@@ -1,258 +1,199 @@
-// Haven Pixel – Eternal Life Sim
-// Versi 3-file maksimal – Professional & Anti-Bosan Edition
+// Minimal 2.5D sandbox using Three.js
+(() => {
+  const container = document.getElementById('canvas-container');
 
-const canvas = document.getElementById('world-canvas');
-const ctx = canvas.getContext('2d');
-const tooltip = document.getElementById('tooltip');
+  // Scene, camera
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x061221);
 
-let state = {
-  gold: 500,
-  happiness: 50,
-  prestige: 0,
-  day: 1,
-  hour: 8,
-  minute: 0,
-  season: 0, // 0=semi, 1=panas, 2=gugur, 3=dingin
-  tool: 'hand',
-  world: Array(20).fill().map(() => Array(30).fill({
-    ground: 'grass',
-    plant: null,
-    building: null,
-    animal: null
-  })),
-  inventory: { seed_carrot: 8, seed_tomato: 5, seed_berry: 3 }
-};
+  const sizes = { width: container.clientWidth, height: container.clientHeight };
+  const camera = new THREE.PerspectiveCamera(45, sizes.width / sizes.height, 0.1, 2000);
+  camera.position.set(30, 35, 30);
+  camera.lookAt(0, 0, 0);
 
-const TILE = 32;
-const W = 30, H = 20;
-const SEASONS = ['Semi', 'Panas', 'Gugur', 'Dingin'];
-const WEATHERS = ['☀️ Cerah', '☁️ Berawan', '🌧️ Hujan', '❄️ Salju'];
-const GROW_RATES = [1.4, 1.1, 0.7, 0.4]; // per musim
+  // Renderer
+  const renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer.setSize(sizes.width, sizes.height);
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  container.appendChild(renderer.domElement);
 
-// Log system
-function log(msg, color = '#00ff41') {
-  const p = document.createElement('p');
-  p.style.color = color;
-  p.textContent = `[H ${state.day} \( {state.hour.toString().padStart(2,'0')}: \){state.minute.toString().padStart(2,'0')}] ${msg}`;
-  document.getElementById('log-panel').prepend(p);
-  if (document.getElementById('log-panel').children.length > 14) {
-    document.getElementById('log-panel').removeChild(document.getElementById('log-panel').lastChild);
+  // Controls (orbit but locked to low polar angle for 2.5D feel)
+  const controls = new THREE.OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true;
+  controls.maxPolarAngle = Math.PI / 2.1; // don't go below plane too much
+  controls.minPolarAngle = 0.2;
+  controls.target.set(0, 0, 0);
+
+  // Lights
+  const ambient = new THREE.HemisphereLight(0xbfe3ff, 0x080820, 0.6);
+  scene.add(ambient);
+
+  const dir = new THREE.DirectionalLight(0xffffff, 0.9);
+  dir.position.set(50, 80, 25);
+  dir.castShadow = true;
+  dir.shadow.camera.left = -60;
+  dir.shadow.camera.right = 60;
+  dir.shadow.camera.top = 60;
+  dir.shadow.camera.bottom = -60;
+  dir.shadow.mapSize.set(2048, 2048);
+  scene.add(dir);
+
+  // Plane (ground)
+  const planeGeo = new THREE.PlaneGeometry(200, 200);
+  const planeMat = new THREE.MeshStandardMaterial({ color: 0x0b1a24, metalness: 0.1, roughness: 0.75 });
+  const plane = new THREE.Mesh(planeGeo, planeMat);
+  plane.rotation.x = -Math.PI / 2;
+  plane.receiveShadow = true;
+  plane.name = "ground";
+  scene.add(plane);
+
+  // Grid helper for sandbox feel
+  const grid = new THREE.GridHelper(200, 40, 0x234, 0x10202a);
+  grid.material.opacity = 0.45;
+  grid.material.transparent = true;
+  scene.add(grid);
+
+  // Basic environment reflection (soft)
+  scene.environment = null; // placeholder if you load envMap later
+
+  // Objects array and helper functions
+  const objects = [];
+  const raycaster = new THREE.Raycaster();
+  const pointer = new THREE.Vector2();
+  let selected = null;
+  let dragOffset = new THREE.Vector3();
+  let isDragging = false;
+  let spawnType = 'box';
+
+  function spawnAt(point) {
+    const size = 2 + Math.random() * 3;
+    let mesh;
+    if (spawnType === 'box') {
+      const geo = new THREE.BoxGeometry(size, size, size);
+      const mat = new THREE.MeshStandardMaterial({ color: new THREE.Color().setHSL(Math.random(), 0.6, 0.5), roughness: 0.4, metalness: 0.1 });
+      mesh = new THREE.Mesh(geo, mat);
+    } else {
+      const geo = new THREE.SphereGeometry(size / 1.6, 24, 18);
+      const mat = new THREE.MeshStandardMaterial({ color: new THREE.Color().setHSL(Math.random(), 0.8, 0.5), roughness: 0.45, metalness: 0.05 });
+      mesh = new THREE.Mesh(geo, mat);
+    }
+    mesh.castShadow = true;
+    mesh.receiveShadow = true;
+    mesh.position.copy(point).add(new THREE.Vector3(0, (mesh.geometry.boundingBox ? mesh.geometry.boundingBox.max.y : size/1.5), 0));
+    // ensure y above plane:
+    mesh.position.y = size/2;
+    mesh.userData.spawnSize = size;
+    scene.add(mesh);
+    objects.push(mesh);
   }
-}
 
-// Update UI
-function updateUI() {
-  document.getElementById('gold').textContent = state.gold.toLocaleString();
-  document.getElementById('happiness').textContent = Math.floor(state.happiness) + '%';
-  document.getElementById('prestige').textContent = state.prestige;
-  document.getElementById('season').textContent = SEASONS[state.season];
-  document.getElementById('day').textContent = state.day;
-
-  const timeOfDay = ['Pagi','Siang','Sore','Malam'][Math.floor(state.hour/6)];
-  document.getElementById('time').textContent = `${timeOfDay} – \( {state.hour.toString().padStart(2,'0')}: \){state.minute.toString().padStart(2,'0')}`;
-
-  // Weather random setiap jam
-  if (state.minute === 0) {
-    document.getElementById('weather').textContent = WEATHERS[Math.floor(Math.random()*WEATHERS.length)];
+  // Pointer events
+  function getIntersectPlane(clientX, clientY) {
+    const rect = renderer.domElement.getBoundingClientRect();
+    pointer.x = ((clientX - rect.left) / rect.width) * 2 - 1;
+    pointer.y = -((clientY - rect.top) / rect.height) * 2 + 1;
+    raycaster.setFromCamera(pointer, camera);
+    const intersects = raycaster.intersectObjects([plane], false);
+    return intersects.length ? intersects[0] : null;
   }
-}
 
-// Draw world with glow & detail
-function drawWorld() {
-  ctx.clearRect(0,0,canvas.width,canvas.height);
+  function getIntersectObjects(clientX, clientY) {
+    const rect = renderer.domElement.getBoundingClientRect();
+    pointer.x = ((clientX - rect.left) / rect.width) * 2 - 1;
+    pointer.y = -((clientY - rect.top) / rect.height) * 2 + 1;
+    raycaster.setFromCamera(pointer, camera);
+    const hits = raycaster.intersectObjects(objects, false);
+    return hits.length ? hits[0] : null;
+  }
 
-  for (let y = 0; y < H; y++) {
-    for (let x = 0; x < W; x++) {
-      const t = state.world[y][x];
-      let baseColor = '#0f3f0f';
-
-      if (t.ground === 'dirt') baseColor = '#6b4423';
-      if (state.season === 2) baseColor = '#8b5a2b'; // gugur
-      if (state.season === 3) baseColor = '#d0e0ff'; // dingin
-
-      ctx.fillStyle = baseColor;
-      ctx.fillRect(x*TILE, y*TILE, TILE, TILE);
-
-      // Plant
-      if (t.plant) {
-        const g = t.plant.growth;
-        let plantColor = g < 30 ? '#aaffaa' : g < 70 ? '#55ff55' : '#00ff41';
-        if (g >= 100) plantColor = '#ffdd00';
-        ctx.fillStyle = plantColor;
-        ctx.shadowColor = plantColor;
-        ctx.shadowBlur = 12;
-        ctx.fillRect(x*TILE + 8, y*TILE + 8, TILE-16, TILE-16);
-        ctx.shadowBlur = 0;
+  renderer.domElement.addEventListener('pointerdown', (ev) => {
+    ev.preventDefault();
+    const hitObj = getIntersectObjects(ev.clientX, ev.clientY);
+    if (hitObj) {
+      selected = hitObj.object;
+      isDragging = true;
+      // compute offset between object's position and plane intersection
+      const planeHit = getIntersectPlane(ev.clientX, ev.clientY);
+      if (planeHit) {
+        dragOffset.copy(selected.position).sub(planeHit.point);
+      } else {
+        dragOffset.set(0,0,0);
       }
-
-      // Building
-      if (t.building) {
-        ctx.fillStyle = '#8b4513';
-        ctx.fillRect(x*TILE + 4, y*TILE + 4, TILE-8, TILE-8);
-        ctx.fillStyle = '#a0522d';
-        ctx.fillRect(x*TILE + 6, y*TILE + 6, TILE-12, TILE-20);
-      }
-
-      // Animal
-      if (t.animal) {
-        ctx.fillStyle = t.animal.type === 'chicken' ? '#ffd700' : '#c19a6b';
-        ctx.shadowColor = '#fff';
-        ctx.shadowBlur = 8;
-        ctx.beginPath();
-        ctx.arc(x*TILE + TILE/2, y*TILE + TILE/2, TILE/3, 0, Math.PI*2);
-        ctx.fill();
-        ctx.shadowBlur = 0;
-      }
+      return;
     }
-  }
-}
-
-// Time tick (1 detik real = 1 menit game – cepat untuk testing, bisa diubah ke 60 detik)
-setInterval(() => {
-  state.minute++;
-  if (state.minute >= 60) {
-    state.minute = 0;
-    state.hour++;
-    if (state.hour >= 24) {
-      state.hour = 0;
-      state.day++;
-      dailyEvent();
-      if (state.day % 7 === 0) state.season = (state.season + 1) % 4;
+    const planeHit = getIntersectPlane(ev.clientX, ev.clientY);
+    if (planeHit) {
+      spawnAt(planeHit.point);
     }
-  }
+  });
 
-  // Growth & happiness update
-  let totalAnimalHappy = 0;
-  let animalCount = 0;
-
-  state.world.forEach((row, y) => row.forEach((t, x) => {
-    if (t.plant) {
-      let rate = GROW_RATES[state.season];
-      if (document.getElementById('weather').textContent.includes('Hujan')) rate *= 1.5;
-      t.plant.growth = Math.min(100, (t.plant.growth || 0) + rate);
+  renderer.domElement.addEventListener('pointermove', (ev) => {
+    if (!isDragging || !selected) return;
+    const planeHit = getIntersectPlane(ev.clientX, ev.clientY);
+    if (planeHit) {
+      const newPos = planeHit.point.clone().add(dragOffset);
+      // snap optionally to grid of 0.5
+      newPos.x = Math.round(newPos.x * 2) / 2;
+      newPos.z = Math.round(newPos.z * 2) / 2;
+      selected.position.x = newPos.x;
+      selected.position.z = newPos.z;
+      // keep y relative to size
+      selected.position.y = selected.userData.spawnSize / 2;
     }
-    if (t.animal) {
-      animalCount++;
-      totalAnimalHappy += t.animal.happiness = Math.max(0, Math.min(100, t.animal.happiness + (Math.random()*1.2 - 0.6)));
-      if (Math.random() < 0.02) state.gold += 8; // telur/emas kecil
-    }
-  }));
+  });
 
-  if (animalCount > 0) {
-    state.happiness += (totalAnimalHappy / animalCount) * 0.015;
+  window.addEventListener('pointerup', () => {
+    isDragging = false;
+    selected = null;
+  });
+
+  // GUI controls (dat.GUI)
+  const gui = new dat.GUI({ autoPlace: false, width: 260 });
+  document.getElementById('gui').appendChild(gui.domElement);
+  const params = {
+    spawn: 'box',
+    clearAll: () => {
+      objects.forEach(o => scene.remove(o));
+      objects.length = 0;
+    },
+    shadows: true,
+    cameraAngle: 35,
+    ambient: 0.6
+  };
+  gui.add(params, 'spawn', ['box', 'sphere']).name('Spawn type').onChange(v => spawnType = v);
+  gui.add(params, 'clearAll').name('Clear objects');
+  gui.add(params, 'shadows').name('Shadows').onChange(v => {
+    renderer.shadowMap.enabled = v;
+    dir.castShadow = v;
+    objects.forEach(o => { o.castShadow = v; o.receiveShadow = v; });
+    plane.receiveShadow = v;
+  });
+  gui.add(params, 'cameraAngle', 10, 80).name('Camera angle').onChange(v => {
+    camera.position.set(Math.cos(THREE.Math.degToRad(v))*40, Math.sin(THREE.Math.degToRad(v))*40, 30);
+    camera.lookAt(0,0,0);
+  });
+  gui.add(params, 'ambient', 0, 1).name('Ambient').onChange(v => ambient.intensity = v);
+
+  // Resize handling
+  function onResize() {
+    sizes.width = container.clientWidth; sizes.height = container.clientHeight;
+    camera.aspect = sizes.width / sizes.height;
+    camera.updateProjectionMatrix();
+    renderer.setSize(sizes.width, sizes.height);
   }
-  state.happiness = Math.max(10, Math.min(100, state.happiness + (Math.random()*0.4 - 0.2)));
+  window.addEventListener('resize', onResize);
 
-  updateUI();
-  drawWorld();
-}, 1000); // 1 detik real = 1 menit game
-
-// Daily surprise & seasonal effect
-function dailyEvent() {
-  const r = Math.random();
-  if (r < 0.3) {
-    state.gold += 60 + state.prestige * 15;
-    log("Pedagang misterius lewat! + emas", '#ffd700');
-  } else if (r < 0.45) {
-    state.happiness += 10 + state.prestige * 2;
-    log("Angin sepoi membawa kebahagiaan +10~", '#00d4ff');
-  } else if (r < 0.55 && state.inventory.seed_carrot < 20) {
-    state.inventory.seed_carrot += 4;
-    log("Benih beterbangan datang! +4 wortel", '#88ff88');
+  // Animation loop
+  const clock = new THREE.Clock();
+  function animate() {
+    const dt = clock.getDelta();
+    controls.update();
+    renderer.render(scene, camera);
+    requestAnimationFrame(animate);
   }
-}
+  animate();
 
-// Prestige Reset
-function prestigeReset() {
-  if (state.gold < 1500 && state.prestige === 0) {
-    alert("Butuh minimal 1.500 emas atau prestige sebelumnya!");
-    return;
-  }
-  if (!confirm("Reset dunia? Kamu akan dapat prestige point permanen!")) return;
-
-  const gain = Math.floor(Math.sqrt(state.gold / 80) + state.day / 12 + state.happiness / 20);
-  state.prestige += gain;
-  log(`Prestige +${gain}! Dunia baru dimulai...`, '#ffea00');
-
-  state.gold = 500 + state.prestige * 250;
-  state.happiness = 50;
-  state.day = 1;
-  state.season = 0;
-  state.hour = 8;
-  state.minute = 0;
-
-  // Bonus permanen
-  state.inventory.seed_carrot += state.prestige * 3;
-
-  // Reset world partially
-  state.world.forEach(row => row.forEach(t => {
-    t.plant = null;
-    if (Math.random() < 0.3) t.ground = 'grass';
-  }));
-
-  drawWorld();
-}
-
-// Klik interaksi
-canvas.addEventListener('click', e => {
-  const rect = canvas.getBoundingClientRect();
-  const x = Math.floor((e.clientX - rect.left) / TILE);
-  const y = Math.floor((e.clientY - rect.top) / TILE);
-
-  if (x < 0 || x >= W || y < 0 || y >= H) return;
-
-  const tile = state.world[y][x];
-
-  if (state.tool === 'plant' && !tile.plant && state.inventory.seed_carrot > 0) {
-    tile.plant = { type: 'carrot', growth: 0 };
-    state.inventory.seed_carrot--;
-    log(`Menanam wortel (\( {x}, \){y})`);
-  }
-
-  if (state.tool === 'harvest' && tile.plant?.growth >= 100) {
-    state.gold += 45 + Math.floor(state.prestige * 1.5);
-    tile.plant = null;
-    log(`Panen berhasil! +${45 + Math.floor(state.prestige * 1.5)} emas`);
-  }
-
-  if (state.tool === 'build' && !tile.building && state.gold >= 280) {
-    tile.building = 'house';
-    state.gold -= 280;
-    state.happiness += 9;
-    log(`Rumah dibangun → Kebahagiaan +9`);
-  }
-
-  if (state.tool === 'animal' && !tile.animal && state.gold >= 180) {
-    tile.animal = { type: 'chicken', happiness: 65 + Math.floor(Math.random()*20) };
-    state.gold -= 180;
-    log(`Ayam baru ditangkap! Mulai menghasilkan...`);
-  }
-
-  drawWorld();
-});
-
-// Tooltip hover
-canvas.addEventListener('mousemove', e => {
-  const rect = canvas.getBoundingClientRect();
-  const x = Math.floor((e.clientX - rect.left) / TILE);
-  const y = Math.floor((e.clientY - rect.top) / TILE);
-
-  if (x >= 0 && x < W && y >= 0 && y < H) {
-    const t = state.world[y][x];
-    let tip = `(\( {x}, \){y})`;
-    if (t.plant) tip += ` Tanaman: ${t.plant.growth.toFixed(0)}%`;
-    if (t.building) tip += ` Bangunan: ${t.building}`;
-    if (t.animal) tip += ` Hewan: ${t.animal.happiness.toFixed(0)}% happy`;
-    tooltip.textContent = tip;
-    tooltip.style.left = `${e.clientX + 16}px`;
-    tooltip.style.top = `${e.clientY - 40}px`;
-    tooltip.style.display = 'block';
-  } else {
-    tooltip.style.display = 'none';
-  }
-});
-
-// Init
-log("Selamat datang di Haven Pixel!", '#00ff41');
-log("Klik mana saja → tanam, panen, bangun, pelihara...", '#88ff88');
-drawWorld();
+  // Helpful: expose simple API to programmatically add high-res textures later
+  window.RHFSandbox = { scene, spawnAt, objects, renderer };
+})();
