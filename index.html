@@ -1,42 +1,21 @@
-<!doctype html>
-<html lang="id">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>RHF — Sandbox 2.5D</title>
-  <link rel="stylesheet" href="styles.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clickable Target Game</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header class="site-header">
-    <div class="container">
-      <a class="logo" href="/">RHF</a>
-      <nav class="main-nav">
-        <a href="#">Beranda</a>
-        <a href="#">Sandbox</a>
-        <a href="#">Produk</a>
-      </nav>
-    </div>
-  </header>
-
-  <main>
     <div id="hud">
-      <div id="info">Klik plane untuk spawn objek. Drag untuk memindah.</div>
-      <div id="gui"></div>
+        <h1>Clickable Target Game</h1>
+        <div>Score: <span id="score">0</span></div>
+        <div>Time: <span id="timer">30</span></div>
+        <button id="startBtn">Start</button>
+        <button id="restartBtn" style="display:none;">Restart</button>
     </div>
-    <div id="canvas-container"></div>
-  </main>
-
-  <footer class="site-footer">
-    <div class="container">
-      <p>&copy; 2026 RHF — Sandbox 2.5D</p>
-    </div>
-  </footer>
-
-  <!-- Three.js & helpers from CDN -->
-  <script src="https://unpkg.com/three@0.154.0/build/three.min.js"></script>
-  <script src="https://unpkg.com/three@0.154.0/examples/js/controls/OrbitControls.js"></script>
-  <script src="https://unpkg.com/dat.gui@0.7.9/build/dat.gui.min.js"></script>
-
-  <script src="game.js"></script>
+    <div id="gameArea"></div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="game.js"></script>
 </body>
 </html>
