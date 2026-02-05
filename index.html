@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Haven Pixel – Eternal Life Sim</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="overlay"></div>
+
+  <header class="top-bar">
+    <div class="season-info">Musim <span id="season">Semi</span> • Hari <span id="day">1</span></div>
+    <div class="clock"><span id="time">08:00</span> • <span id="weather">☀️ Cerah</span></div>
+  </header>
+
+  <canvas id="world-canvas" width="960" height="640"></canvas>
+
+  <div class="bottom-ui">
+    <div class="toolbar">
+      <button data-tool="hand" class="active">✋</button>
+      <button data-tool="plant">🌱</button>
+      <button data-tool="harvest">✂️</button>
+      <button data-tool="build">🏠</button>
+      <button data-tool="animal">🐔</button>
+      <button onclick="prestigeReset()">🔄 Prestige</button>
+    </div>
+
+    <div class="stats">
+      <span>Emas: <b id="gold">500</b></span>
+      <span>Kebahagiaan: <b id="happiness">50%</b></span>
+      <span>Prestige Lv: <b id="prestige">0</b></span>
+    </div>
+  </div>
+
+  <div class="log-panel" id="log-panel"></div>
+
+  <div class="tooltip" id="tooltip"></div>
+
+  <script src="game.js"></script>
+</body>
+</html>
