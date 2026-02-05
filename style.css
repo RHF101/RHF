@@ -1,0 +1,133 @@
+:root {
+  --bg: #071407;
+  --primary: #39ff14;
+  --secondary: #00d4ff;
+  --accent: #ffea00;
+  --danger: #ff3366;
+  --text: #e0ffe0;
+  --glow: 0 0 12px #39ff14, 0 0 24px #39ff14;
+  --shadow: 0 0 20px rgba(57,255,20,0.3);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Courier New', monospace;
+  overflow: hidden;
+  image-rendering: pixelated;
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(circle at 50% 30%, rgba(57,255,20,0.08), transparent 60%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.top-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 20px;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.7), transparent);
+  font-size: 1.3rem;
+  text-shadow: 1px 1px 4px #000;
+  z-index: 10;
+}
+
+#world-canvas {
+  image-rendering: pixelated;
+  display: block;
+  margin: 0 auto;
+  border: 4px solid #1a3c1a;
+  box-shadow: var(--shadow);
+}
+
+.bottom-ui {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 12px 20px;
+  background: linear-gradient(to top, rgba(0,0,0,0.85), transparent);
+  z-index: 10;
+}
+
+.toolbar {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  margin-bottom: 12px;
+}
+
+.toolbar button {
+  width: 64px;
+  height: 64px;
+  font-size: 2.4rem;
+  background: rgba(57,255,20,0.12);
+  border: 2px solid var(--primary);
+  color: var(--primary);
+  cursor: pointer;
+  border-radius: 10px;
+  transition: all 0.25s;
+}
+
+.toolbar button:hover,
+.toolbar button.active {
+  background: var(--primary);
+  color: #000;
+  box-shadow: var(--glow);
+  transform: scale(1.08);
+}
+
+.stats {
+  text-align: center;
+  font-size: 1.2rem;
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  text-shadow: 1px 1px 3px #000;
+}
+
+.log-panel {
+  position: absolute;
+  bottom: 140px;
+  left: 16px;
+  width: 420px;
+  max-height: 220px;
+  overflow-y: auto;
+  background: rgba(0,0,0,0.75);
+  border: 1px solid #1a5c1a;
+  border-radius: 8px;
+  padding: 12px;
+  font-size: 0.95rem;
+  line-height: 1.45;
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(4px);
+}
+
+.log-panel p {
+  margin: 6px 0;
+  padding-left: 8px;
+  border-left: 3px solid var(--accent);
+}
+
+.tooltip {
+  position: absolute;
+  background: rgba(0,0,0,0.9);
+  border: 1px solid var(--primary);
+  color: var(--primary);
+  padding: 8px 14px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  pointer-events: none;
+  z-index: 100;
+  box-shadow: var(--glow);
+  transform: translate(-50%, -120%);
+  white-space: nowrap;
+}
