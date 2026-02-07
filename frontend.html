@@ -1,1 +1,152 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>WA Sewa Sederhana</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/qrcode@1.5.3/build/qrcode.min.js"></script>
+  <script src="https://unpkg.com/socket.io@4.7.5/client-dist/socket.io.min.js"></script>
+  <style>
+    body { background: #0f172a; color: white; font-family: system-ui, sans-serif; }
+    .wa-green { background-color: #25d366; }
+    .wa-green:hover { background-color: #22c35e; }
+  </style>
+</head>
+<body class="min-h-screen p-6">
 
+  <header class="text-center mb-10">
+    <h1 class="text-4xl md:text-5xl font-bold mb-3">
+      Sewa Nomor <span class="text-wa-green">WhatsApp</span> Multi-Device
+    </h1>
+    <p class="text-lg text-gray-400">Prototype sederhana • Admin kontrol semua nomor</p>
+  </header>
+
+  <!-- Login Admin -->
+  <section id="login-section" class="max-w-md mx-auto bg-gray-800 p-8 rounded-xl shadow-2xl mb-10">
+    <h2 class="text-2xl font-semibold mb-6 text-center">Admin Login</h2>
+    <input id="username" type="text" placeholder="Username" class="w-full p-3 mb-4 bg-gray-700 rounded-lg text-white" value="admin">
+    <input id="password" type="password" placeholder="Password" class="w-full p-3 mb-6 bg-gray-700 rounded-lg text-white" value="admin123">
+    <button onclick="login()" class="wa-green text-white font-bold py-3 px-6 rounded-lg w-full hover:shadow-lg transition">
+      Masuk
+    </button>
+  </section>
+
+  <!-- Admin Panel (hidden awalnya) -->
+  <section id="admin-panel" class="hidden max-w-4xl mx-auto">
+
+    <div class="bg-gray-800 p-6 rounded-xl mb-8">
+      <h2 class="text-2xl mb-4">Tambah Nomor Baru</h2>
+      <div class="flex flex-col sm:flex-row gap-4">
+        <input id="new-number" type="text" placeholder="6281234567890" class="flex-1 p-3 bg-gray-700 rounded-lg text-white">
+        <button onclick="addNumber()" class="wa-green text-white font-bold py-3 px-8 rounded-lg hover:shadow-lg">
+          Connect Nomor
+        </button>
+      </div>
+    </div>
+
+    <div id="qr-area" class="text-center mb-10 hidden">
+      <h3 id="qr-title" class="text-xl mb-4"></h3>
+      <div id="qrcode" class="inline-block bg-white p-4 rounded-xl"></div>
+    </div>
+
+    <div class="bg-gray-800 p-6 rounded-xl">
+      <h2 class="text-2xl mb-4">Daftar Nomor</h2>
+      <ul id="session-list" class="space-y-4"></ul>
+    </div>
+
+  </section>
+
+  <script>
+    const socket = io();
+    let token = '';
+
+    function login() {
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+
+      fetch('/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password })
+      })
+      .then(r => r.json())
+      .then(data => {
+        if (data.token) {
+          token = data.token;
+          document.getElementById('login-section').classList.add('hidden');
+          document.getElementById('admin-panel').classList.remove('hidden');
+          loadSessions();
+        } else {
+          alert(data.error || 'Login gagal');
+        }
+      })
+      .catch(err => alert('Error: ' + err));
+    }
+
+    function loadSessions() {
+      fetch('/api/sessions', {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      .then(r => r.json())
+      .then(sessions => {
+        const list = document.getElementById('session-list');
+        list.innerHTML = '';
+        sessions.forEach(s => {
+          const li = document.createElement('li');
+          li.className = 'flex justify-between items-center bg-gray-700 p-4 rounded-lg';
+          li.innerHTML = `
+            <span>\( {s.id} • <strong> \){s.status}</strong></span>
+            <button onclick="alert('Fitur kirim pesan bisa ditambah di sini')" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded">
+              Pakai
+            </button>
+          `;
+          list.appendChild(li);
+        });
+      });
+    }
+
+    function addNumber() {
+      const number = document.getElementById('new-number').value.trim();
+      if (!number) return alert('Masukkan nomor');
+
+      fetch('/api/connect', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({ numberId: number })
+      })
+      .then(r => r.json())
+      .then(data => {
+        if (data.error) alert(data.error);
+        else {
+          loadSessions();
+          document.getElementById('qr-title').textContent = `Scan QR untuk ${number}`;
+          document.getElementById('qr-area').classList.remove('hidden');
+        }
+      });
+    }
+
+    // Real-time dari server
+    socket.on('qr', ({ numberId, qr }) => {
+      document.getElementById('qr-title').textContent = `Scan QR untuk ${numberId}`;
+      document.getElementById('qr-area').classList.remove('hidden');
+      document.getElementById('qrcode').innerHTML = '';
+      new QRCode(document.getElementById('qrcode'), {
+        text: qr,
+        width: 220,
+        height: 220
+      });
+    });
+
+    socket.on('status', ({ numberId, status }) => {
+      if (status === 'connected') {
+        document.getElementById('qr-area').classList.add('hidden');
+        loadSessions();
+      }
+    });
+  </script>
+</body>
+</html>
