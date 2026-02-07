@@ -1,1 +1,71 @@
-
+{
+  "name": "wa-sewa-multi-device",
+  "version": "1.0.1",
+  "description": "Platform sewa nomor WhatsApp multi-device dengan dashboard modern. Support banyak sesi, QR pairing real-time, admin kontrol penuh.",
+  "private": true,
+  "type": "module",
+  "main": "backend/server.js",
+  "scripts": {
+    "start": "node backend/server.js",
+    "dev": "nodemon backend/server.js",
+    "lint": "eslint . --ext .js --fix",
+    "format": "prettier --write .",
+    "build:css": "npx tailwindcss -i frontend/input.css -o frontend/output.css --minify",
+    "watch:css": "npx tailwindcss -i frontend/input.css -o frontend/output.css --watch",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepare": "husky install",
+    "postinstall": "npm run build:css"
+  },
+  "dependencies": {
+    "@whiskeysockets/baileys": "^6.7.7",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.0",
+    "jsonwebtoken": "^9.0.2",
+    "qrcode-terminal": "^0.12.0",
+    "socket.io": "^4.8.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.11.1",
+    "autoprefixer": "^10.4.20",
+    "eslint": "^9.11.1",
+    "eslint-config-prettier": "^9.1.0",
+    "globals": "^15.9.0",
+    "husky": "^9.1.6",
+    "nodemon": "^3.1.7",
+    "postcss": "^8.4.47",
+    "prettier": "^3.3.3",
+    "tailwindcss": "^3.4.13"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "author": {
+    "name": "Chh",
+    "email": "chh@example.com",
+    "url": "https://github.com/chh-dev"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chh-dev/wa-sewa-multi-device.git"
+  },
+  "bugs": {
+    "url": "https://github.com/chh-dev/wa-sewa-multi-device/issues"
+  },
+  "homepage": "https://github.com/chh-dev/wa-sewa-multi-device#readme",
+  "keywords": [
+    "whatsapp",
+    "multi-device",
+    "baileys",
+    "sewa-nomor",
+    "whatsapp-gateway",
+    "whatsapp-rental",
+    "otp-service",
+    "broadcast-tool"
+  ],
+  "exports": {
+    ".": "./backend/server.js"
+  }
+}
