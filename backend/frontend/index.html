@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>WA Sewa Pro • Multi Device Rental</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/socket.io@4.7.5/client-dist/socket.io.min.js"></script>
+  <script src="https://unpkg.com/qrcode@1.5.3/build/qrcode.min.js"></script>
+  <style>
+    :root { --wa-green: #25d366; --wa-green-dark: #22c35e; }
+    body { background: linear-gradient(135deg, #0f172a, #1e293b); }
+  </style>
+</head>
+<body class="text-gray-100 min-h-screen p-4 md:p-8 font-sans">
+
+  <header class="text-center mb-12">
+    <h1 class="text-4xl md:text-6xl font-extrabold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-white to-[var(--wa-green)]">
+      Sewa Nomor WhatsApp Multi-Device
+    </h1>
+    <p class="text-lg md:text-2xl text-gray-300 max-w-4xl mx-auto">
+      Nomor aktif 24/7 • Dashboard modern • Admin kontrol semua sesi • Cocok bisnis & marketing
+    </p>
+  </header>
+
+  <div class="max-w-6xl mx-auto grid md:grid-cols-2 gap-8">
+
+    <!-- Login & Control -->
+    <div class="bg-gray-800/70 backdrop-blur-xl p-8 rounded-3xl shadow-2xl border border-gray-700">
+      <h2 class="text-3xl font-bold mb-8 text-center text-[var(--wa-green)]">Admin Dashboard</h2>
+
+      <div id="login-form">
+        <input id="user" type="text" placeholder="Username" value="admin" class="w-full p-4 mb-4 bg-gray-900 border border-gray-700 rounded-xl focus:border-[var(--wa-green)] outline-none">
+        <input id="pass" type="password" placeholder="Password" value="adminpro2026" class="w-full p-4 mb-6 bg-gray-900 border border-gray-700 rounded-xl focus:border-[var(--wa-green)] outline-none">
+        <button onclick="login()" class="w-full py-4 bg-[var(--wa-green)] hover:bg-[var(--wa-green-dark)] text-black font-bold rounded-xl transition transform hover:scale-105">
+          Masuk
+        </button>
+      </div>
+
+      <div id="control" class="hidden">
+        <div class="mb-8">
+          <h3 class="text-2xl mb-4">Tambah Nomor Baru</h3>
+          <div class="flex flex-col sm:flex-row gap-4">
+            <input id="nomor" placeholder="628xxxxxxxxxx" class="flex-1 p-4 bg-gray-900 border border-gray-700 rounded-xl focus:border-[var(--wa-green)] outline-none">
+            <button onclick="connect()" class="px-8 py-4 bg-[var(--wa-green)] hover:bg-[var(--wa-green-dark)] text-black font-bold rounded-xl transition">
+              Connect
+            </button>
+          </div>
+        </div>
+
+        <div id="qr-box" class="hidden text-center mb-8">
+          <p id="qr-msg" class="text-xl mb-4 font-medium"></p>
+          <div id="qrcode" class="inline-block bg-white p-6 rounded-2xl shadow-2xl mx-auto"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- List Nomor -->
+    <div class="bg-gray-800/70 backdrop-blur-xl p-8 rounded-3xl shadow-2xl border border-gray-700">
+      <h2 class="text-3xl font-bold mb-6 text-center text-[var(--wa-green)]">Daftar Nomor</h2>
+      <ul id="list" class="space-y-4"></ul>
+    </div>
+
+  </div>
+
+  <script>
+    const socket = io();
+    let token = localStorage.getItem('waToken');
+
+    function login() {
+      const user = document.getElementById('user').value.trim();
+      const pass = document.getElementById('pass').value.trim();
+
+      fetch('/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ user, pass })
+      })
+      .then(r => r.json())
+      .then(d => {
+        if (d.token) {
+          token = d.token;
+          localStorage.setItem('waToken', token);
+          document.getElementById('login-form').classList.add('hidden');
+          document.getElementById('control').classList.remove('hidden');
+          loadList();
+        } else alert('Login gagal');
+      });
+    }
+
+    function connect() {
+      const nomor = document.getElementById('nomor').value.trim().replace(/[^0-9]/g, '');
+      if (!nomor) return alert('Masukkan nomor');
+
+      fetch('/api/connect', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({ numberId: nomor })
+      })
+      .then(r => r.json())
+      .then(d => {
+        if (d.success) loadList();
+        else alert(d.error || 'Gagal');
+      });
+    }
+
+    function loadList() {
+      fetch('/api/sessions', { headers: { Authorization: `Bearer ${token}` } })
+        .then(r => r.json())
+        .then(data => {
+          const ul = document.getElementById('list');
+          ul.innerHTML = data.length ? '' : '<li class="text-gray-400 text-center">Belum ada nomor tertaut</li>';
+          data.forEach(s => {
+            const li = document.createElement('li');
+            li.className = 'bg-gray-900 p-5 rounded-xl flex justify-between items-center border border-gray-700';
+            li.innerHTML = `
+              <div>
+                <p class="font-bold text-lg">${s.id}</p>
+                <p class="text-sm \( {s.status === 'connected' ? 'text-green-400' : 'text-red-400'}"> \){s.status.toUpperCase()}</p>
+              </div>
+              <span class="text-xs bg-gray-800 px-4 py-2 rounded-full">Aktif</span>
+            `;
+            ul.appendChild(li);
+          });
+        });
+    }
+
+    socket.on('qr', ({ numberId, qr }) => {
+      document.getElementById('qr-msg').textContent = `Scan QR untuk ${numberId}`;
+      document.getElementById('qr-box').classList.remove('hidden');
+      document.getElementById('qrcode').innerHTML = '';
+      new QRCode(document.getElementById('qrcode'), { text: qr, width: 280, height: 280 });
+    });
+
+    socket.on('status-update', loadList);
+
+    if (token) {
+      document.getElementById('login-form').classList.add('hidden');
+      document.getElementById('control').classList.remove('hidden');
+      loadList();
+    }
+  </script>
+</body>
+</html>
