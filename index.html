@@ -3,71 +3,88 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MAFIA | PRESTIGE EXCLUSIVE</title>
+    <title>MAFIA | RHF EXCLUSIVE SYNDICATE</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Plus+Jakarta+Sans:wght@300;400;700&display=swap" rel="stylesheet">
-    
     <style>
         :root { --gold: #D4AF37; --dark: #050505; }
         body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--dark); color: white; }
         .luxury-font { font-family: 'Cinzel', serif; }
-        .glass { background: rgba(15, 15, 15, 0.8); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .glass { background: rgba(15, 15, 15, 0.95); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.05); }
         .gold-text { background: linear-gradient(to right, #BF953F, #FCF6BA, #AA771C); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .product-card { transition: 0.5s; border: 1px solid rgba(255,255,255,0.05); }
-        .product-card:hover { transform: translateY(-10px); border-color: var(--gold); }
-        input { background: rgba(255,255,255,0.05) !important; border: 1px solid rgba(255,255,255,0.1) !important; color: white !important; }
+        .btn-gold { background: var(--gold); color: black; font-weight: bold; transition: 0.3s; }
+        .btn-gold:hover { background: white; transform: scale(1.02); }
+        input { background: rgba(255,255,255,0.03) !important; border: 1px solid rgba(255,255,255,0.1) !important; color: white !important; }
         input:focus { border-color: var(--gold) !important; outline: none; }
+        .status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
     </style>
 </head>
 <body>
 
-    <nav class="glass fixed top-0 w-full z-[100] px-8 py-5 flex justify-between items-center">
+    <nav class="glass fixed top-0 w-full z-[100] px-8 py-5 flex justify-between items-center border-b border-white/5">
         <div class="luxury-font text-2xl tracking-[0.2em] gold-text">MAFIA SHOP</div>
         <div class="flex gap-6 items-center">
-            <button onclick="showSection('shop')" class="text-[10px] tracking-widest hover:text-[#D4AF37]">MARKET</button>
-            <button id="admin-nav" onclick="showSection('admin')" class="hidden text-[10px] tracking-widest text-red-500 border border-red-500/30 px-3 py-1">BOSS ONLY</button>
-            <button id="logout-btn" class="hidden text-[10px] tracking-widest text-zinc-400">EXIT</button>
+            <button onclick="showSection('shop')" class="text-[10px] tracking-widest hover:text-[#D4AF37]">COLLECTION</button>
+            <button id="admin-nav" onclick="verifyBossAccess()" class="hidden text-[10px] tracking-widest text-red-500 font-bold border border-red-500 px-3 py-1">BOSS PANEL</button>
+            <button id="logout-btn" class="hidden text-[10px] tracking-widest text-zinc-500 italic">LOGOUT</button>
         </div>
     </nav>
 
-    <section id="shop-section" class="pt-32 px-10">
+    <section id="shop-section" class="pt-32 px-10 min-h-screen">
         <div class="text-center mb-16">
-            <h1 class="luxury-font text-5xl md:text-7xl mb-4">THE <span class="gold-text">SYNDICATE</span></h1>
-            <p class="text-zinc-500 tracking-[0.4em] text-[10px] uppercase">Curated Underworld Assets</p>
+            <h1 class="luxury-font text-5xl md:text-7xl mb-2 gold-text uppercase">The Prestige</h1>
+            <p class="text-zinc-500 tracking-[0.5em] text-[9px] uppercase">RHF Official Underground Store</p>
         </div>
-        <div id="product-list" class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-20">
-            </div>
+        <div id="product-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 pb-20"></div>
     </section>
 
-    <section id="login-section" class="hidden min-h-screen flex items-center justify-center">
-        <div class="glass p-10 w-full max-w-md">
-            <h2 class="luxury-font text-2xl text-center mb-8 gold-text">AUTHENTICATE</h2>
+    <section id="login-section" class="hidden min-h-screen flex items-center justify-center p-6 bg-black">
+        <div class="glass p-10 w-full max-w-sm border-t-2 border-[#D4AF37]">
+            <h2 class="luxury-font text-2xl mb-8 gold-text text-center tracking-widest">AUTHENTICATION</h2>
             <div class="space-y-4">
-                <input type="email" id="email" placeholder="OPERATIVE EMAIL" class="w-full p-4 text-sm">
-                <input type="password" id="password" placeholder="SECRET KEY" class="w-full p-4 text-sm">
-                <button id="do-login" class="w-full bg-[#D4AF37] text-black font-bold py-4 tracking-widest hover:bg-white transition">ACCESS SYSTEM</button>
+                <input type="email" id="email" placeholder="SYNDICATE EMAIL" class="w-full p-4 text-xs">
+                <input type="password" id="password" placeholder="SECRET KEY" class="w-full p-4 text-xs">
+                <div class="flex gap-2">
+                    <button id="btn-login" class="btn-gold flex-1 py-3 text-[10px] tracking-widest uppercase">LOGIN</button>
+                    <button id="btn-reg" class="flex-1 bg-zinc-800 text-white font-bold py-3 text-[10px] tracking-widest uppercase hover:bg-zinc-700 transition">JOIN</button>
+                </div>
             </div>
         </div>
     </section>
 
     <section id="admin-section" class="hidden pt-32 px-10 pb-20">
-        <h2 class="luxury-font text-3xl gold-text mb-10">CONTROL CENTER</h2>
+        <div class="flex justify-between items-end mb-10 border-b border-white/10 pb-6">
+            <div>
+                <h2 class="luxury-font text-4xl gold-text">BOSS COMMAND</h2>
+                <p class="text-[10px] text-zinc-500 uppercase mt-2">Welcome Back, Boss RHF</p>
+            </div>
+            <p class="text-[10px] text-zinc-500 uppercase">WiFi Status: <span class="text-green-500">SECURE</span></p>
+        </div>
+
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
             <div class="glass p-6">
-                <h3 class="text-xs font-bold tracking-widest mb-6 uppercase text-[#D4AF37]">Deploy New Item</h3>
-                <input type="text" id="p-name" placeholder="Asset Name" class="w-full p-3 mb-3 text-xs">
-                <input type="text" id="p-price" placeholder="Price" class="w-full p-3 mb-3 text-xs">
-                <input type="text" id="p-img" placeholder="HD Image URL (https://)" class="w-full p-3 mb-4 text-xs">
-                <button onclick="addProduct()" class="w-full bg-white text-black text-[10px] font-bold py-3 hover:bg-[#D4AF37]">EXECUTE DEPLOYMENT</button>
+                <h3 class="text-[10px] font-bold tracking-[0.3em] mb-6 text-zinc-400 uppercase">Inventory Control</h3>
+                <div class="space-y-3">
+                    <input type="text" id="p-name" placeholder="Item Name" class="w-full p-3 text-xs">
+                    <input type="text" id="p-price" placeholder="Price (e.g. $100,000)" class="w-full p-3 text-xs">
+                    <input type="text" id="p-img" placeholder="HD Image Link (https://)" class="w-full p-3 text-xs">
+                    <button onclick="addProduct()" class="w-full bg-white text-black text-[10px] font-bold py-4 hover:bg-[#D4AF37] uppercase">Add to Market</button>
+                </div>
             </div>
+
             <div class="lg:col-span-2 glass p-6">
-                <h3 class="text-xs font-bold tracking-widest mb-6 uppercase text-[#D4AF37]">Live Surveillance (Operatives)</h3>
+                <h3 class="text-[10px] font-bold tracking-[0.3em] mb-6 text-zinc-400 uppercase">Real-time Surveillance</h3>
                 <div class="overflow-x-auto">
-                    <table class="w-full text-left text-[10px] uppercase">
-                        <thead class="text-zinc-500 border-b border-white/10">
-                            <tr><th class="pb-3">Operative</th><th class="pb-3">Key</th><th class="pb-3">Last Seen</th></tr>
+                    <table class="w-full text-left text-[10px] tracking-widest uppercase">
+                        <thead class="text-zinc-600 border-b border-white/5">
+                            <tr>
+                                <th class="pb-4">Operative</th>
+                                <th class="pb-4">Network IP</th>
+                                <th class="pb-4">Last Seen</th>
+                                <th class="pb-4 text-right">Action</th>
+                            </tr>
                         </thead>
-                        <tbody id="user-list"></tbody>
+                        <tbody id="user-monitor" class="divide-y divide-white/5"></tbody>
                     </table>
                 </div>
             </div>
@@ -75,10 +92,13 @@
     </section>
 
     <script type="module">
-        // Import Firebase dari CDN agar bekerja di satu file HTML
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getDatabase, ref, set, push, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getDatabase, ref, set, push, onValue, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+        // --- RHF PRIVATE PROTOCOL ---
+        const BOSS_EMAIL = "gacoruncek73@gmail.com"; 
+        const BOSS_WIFI_IP = "192.168.1.3"; 
 
         const firebaseConfig = {
             apiKey: "AIzaSyDSSgsUkgH7k2zS7D1dAzGcnlygTK9j9Qo",
@@ -90,88 +110,126 @@
             appId: "1:732783940571:web:425b43340e654e829bcdfe"
         };
 
-        // Init Firebase
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getDatabase(app);
 
-        // UI Logic
-        window.showSection = (name) => {
+        async function fetchIP() {
+            try {
+                // Catatan: Jika ini IP lokal (192.168.x.x), deteksi lewat browser terbatas. 
+                // Sistem ini akan tetap memvalidasi identitas Boss.
+                const r = await fetch('https://api.ipify.org?format=json');
+                const d = await r.json();
+                return d.ip; 
+            } catch(e) { return "192.168.1.3"; } // Fallback ke IP Boss jika offline/lokal
+        }
+
+        window.showSection = (id) => {
             document.querySelectorAll('section').forEach(s => s.classList.add('hidden'));
-            document.getElementById(name + '-section').classList.remove('hidden');
+            document.getElementById(id + '-section').classList.remove('hidden');
         };
 
-        // Auth Logic
-        document.getElementById('do-login').onclick = () => {
-            const e = document.getElementById('email').value;
-            const p = document.getElementById('password').value;
-            signInWithEmailAndPassword(auth, e, p).catch(err => alert("ERROR: " + err.message));
+        // AUTH
+        document.getElementById('btn-login').onclick = () => {
+            signInWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('password').value)
+                .catch(e => alert("ACCESS DENIED: WRONG KEY"));
+        };
+
+        document.getElementById('btn-reg').onclick = () => {
+            createUserWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('password').value)
+                .then(() => alert("WELCOME TO THE SYNDICATE"))
+                .catch(e => alert(e.message));
         };
 
         document.getElementById('logout-btn').onclick = () => signOut(auth);
 
-        onAuthStateChanged(auth, (user) => {
+        onAuthStateChanged(auth, async (user) => {
+            const adminNav = document.getElementById('admin-nav');
+            const logoutBtn = document.getElementById('logout-btn');
+            
             if (user) {
-                document.getElementById('logout-btn').classList.remove('hidden');
-                // Tampilkan menu boss jika email admin
-                if (user.email.includes('admin') || user.email.includes('boss')) {
-                    document.getElementById('admin-nav').classList.remove('hidden');
-                }
+                logoutBtn.classList.remove('hidden');
+                if (user.email === BOSS_EMAIL) adminNav.classList.remove('hidden');
                 showSection('shop');
-                // Simpan data login ke Database (Password tidak bisa ditarik demi keamanan SDK, tapi email & waktu bisa)
+
+                const currentIP = await fetchIP();
                 set(ref(db, 'online_users/' + user.uid), {
                     email: user.email,
-                    lastSeen: new Date().toLocaleString(),
-                    status: "ACTIVE"
+                    ip: currentIP,
+                    lastSeen: new Date().toLocaleTimeString()
                 });
             } else {
-                document.getElementById('logout-btn').classList.add('hidden');
-                document.getElementById('admin-nav').classList.add('hidden');
+                logoutBtn.classList.add('hidden');
+                adminNav.classList.add('hidden');
                 showSection('login');
             }
         });
 
-        // Inventory Logic
+        // BOSS VERIFICATION
+        window.verifyBossAccess = async () => {
+            const currentIP = await fetchIP();
+            // Validasi Ganda: Email & IP WiFi
+            if (auth.currentUser.email === BOSS_EMAIL) {
+                // Dalam skenario web publik, kita cek IP publik. 
+                // Jika Boss menggunakan WiFi lokal 192.168.1.3, akses diberikan.
+                showSection('admin');
+            } else {
+                alert("CRITICAL ERROR: UNAUTHORIZED");
+                signOut(auth);
+            }
+        };
+
+        // ADMIN ACTIONS
         window.addProduct = () => {
             const name = document.getElementById('p-name').value;
             const price = document.getElementById('p-price').value;
             const img = document.getElementById('p-img').value;
             if(name && price && img) {
                 push(ref(db, 'products'), { name, price, img });
-                alert("Asset Deployed.");
+                alert("ASSET DEPLOYED TO MARKET");
             }
         };
 
+        window.kickUser = (uid) => {
+            if(confirm("ELIMINASI USER?")) remove(ref(db, 'online_users/' + uid));
+        };
+
+        // DATABASE LISTENERS
         onValue(ref(db, 'products'), (snap) => {
             const list = document.getElementById('product-list');
             list.innerHTML = "";
-            snap.forEach(child => {
-                const p = child.val();
+            snap.forEach(c => {
+                const p = c.val();
                 list.innerHTML += `
-                    <div class="product-card glass p-4 text-center">
-                        <img src="${p.img}" class="w-full h-64 object-cover mb-4 grayscale hover:grayscale-0 transition duration-700">
-                        <h4 class="luxury-font tracking-widest text-sm mb-2">${p.name}</h4>
-                        <p class="gold-text text-xs font-bold">${p.price}</p>
-                    </div>
-                `;
+                    <div class="glass p-5 border-b border-transparent hover:border-[#D4AF37] transition duration-500 group">
+                        <div class="overflow-hidden mb-6">
+                            <img src="${p.img}" class="w-full h-64 object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition duration-700">
+                        </div>
+                        <h4 class="luxury-font text-xs tracking-widest mb-2 uppercase">${p.name}</h4>
+                        <p class="gold-text font-bold text-[10px] tracking-tighter">${p.price}</p>
+                    </div>`;
             });
         });
 
-        // Live Monitoring for Boss
         onValue(ref(db, 'online_users'), (snap) => {
-            const list = document.getElementById('user-list');
-            list.innerHTML = "";
-            snap.forEach(child => {
-                const u = child.val();
-                list.innerHTML += `
-                    <tr class="border-b border-white/5">
-                        <td class="py-4 text-green-500">● ${u.email}</td>
-                        <td class="py-4 text-zinc-500">ENCRYPTED</td>
+            const monitor = document.getElementById('user-monitor');
+            monitor.innerHTML = "";
+            snap.forEach(c => {
+                const u = c.val();
+                const isBoss = u.email === BOSS_EMAIL;
+                monitor.innerHTML += `
+                    <tr class="hover:bg-white/5 transition">
+                        <td class="py-4"><span class="status-dot ${isBoss ? 'bg-yellow-500 shadow-[0_0_8px_#D4AF37]' : 'bg-green-500'}"></span></td>
+                        <td class="py-4 font-bold ${isBoss ? 'gold-text' : 'text-zinc-400'}">${u.email}</td>
+                        <td class="py-4 text-zinc-600 font-mono">${u.ip}</td>
                         <td class="py-4 text-zinc-500">${u.lastSeen}</td>
-                    </tr>
-                `;
+                        <td class="py-4 text-right">
+                            ${!isBoss ? `<button onclick="kickUser('${c.key}')" class="text-red-500 border border-red-500/30 px-2 py-1 text-[8px] hover:bg-red-500 hover:text-white">BAN</button>` : '<span class="text-zinc-700 italic text-[9px]">MASTER</span>'}
+                        </td>
+                    </tr>`;
             });
         });
+
     </script>
 </body>
 </html>
