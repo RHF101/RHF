@@ -1,300 +1,168 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RHF SUPREME MARKET</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js"></script>
-
-<style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:Poppins}
-body{background:linear-gradient(135deg,#0a0a0a,#1a1a1a);color:white}
-header{display:flex;justify-content:space-between;align-items:center;padding:15px;background:#000;border-bottom:1px solid gold;position:sticky;top:0}
-.logo{color:gold;font-weight:600;letter-spacing:2px}
-.container{padding:20px;max-width:700px;margin:auto}
-.card{background:#111;padding:20px;border-radius:15px;margin-bottom:15px;border:1px solid #222}
-input{width:100%;padding:10px;margin:6px 0;background:#0f0f0f;border:1px solid #333;color:white;border-radius:8px}
-button{padding:10px;width:100%;margin-top:10px;border:none;border-radius:8px;background:linear-gradient(45deg,gold,#d4af37);font-weight:600;cursor:pointer}
-button:hover{opacity:0.85}
-.product{background:#1a1a1a;padding:15px;border-radius:10px;margin:10px 0;border:1px solid #222}
-.product img{width:100%;height:160px;object-fit:cover;border-radius:8px;margin-bottom:10px}
-.hidden{display:none}
-.badge{padding:10px;border:1px solid gold;color:gold;border-radius:8px;margin-bottom:10px;text-align:center}
-.cart{background:#111;padding:15px;border-radius:10px;margin-top:15px;border:1px solid gold}
-.admin{border:1px solid gold}
-small{opacity:0.6}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MAFIA UNDERGROUND | Exclusive Shop</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #0a0a0a; color: #e5e5e5; }
+        .gold-gradient { background: linear-gradient(45deg, #d4af37, #f9e2af); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .mafia-card { background: rgba(20, 20, 20, 0.8); border: 1px solid #333; transition: 0.3s; }
+        .mafia-card:hover { border-color: #d4af37; box-shadow: 0 0 15px rgba(212, 175, 55, 0.2); }
+        .admin-panel { display: none; }
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-thumb { background: #d4af37; }
+    </style>
 </head>
 <body>
 
-<header>
-<div class="logo">RHF SUPREME</div>
-<div id="saldoTop"></div>
-</header>
+    <nav class="p-6 border-b border-zinc-800 flex justify-between items-center bg-black sticky top-0 z-50">
+        <h1 class="text-2xl font-black tracking-tighter gold-gradient">MAFIA SHOP</h1>
+        <div id="nav-links">
+            <button onclick="showSection('shop')" class="mx-3 hover:text-yellow-500">Market</button>
+            <button id="admin-btn" onclick="showSection('admin')" class="hidden mx-3 text-red-500 font-bold border border-red-500 px-2">ADMIN PANEL</button>
+            <button id="login-btn" onclick="showSection('login')" class="bg-yellow-600 text-black px-4 py-1 font-bold">LOG IN</button>
+            <button id="logout-btn" class="hidden bg-zinc-800 px-4 py-1">EXIT</button>
+        </div>
+    </nav>
 
-<div class="container">
+    <section id="shop-section" class="p-8">
+        <h2 class="text-4xl font-bold mb-8">EXCLUSIVE <span class="gold-gradient">COLLECTION</span></h2>
+        <div id="product-list" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            </div>
+    </section>
 
-<div id="loginBox" class="card">
-<h3>Login / Register</h3>
-<input id="username" placeholder="Username">
-<input id="password" type="password" placeholder="Password">
-<input id="pin" type="password" placeholder="PIN 4 Digit">
-<button onclick="login()">Login</button>
-<button onclick="register()">Register</button>
-</div>
+    <section id="login-section" class="hidden min-h-screen flex items-center justify-center p-8">
+        <div class="mafia-card p-10 w-full max-w-md">
+            <h2 class="text-2xl font-bold mb-6 text-center">IDENTIFY YOURSELF</h2>
+            <input type="email" id="email" placeholder="Email" class="w-full bg-zinc-900 border border-zinc-700 p-3 mb-4 focus:outline-none focus:border-yellow-500">
+            <input type="password" id="password" placeholder="Password" class="w-full bg-zinc-900 border border-zinc-700 p-3 mb-6 focus:outline-none focus:border-yellow-500">
+            <button id="do-login" class="w-full bg-yellow-600 text-black font-bold p-3 hover:bg-yellow-500">ENTER THE SYSTEM</button>
+        </div>
+    </section>
 
-<div id="appBox" class="hidden">
+    <section id="admin-section" class="hidden p-8">
+        <h2 class="text-3xl font-black text-red-600 mb-8">BOSS CONTROL CENTER</h2>
+        
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
+            <div class="mafia-card p-6">
+                <h3 class="text-xl font-bold mb-4 text-yellow-500 underline">Manage Inventory</h3>
+                <input type="text" id="p-name" placeholder="Item Name" class="w-full bg-zinc-800 p-2 mb-2">
+                <input type="text" id="p-price" placeholder="Price (e.g. $50,000)" class="w-full bg-zinc-800 p-2 mb-2">
+                <input type="text" id="p-img" placeholder="Image URL (https://...)" class="w-full bg-zinc-800 p-2 mb-4">
+                <button onclick="addProduct()" class="w-full bg-green-700 text-white p-2 font-bold">ADD TO MARKET</button>
+            </div>
 
-<div id="securityBadge"></div>
+            <div class="mafia-card p-6">
+                <h3 class="text-xl font-bold mb-4 text-yellow-500 underline">Real-time Operatives (Users)</h3>
+                <div id="user-list" class="space-y-2 text-sm">
+                    </div>
+            </div>
+        </div>
+    </section>
 
-<input id="search" placeholder="Cari Produk..." onkeyup="searchProduct()">
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getDatabase, ref, set, push, onValue, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-<div id="productList"></div>
+        const firebaseConfig = {
+            apiKey: "AIzaSyDSSgsUkgH7k2zS7D1dAzGcnlygTK9j9Qo",
+            authDomain: "rhf-shop-mafia.firebaseapp.com",
+            databaseURL: "https://rhf-shop-mafia-default-rtdb.firebaseio.com",
+            projectId: "rhf-shop-mafia",
+            storageBucket: "rhf-shop-mafia.firebasestorage.app",
+            messagingSenderId: "732783940571",
+            appId: "1:732783940571:web:425b43340e654e829bcdfe",
+            measurementId: "G-WDHKC3RFX3"
+        };
 
-<div id="cartBox" class="cart hidden">
-<h4>Keranjang</h4>
-<div id="cartItems"></div>
-<button onclick="checkout()">Checkout</button>
-</div>
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getDatabase(app);
 
-<div id="adminPanel" class="card admin hidden">
-<h3>ADMIN RHF</h3>
+        // --- AUTH LOGIC ---
+        window.showSection = (section) => {
+            ['shop', 'login', 'admin'].forEach(s => document.getElementById(s + '-section').classList.add('hidden'));
+            document.getElementById(section + '-section').classList.remove('hidden');
+        };
 
-<h4>Tambah Produk</h4>
-<input id="pName" placeholder="Nama">
-<input id="pPrice" placeholder="Harga">
-<input id="pImage" placeholder="URL HTTPS">
-<button onclick="addProduct()">Tambah</button>
+        document.getElementById('do-login').onclick = () => {
+            const e = document.getElementById('email').value;
+            const p = document.getElementById('password').value;
+            signInWithEmailAndPassword(auth, e, p).catch(err => alert(err.message));
+        };
 
-<hr><br>
+        document.getElementById('logout-btn').onclick = () => signOut(auth);
 
-<h4>Kelola Saldo</h4>
-<input id="targetUser" placeholder="Username">
-<input id="saldoAmount" placeholder="Jumlah">
-<button onclick="addSaldo()">Tambah Saldo</button>
-<button onclick="reduceSaldo()">Kurangi Saldo</button>
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                document.getElementById('login-btn').classList.add('hidden');
+                document.getElementById('logout-btn').classList.remove('hidden');
+                showSection('shop');
+                // Cek jika admin (contoh sederhana: email tertentu adalah bos)
+                if (user.email === "admin@mafia.com") {
+                    document.getElementById('admin-btn').classList.remove('hidden');
+                }
+                // Catat user login ke Database
+                set(ref(db, 'online_users/' + user.uid), {
+                    email: user.email,
+                    lastActive: new Date().toLocaleString()
+                });
+            } else {
+                document.getElementById('login-btn').classList.remove('remove');
+                document.getElementById('logout-btn').classList.add('hidden');
+                document.getElementById('admin-btn').classList.add('hidden');
+                showSection('login');
+            }
+        });
 
-<hr><br>
+        // --- PRODUCT LOGIC ---
+        window.addProduct = () => {
+            const name = document.getElementById('p-name').value;
+            const price = document.getElementById('p-price').value;
+            const img = document.getElementById('p-img').value;
+            if(name && price && img) {
+                push(ref(db, 'products'), { name, price, img });
+                alert("Barang telah masuk ke gudang, Boss.");
+            }
+        };
 
-<h4>Aktifkan Verified</h4>
-<input id="secureUser" placeholder="Username">
-<button onclick="activateHTTPS()">Aktifkan Verified</button>
+        onValue(ref(db, 'products'), (snapshot) => {
+            const list = document.getElementById('product-list');
+            list.innerHTML = "";
+            snapshot.forEach((child) => {
+                const data = child.val();
+                list.innerHTML += `
+                    <div class="mafia-card overflow-hidden">
+                        <img src="${data.img}" class="w-full h-48 object-cover grayscale hover:grayscale-0 transition duration-500">
+                        <div class="p-4">
+                            <h4 class="font-bold text-lg">${data.name}</h4>
+                            <p class="text-yellow-500 font-mono">${data.price}</p>
+                            <button class="mt-4 w-full border border-zinc-700 py-2 hover:bg-white hover:text-black transition">BUY NOW</button>
+                        </div>
+                    </div>
+                `;
+            });
+        });
 
-</div>
+        // --- ADMIN MONITORING ---
+        onValue(ref(db, 'online_users'), (snapshot) => {
+            const userList = document.getElementById('user-list');
+            userList.innerHTML = "";
+            snapshot.forEach((child) => {
+                const u = child.val();
+                userList.innerHTML += `
+                    <div class="flex justify-between border-b border-zinc-800 pb-1">
+                        <span class="text-green-400">● ${u.email}</span>
+                        <span class="text-zinc-500 italic">${u.lastActive}</span>
+                    </div>
+                `;
+            });
+        });
 
-<button onclick="logout()">Logout</button>
-
-</div>
-</div>
-
-<script>
-// FIREBASE CONFIG
-const firebaseConfig={
-apiKey:"AIzaSyDSSgsUkgH7k2zS7D1dAzGcnlygTK9j9Qo",
-authDomain:"rhf-shop-mafia.firebaseapp.com",
-databaseURL:"https://rhf-shop-mafia-default-rtdb.firebaseio.com",
-projectId:"rhf-shop-mafia",
-storageBucket:"rhf-shop-mafia.firebasestorage.app",
-messagingSenderId:"732783940571",
-appId:"1:732783940571:web:425b43340e654e829bcdfe"
-};
-
-firebase.initializeApp(firebaseConfig);
-const db=firebase.database();
-
-let currentUser=null;
-let usersCache={};
-let cart=[];
-let logoutTimer=null;
-
-// HASH
-async function hash(text){
-const msg=new TextEncoder().encode(text);
-const buf=await crypto.subtle.digest('SHA-256',msg);
-return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
-}
-
-// REGISTER
-async function register(){
-let u=username.value;
-let p=password.value;
-let pinCode=pin.value;
-if(!u||!p||pinCode.length!==4)return alert("Lengkapi data");
-
-let passHash=await hash(p);
-let pinHash=await hash(pinCode);
-
-db.ref("users/"+u).set({
-password:passHash,
-pin:pinHash,
-saldo:100000,
-role:"user",
-verified:false
-});
-
-alert("Register berhasil");
-}
-
-// LOGIN
-async function login(){
-let u=username.value;
-let p=password.value;
-let pinCode=pin.value;
-
-let snap=await db.ref("users/"+u).once("value");
-if(!snap.exists())return alert("User tidak ada");
-
-let data=snap.val();
-let passHash=await hash(p);
-let pinHash=await hash(pinCode);
-
-if(passHash!==data.password||pinHash!==data.pin)return alert("Login gagal");
-
-currentUser=u;
-usersCache[u]=data;
-
-startApp();
-}
-
-// START
-function startApp(){
-loginBox.classList.add("hidden");
-appBox.classList.remove("hidden");
-
-saldoTop.innerText="Saldo: Rp "+usersCache[currentUser].saldo;
-
-if(usersCache[currentUser].verified){
-securityBadge.innerHTML="<div class='badge'>🛡 VERIFIED SECURITY ACTIVE</div>";
-}
-
-if(currentUser==="RHF"){
-adminPanel.classList.remove("hidden");
-}
-
-loadProducts();
-startAutoLogout();
-}
-
-// AUTO LOGOUT 1 JAM
-function startAutoLogout(){
-clearTimeout(logoutTimer);
-logoutTimer=setTimeout(()=>{
-alert("Session habis 1 jam");
-logout();
-},3600000);
-}
-
-// LOAD PRODUK
-function loadProducts(){
-db.ref("products").on("value",snap=>{
-productList.innerHTML="";
-snap.forEach(child=>{
-let p=child.val();
-productList.innerHTML+=`
-<div class="product">
-<img src="${p.image}">
-<h4>${p.name}</h4>
-<p>Rp ${p.price}</p>
-<button onclick="addCart(${p.price})">Beli</button>
-</div>`;
-});
-});
-}
-
-// CART
-function addCart(price){
-cart.push(price);
-cartBox.classList.remove("hidden");
-renderCart();
-}
-function renderCart(){
-let total=0;
-cartItems.innerHTML="";
-cart.forEach(p=>{
-total+=p;
-cartItems.innerHTML+="<p>Rp "+p+"</p>";
-});
-cartItems.innerHTML+="<hr>Total: Rp "+total;
-}
-
-// CHECKOUT
-function checkout(){
-let total=cart.reduce((a,b)=>a+b,0);
-if(usersCache[currentUser].saldo<total)return alert("Saldo kurang");
-
-usersCache[currentUser].saldo-=total;
-db.ref("users/"+currentUser).update({saldo:usersCache[currentUser].saldo});
-saldoTop.innerText="Saldo: Rp "+usersCache[currentUser].saldo;
-cart=[];
-renderCart();
-alert("Berhasil beli");
-}
-
-// ADMIN
-function addProduct(){
-db.ref("products").push({
-name:pName.value,
-price:parseInt(pPrice.value),
-image:pImage.value
-});
-alert("Produk ditambah");
-}
-
-function addSaldo(){
-db.ref("users/"+targetUser.value).once("value").then(snap=>{
-let d=snap.val();
-db.ref("users/"+targetUser.value).update({saldo:d.saldo+parseInt(saldoAmount.value)});
-alert("Saldo ditambah");
-});
-}
-
-function reduceSaldo(){
-db.ref("users/"+targetUser.value).once("value").then(snap=>{
-let d=snap.val();
-db.ref("users/"+targetUser.value).update({saldo:d.saldo-parseInt(saldoAmount.value)});
-alert("Saldo dikurangi");
-});
-}
-
-function activateHTTPS(){
-db.ref("users/"+secureUser.value).update({verified:true});
-alert("Verified aktif");
-}
-
-// SEARCH
-function searchProduct(){
-let key=search.value.toLowerCase();
-document.querySelectorAll(".product").forEach(p=>{
-p.style.display=p.innerText.toLowerCase().includes(key)?"block":"none";
-});
-}
-
-// LOGOUT
-function logout(){
-location.reload();
-}
-
-// AUTO CREATE ADMIN
-db.ref("users/RHF").once("value").then(snap=>{
-if(!snap.exists()){
-hash("RHF").then(hp=>{
-hash("9999").then(hpin=>{
-db.ref("users/RHF").set({
-password:hp,
-pin:hpin,
-saldo:999999999,
-role:"admin",
-verified:true
-});
-});
-});
-}
-});
-</script>
-
+    </script>
 </body>
 </html>
