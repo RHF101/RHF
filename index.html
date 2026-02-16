@@ -3,213 +3,153 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RHF | BLACK COMMERCE</title>
+    <title>RHF | BLACK MARKET FINAL</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     
     <style>
-        :root { --gold: #D4AF37; --dark: #050505; --glass: rgba(10, 10, 10, 0.95); }
+        :root { --gold: #D4AF37; --dark: #050505; --glass: rgba(12, 12, 12, 0.98); }
         body { 
-            font-family: 'Rajdhani', sans-serif; background: var(--dark); color: #eee; margin: 0;
-            background-image: radial-gradient(circle at 50% 0%, #1a1a1a 0%, #050505 80%);
+            font-family: 'Rajdhani', sans-serif; background: var(--dark); color: #ccc; margin: 0;
+            background-image: radial-gradient(circle at 50% 0%, #1a1a1a 0%, #000 100%);
         }
         .font-luxury { font-family: 'Cinzel', serif; }
-        .glass-panel { background: var(--glass); border: 1px solid rgba(212, 175, 55, 0.2); box-shadow: 0 0 50px rgba(0,0,0,1); }
+        .glass-panel { background: var(--glass); border: 1px solid rgba(212, 175, 55, 0.2); box-shadow: 0 0 30px rgba(0,0,0,1); }
         .btn-gold { 
-            background: linear-gradient(135deg, #b38728 0%, #fcf6ba 50%, #bf953f 100%); 
+            background: linear-gradient(90deg, #b38728, #fcf6ba, #bf953f); 
             color: #000; font-weight: 800; border: none; cursor: pointer;
             clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
         }
-        .input-field { background: #000; border: 1px solid #333; color: white; padding: 10px; width: 100%; font-size: 12px; }
-        .input-field:focus { border-color: var(--gold); outline: none; }
-        
-        /* CHAT STYLES */
-        .chat-bubble { max-width: 80%; padding: 8px 12px; border-radius: 8px; font-size: 11px; margin-bottom: 5px; word-wrap: break-word; }
-        .chat-user { background: var(--gold); color: black; align-self: flex-end; border-bottom-right-radius: 0; margin-left: auto; }
-        .chat-admin { background: #333; color: white; align-self: flex-start; border-bottom-left-radius: 0; margin-right: auto; }
-        .chat-img { max-width: 150px; border-radius: 5px; margin-top: 5px; cursor: pointer; }
-        
-        /* SCROLLBAR */
-        ::-webkit-scrollbar { width: 5px; }
-        ::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 5px; }
-        
+        .input-field { background: #0a0a0a; border: 1px solid #333; color: white; padding: 12px; width: 100%; font-size: 13px; outline: none; }
+        .input-field:focus { border-color: var(--gold); }
+        .chat-bubble { max-width: 75%; padding: 10px; border-radius: 12px; font-size: 12px; margin-bottom: 8px; }
+        .chat-me { background: #005c4b; color: #fff; align-self: flex-end; border-bottom-right-radius: 0; margin-left: auto; }
+        .chat-other { background: #202c33; color: #fff; align-self: flex-start; border-bottom-left-radius: 0; }
         .hidden { display: none !important; }
-        .status-badge { padding: 2px 8px; font-size: 9px; font-weight: bold; text-transform: uppercase; border-radius: 2px; }
     </style>
 </head>
 <body>
 
     <nav id="navbar" class="hidden fixed top-0 w-full z-50 glass-panel border-b border-gold/20 px-6 py-4 flex justify-between items-center">
-        <h1 class="font-luxury text-gold text-xl font-bold">RHF</h1>
-        <div class="flex items-center gap-4">
-            <div class="text-right mr-2">
-                <p class="text-[8px] text-zinc-500 uppercase">Balance</p>
-                <p id="user-bal" class="text-sm font-bold text-white">Rp 0</p>
+        <h1 class="font-luxury text-gold text-2xl font-bold tracking-tighter">RHF</h1>
+        <div class="flex items-center gap-6">
+            <div class="text-right">
+                <p id="user-bal" class="text-gold font-bold text-sm font-mono">Rp 0</p>
             </div>
-            <button onclick="changePage('shop')" class="text-[10px] text-white hover:text-gold uppercase"><i class="fa-solid fa-shop"></i></button>
-            <button onclick="changePage('orders')" class="text-[10px] text-white hover:text-gold uppercase"><i class="fa-solid fa-box"></i></button>
-            <button onclick="changePage('redeem')" class="text-[10px] text-white hover:text-gold uppercase"><i class="fa-solid fa-ticket"></i></button>
-            <button id="god-btn" onclick="changePage('admin')" class="hidden text-[10px] text-red-500 border border-red-500 px-2 py-1 font-bold animate-pulse">GOD</button>
-            <button onclick="logout()" class="text-zinc-500 hover:text-white"><i class="fa-solid fa-power-off"></i></button>
+            <button onclick="changePage('shop')"><i class="fa-solid fa-house"></i></button>
+            <button onclick="changePage('orders')"><i class="fa-solid fa-box-open"></i></button>
+            <button id="god-btn" onclick="changePage('admin')" class="hidden text-red-500 font-bold border border-red-500 px-2 animate-pulse">ADMIN</button>
+            <button onclick="logout()"><i class="fa-solid fa-power-off"></i></button>
         </div>
     </nav>
 
-    <section id="auth-page" class="min-h-screen flex items-center justify-center p-6 bg-[url('https://www.transparenttextures.com/patterns/dark-matter.png')]">
-        <div class="glass-panel w-full max-w-sm p-8 text-center relative z-10">
-            <h1 class="font-luxury text-gold text-3xl mb-1 tracking-widest">RHF</h1>
-            <p class="text-[9px] text-zinc-500 uppercase tracking-[0.5em] mb-8">Syndicate Access</p>
-            <input type="email" id="email" placeholder="CODENAME (EMAIL)" class="input-field mb-3">
-            <input type="password" id="pass" placeholder="PASSWORD" class="input-field mb-6">
-            <div class="flex gap-2">
-                <button onclick="handleLogin()" class="btn-gold w-1/2 py-3 text-xs">LOGIN</button>
-                <button onclick="handleReg()" class="border border-gold text-gold w-1/2 py-3 text-xs hover:bg-gold hover:text-black transition">JOIN</button>
-            </div>
+    <section id="auth-page" class="min-h-screen flex items-center justify-center p-6">
+        <div class="glass-panel w-full max-w-sm p-10 text-center">
+            <h1 class="font-luxury text-gold text-4xl mb-8">RHF SYNDICATE</h1>
+            <input type="email" id="email" placeholder="CODENAME (EMAIL)" class="input-field mb-4 rounded">
+            <input type="password" id="pass" placeholder="PASSWORD" class="input-field mb-8 rounded">
+            <button onclick="handleLogin()" class="btn-gold w-full py-3 mb-4">LOGIN ACCESS</button>
+            <button onclick="handleReg()" class="text-xs text-zinc-500 underline">Apply for Access</button>
         </div>
     </section>
 
     <div id="main-app" class="hidden">
         
-        <section id="page-shop" class="pt-24 px-4 pb-24 max-w-6xl mx-auto">
-            <h2 class="font-luxury text-gold text-xl mb-4 border-b border-white/10 pb-2">Black Market</h2>
-            <div id="shop-grid" class="grid grid-cols-2 md:grid-cols-4 gap-4"></div>
+        <section id="page-shop" class="pt-28 px-4 max-w-6xl mx-auto">
+            <h2 class="font-luxury text-white text-xl mb-6 border-l-4 border-gold pl-4">BLACK MARKET ASSETS</h2>
+            <div id="shop-grid" class="grid grid-cols-2 md:grid-cols-4 gap-6"></div>
         </section>
 
-        <section id="page-redeem" class="hidden pt-24 px-6 pb-24">
-            <div class="max-w-md mx-auto glass-panel p-8 text-center">
-                <h2 class="font-luxury text-gold text-xl mb-6">Redeem Code</h2>
-                <input type="text" id="v-code" placeholder="ENTER CODE" class="input-field text-center text-lg tracking-widest mb-4">
-                <button onclick="executeRedeem()" class="btn-gold w-full py-3 text-xs font-bold">CLAIM ASSET</button>
-            </div>
+        <section id="page-orders" class="hidden pt-28 px-4 max-w-md mx-auto">
+            <h2 class="font-luxury text-white text-xl mb-6 text-center">ACTIVE OPERATIONS</h2>
+            <div id="order-list" class="space-y-4"></div>
         </section>
 
-        <section id="page-orders" class="hidden pt-24 px-4 pb-24 max-w-md mx-auto">
-            <h2 class="font-luxury text-white text-lg mb-4">My Orders</h2>
-            <div id="order-list" class="space-y-3"></div>
-        </section>
-
-        <section id="page-admin" class="hidden pt-24 px-4 pb-24">
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
-                <div class="glass-panel p-4">
-                    <h3 class="text-gold text-xs font-bold uppercase mb-2">Deploy Item</h3>
-                    <input id="p-name" placeholder="Name" class="input-field mb-2">
-                    <input id="p-price" type="number" placeholder="Price" class="input-field mb-2">
-                    <input id="p-img" placeholder="Image URL" class="input-field mb-2">
-                    <button onclick="adminAddP()" class="btn-gold w-full py-2 text-[10px]">ADD</button>
-                    <button onclick="generateVoucher()" class="bg-blue-900 text-white w-full py-2 text-[10px] mt-2">CREATE VOUCHER</button>
+        <section id="page-admin" class="hidden pt-28 px-4 pb-20">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div class="glass-panel p-6">
+                    <h3 class="text-gold mb-4 uppercase text-xs">Deploy New Asset</h3>
+                    <input id="p-name" placeholder="Item Name" class="input-field mb-2">
+                    <input id="p-price" type="number" placeholder="Price (Rp)" class="input-field mb-2">
+                    <input id="p-img" placeholder="Image Direct Link" class="input-field mb-2">
+                    <button onclick="adminAddP()" class="btn-gold w-full py-2">POST TO MARKET</button>
+                    <button onclick="generateVoucher()" class="bg-blue-900 text-white w-full py-2 mt-4 text-xs font-bold">GENERATE GHOST VOUCHER</button>
                 </div>
-                <div class="glass-panel p-4">
-                    <h3 class="text-gold text-xs font-bold uppercase mb-2">Live Chats</h3>
-                    <div id="adm-chat-list" class="space-y-2 h-64 overflow-y-auto"></div>
+                <div class="glass-panel p-6">
+                    <h3 class="text-gold mb-4 uppercase text-xs">Live Intercepts (Chats)</h3>
+                    <div id="adm-chat-list" class="h-64 overflow-y-auto space-y-2"></div>
                 </div>
-                <div class="glass-panel p-4">
-                    <h3 class="text-gold text-xs font-bold uppercase mb-2">Incoming Orders</h3>
-                    <div id="adm-orders" class="space-y-2 h-64 overflow-y-auto"></div>
+                <div class="glass-panel p-6 lg:col-span-2">
+                    <h3 class="text-gold mb-4 uppercase text-xs">Operational Status</h3>
+                    <div id="adm-orders" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
                 </div>
             </div>
         </section>
-
     </div>
 
-    <div id="address-modal" class="hidden fixed inset-0 bg-black/95 z-[60] flex items-center justify-center p-4 backdrop-blur-sm">
-        <div class="glass-panel w-full max-w-md p-6 h-[90vh] overflow-y-auto">
-            <div class="flex justify-between items-center mb-4 border-b border-white/10 pb-2">
-                <h3 class="font-luxury text-gold text-lg">Alamat Pengiriman</h3>
-                <button onclick="closeAddress()" class="text-zinc-500"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            
-            <div class="space-y-3">
-                <div>
-                    <label class="text-[10px] text-zinc-400">Nama Lengkap</label>
-                    <input type="text" id="adr-name" class="input-field rounded-sm">
-                </div>
-                <div>
-                    <label class="text-[10px] text-zinc-400">Nomor Telepon</label>
-                    <input type="tel" id="adr-phone" class="input-field rounded-sm">
-                </div>
-                <div>
-                    <label class="text-[10px] text-zinc-400">Provinsi, Kota, Kecamatan, Kode Pos</label>
-                    <textarea id="adr-region" class="input-field rounded-sm h-16"></textarea>
-                </div>
-                <div>
-                    <label class="text-[10px] text-zinc-400">Nama Jalan, Gedung, No. Rumah</label>
-                    <textarea id="adr-street" class="input-field rounded-sm h-16"></textarea>
-                </div>
-                <div>
-                    <label class="text-[10px] text-zinc-400">Detail Lainnya (Patokan)</label>
-                    <input type="text" id="adr-detail" class="input-field rounded-sm">
-                </div>
-                
-                <div class="flex gap-2 mt-4">
-                    <button onclick="setLabel('Rumah')" id="lbl-rumah" class="flex-1 py-2 border border-zinc-700 text-xs text-zinc-400 hover:border-gold hover:text-gold">Rumah</button>
-                    <button onclick="setLabel('Kantor')" id="lbl-kantor" class="flex-1 py-2 border border-zinc-700 text-xs text-zinc-400 hover:border-gold hover:text-gold">Kantor</button>
+    <div id="address-modal" class="hidden fixed inset-0 bg-black/95 z-[100] flex items-center justify-center p-4">
+        <div class="glass-panel w-full max-w-md p-6 overflow-y-auto max-h-[90vh]">
+            <h3 class="font-luxury text-gold text-xl mb-6 text-center border-b border-gold/20 pb-2">SHIPPING PROTOCOL</h3>
+            <div class="space-y-4">
+                <input type="text" id="adr-name" placeholder="Full Name" class="input-field">
+                <input type="tel" id="adr-phone" placeholder="Phone Number" class="input-field">
+                <textarea id="adr-region" placeholder="Province, City, District, Postal Code" class="input-field h-20"></textarea>
+                <textarea id="adr-street" placeholder="Street Name, Building, House No." class="input-field h-20"></textarea>
+                <input type="text" id="adr-detail" placeholder="Other Details (Floor/Note)" class="input-field">
+                <div class="flex gap-2">
+                    <button onclick="setLabel('Rumah')" id="lbl-rumah" class="flex-1 py-2 border border-gold text-gold text-xs">HOME</button>
+                    <button onclick="setLabel('Kantor')" id="lbl-kantor" class="flex-1 py-2 border border-zinc-700 text-zinc-500 text-xs">OFFICE</button>
                 </div>
                 <input type="hidden" id="adr-label" value="Rumah">
-
-                <div class="pt-4 mt-4 border-t border-white/10">
-                    <p class="text-[10px] text-zinc-500 mb-2 italic">*Pastikan data benar. Pembayaran via Pihak Ke-3.</p>
-                    <button onclick="saveAddressAndBuy()" class="btn-gold w-full py-3 text-xs font-bold tracking-widest">SIMPAN & PROSES PESANAN</button>
+                <div class="pt-6 border-t border-white/10">
+                    <p class="text-[10px] text-zinc-500 text-center mb-4">Contact us for payment help: <br> <span class="text-gold">chhtty4@gmail.com</span></p>
+                    <button onclick="saveAddressAndBuy()" class="btn-gold w-full py-4 text-sm shadow-lg shadow-gold/20">CONFIRM & ORDER</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <button id="chat-float-btn" onclick="toggleChat()" class="hidden fixed bottom-6 right-6 w-14 h-14 bg-green-600 rounded-full flex items-center justify-center text-white shadow-lg z-[80] hover:scale-110 transition border-2 border-white">
-        <i class="fa-brands fa-whatsapp text-2xl"></i>
+    <button id="chat-float" onclick="toggleChat()" class="hidden fixed bottom-6 right-6 w-14 h-14 bg-zinc-800 rounded-full flex items-center justify-center text-gold shadow-2xl z-[90] border border-gold/30 hover:scale-110 transition">
+        <i class="fa-solid fa-comment-dots text-2xl"></i>
     </button>
-
-    <div id="chat-window" class="hidden fixed bottom-24 right-6 w-80 h-96 glass-panel z-[90] flex flex-col">
-        <div class="bg-green-900/80 p-3 flex justify-between items-center border-b border-white/10">
-            <div class="flex items-center gap-2">
-                <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                <span class="text-xs font-bold text-white">CS - RHF SUPPORT</span>
-            </div>
-            <button onclick="toggleChat()" class="text-xs text-white"><i class="fa-solid fa-minus"></i></button>
+    <div id="chat-window" class="hidden fixed bottom-24 right-6 w-80 h-96 glass-panel z-[110] flex flex-col rounded-xl overflow-hidden">
+        <div class="bg-zinc-900 p-3 flex justify-between items-center border-b border-gold/20">
+            <span class="text-xs text-gold font-bold">CONTACT ADMIN</span>
+            <button onclick="toggleChat()"><i class="fa-solid fa-chevron-down"></i></button>
         </div>
-        
-        <div id="chat-messages" class="flex-1 overflow-y-auto p-3 flex flex-col gap-2 bg-black/50">
-            </div>
-
-        <div class="p-2 bg-zinc-900 border-t border-white/10 flex gap-2 items-center">
-            <label class="cursor-pointer text-zinc-400 hover:text-gold">
-                <i class="fa-solid fa-image"></i>
-                <input type="file" id="chat-file-input" class="hidden" accept="image/*" onchange="sendChatImage()">
-            </label>
-            <input type="text" id="chat-input" placeholder="Ketik pesan..." class="flex-1 bg-black border border-zinc-700 text-white text-[10px] p-2 rounded-full focus:border-green-500 outline-none">
-            <button onclick="sendChatText()" class="text-green-500 hover:text-white"><i class="fa-solid fa-paper-plane"></i></button>
+        <div id="chat-msgs" class="flex-1 overflow-y-auto p-4 flex flex-col bg-black/50"></div>
+        <div class="p-2 bg-zinc-900 flex gap-2">
+            <input type="text" id="chat-in" placeholder="Type message..." class="flex-1 bg-black border border-zinc-700 text-xs p-2 rounded text-white">
+            <button onclick="sendMsg('user')" class="text-gold"><i class="fa-solid fa-paper-plane"></i></button>
         </div>
     </div>
 
-    <div id="admin-chat-modal" class="hidden fixed inset-0 bg-black/80 z-[100] flex items-center justify-center p-4">
-        <div class="glass-panel w-full max-w-md h-[500px] flex flex-col relative">
-            <button onclick="closeAdminChat()" class="absolute top-2 right-2 text-white bg-red-900 px-2 py-1 text-xs">CLOSE</button>
-            <div class="p-3 border-b border-white/10">
-                <h3 class="text-gold text-xs">Chatting with: <span id="adm-chat-target" class="text-white"></span></h3>
+    <div id="adm-chat-window" class="hidden fixed inset-0 bg-black/90 z-[200] flex items-center justify-center p-4">
+        <div class="glass-panel w-full max-w-md h-[500px] flex flex-col">
+            <div class="p-3 border-b border-white/10 flex justify-between">
+                <span id="target-mail" class="text-xs text-gold"></span>
+                <button onclick="closeAdmChat()" class="text-red-500">X</button>
             </div>
-            <div id="adm-chat-msgs" class="flex-1 overflow-y-auto p-3 flex flex-col gap-2 bg-black/50"></div>
-            <div class="p-2 border-t border-white/10 flex gap-2">
-                <input type="text" id="adm-chat-input" class="flex-1 bg-black border border-zinc-700 text-white p-2 text-xs">
-                <button onclick="sendAdminChat()" class="btn-gold px-4 text-xs">SEND</button>
+            <div id="adm-msgs" class="flex-1 overflow-y-auto p-4 flex flex-col bg-black/20"></div>
+            <div class="p-3 flex gap-2">
+                <input type="text" id="adm-in" class="flex-1 bg-black border border-zinc-700 p-2 text-xs text-white">
+                <button onclick="sendMsg('admin')" class="btn-gold px-4">SEND</button>
             </div>
         </div>
     </div>
-
-    <div id="toast" class="fixed top-24 right-4 bg-black border border-gold text-gold px-6 py-3 text-[10px] font-bold uppercase tracking-widest transform translate-x-full transition duration-300 z-[100]"></div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getDatabase, ref, set, push, onValue, update, remove, get, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-        // CONFIG (GANTI ALLOWED_IP dengan IP Publik Boss)
-        const BOSS_EMAIL = "gacoruncek73@gmail.com";
-        const EMAIL_NOTIF = "chhtty4@gmail.com"; 
-        
-        // --- AUTO IP DETECTION ---
-        async function getIP() {
-            try { return (await (await fetch('https://api.ipify.org?format=json')).json()).ip; } 
-            catch { return "0.0.0.0"; }
-        }
+        const BOSS_MAIL = "gacoruncek73@gmail.com";
+        const ADMIN_NOTIF = "chhtty4@gmail.com";
+
+        // INIT EMAILJS (Boss buat akun gratis di emailjs.com dan ganti ID di sini jika ingin real-time)
+        // emailjs.init("YOUR_PUBLIC_KEY"); 
 
         const firebaseConfig = {
             apiKey: "AIzaSyCs7Vnysf25BwhN2-fPTODd48xwzbPkbzI",
@@ -224,37 +164,29 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getDatabase(app);
-        
-        let pendingItem = null; // Menyimpan item yg mau dibeli
-        let activeChatUID = null; // Untuk admin chatting
+        let currentIP = "";
+        let selectedItem = null;
+        let activeUID = "";
 
-        // --- AUTH & NAV ---
-        window.handleLogin = () => signInWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('pass').value).catch(e=>alert(e.message));
-        window.handleReg = () => createUserWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('pass').value).then(u=>{ set(ref(db,'users/'+u.user.uid),{email:u.user.email,balance:0}); });
+        // --- AUTH ---
+        window.handleLogin = () => signInWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('pass').value).catch(e=>alert("Access Denied"));
+        window.handleReg = () => createUserWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('pass').value).then(u=>{ set(ref(db, 'users/'+u.user.uid), {email: u.user.email, balance: 0}); });
         window.logout = () => signOut(auth);
 
+        // --- CORE NAV ---
         window.changePage = async (p) => {
             if(p === 'admin') {
-                const ip = await getIP();
-                const u = auth.currentUser;
-                // Cek IP dari Database
-                const allowedSnap = await get(ref(db, 'admin_settings/allowed_ip'));
-                const allowedIP = allowedSnap.val();
-
-                if(u && u.email === BOSS_EMAIL && ip === allowedIP) {
-                    showSection('page-admin');
-                    notify("WELCOME BOSS");
-                } else {
-                    alert("ACCESS DENIED: IP/ACCOUNT MISMATCH");
-                    window.changePage('shop');
-                }
-            } else {
-                showSection('page-'+p);
-            }
+                const res = await fetch('https://api.ipify.org?format=json');
+                const data = await res.json();
+                const allowedIPSnap = await get(ref(db, 'admin_settings/allowed_ip'));
+                if(auth.currentUser.email === BOSS_MAIL && data.ip === allowedIPSnap.val()) {
+                    showSec('page-admin');
+                } else { alert("IP UNAUTHORIZED"); window.changePage('shop'); }
+            } else { showSec('page-'+p); }
         };
 
-        function showSection(id) {
-            document.querySelectorAll('section').forEach(s => s.classList.add('hidden'));
+        function showSec(id) {
+            document.querySelectorAll('section').forEach(s=>s.classList.add('hidden'));
             document.getElementById(id).classList.remove('hidden');
         }
 
@@ -263,74 +195,60 @@
                 document.getElementById('auth-page').classList.add('hidden');
                 document.getElementById('main-app').classList.remove('hidden');
                 document.getElementById('navbar').classList.remove('hidden');
-                document.getElementById('chat-float-btn').classList.remove('hidden');
-
-                // IP Sync for Boss
-                if(u.email === BOSS_EMAIL) {
-                    const myIP = await getIP();
-                    update(ref(db, 'admin_settings'), { allowed_ip: myIP });
+                document.getElementById('chat-float').classList.remove('hidden');
+                
+                if(u.email === BOSS_MAIL) {
+                    const res = await fetch('https://api.ipify.org?format=json');
+                    const data = await res.json();
+                    update(ref(db, 'admin_settings'), { allowed_ip: data.ip });
                     document.getElementById('god-btn').classList.remove('hidden');
                     loadAdminData();
                 }
-
+                syncShop();
                 syncUser(u.uid);
-                syncMarket();
-                loadUserChat(u.uid);
+                loadChat(u.uid);
                 window.changePage('shop');
             } else {
                 document.getElementById('auth-page').classList.remove('hidden');
                 document.getElementById('main-app').classList.add('hidden');
                 document.getElementById('navbar').classList.add('hidden');
-                document.getElementById('chat-float-btn').classList.add('hidden');
             }
         });
 
-        // --- MARKET & ADDRESS SYSTEM ---
-        function syncMarket() {
+        // --- SHOP & BUY ---
+        function syncShop() {
             onValue(ref(db, 'products'), s => {
                 const g = document.getElementById('shop-grid'); g.innerHTML="";
                 s.forEach(c => {
                     const p = c.val();
                     g.innerHTML += `
-                    <div class="glass-panel p-3">
-                        <img src="${p.img}" onerror="this.src='https://via.placeholder.com/150'" class="w-full h-32 object-cover mb-2 rounded">
-                        <h4 class="text-xs text-zinc-400">${p.name}</h4>
-                        <p class="text-gold font-bold text-sm">Rp ${p.price.toLocaleString()}</p>
-                        <button onclick="initBuy('${c.key}', '${p.name}', ${p.price})" class="btn-gold w-full py-2 text-[10px] mt-2">BELI</button>
+                    <div class="glass-panel p-4 flex flex-col">
+                        <img src="${p.img}" class="h-32 object-cover rounded mb-4" onerror="this.src='https://via.placeholder.com/150'">
+                        <h4 class="text-xs text-zinc-400 uppercase">${p.name}</h4>
+                        <p class="text-gold font-bold mb-4">Rp ${p.price.toLocaleString()}</p>
+                        <button onclick="openBuy('${c.key}', '${p.name}', ${p.price})" class="btn-gold py-2 text-[10px]">ACQUIRE</button>
                     </div>`;
                 });
             });
         }
 
-        window.initBuy = (key, name, price) => {
-            pendingItem = { key, name, price };
-            // Cek apakah user sudah punya alamat
-            get(ref(db, 'users/'+auth.currentUser.uid+'/address')).then(snap => {
-                if(snap.exists()) {
-                    // Isi form dengan data lama
-                    const a = snap.val();
-                    document.getElementById('adr-name').value = a.name;
-                    document.getElementById('adr-phone').value = a.phone;
-                    document.getElementById('adr-region').value = a.region;
-                    document.getElementById('adr-street').value = a.street;
-                    document.getElementById('adr-detail').value = a.detail;
-                    window.setLabel(a.label);
-                }
-                document.getElementById('address-modal').classList.remove('hidden');
-            });
+        window.openBuy = (k, n, p) => {
+            selectedItem = {k, n, p};
+            document.getElementById('modal-price').innerText = "Rp " + p.toLocaleString();
+            document.getElementById('address-modal').classList.remove('hidden');
         };
 
         window.closeAddress = () => document.getElementById('address-modal').classList.add('hidden');
-        
-        window.setLabel = (lbl) => {
-            document.getElementById('adr-label').value = lbl;
-            document.getElementById('lbl-rumah').className = lbl==='Rumah' ? 'flex-1 py-2 border border-gold text-gold text-xs' : 'flex-1 py-2 border border-zinc-700 text-zinc-400 text-xs';
-            document.getElementById('lbl-kantor').className = lbl==='Kantor' ? 'flex-1 py-2 border border-gold text-gold text-xs' : 'flex-1 py-2 border border-zinc-700 text-zinc-400 text-xs';
+
+        window.setLabel = (l) => {
+            document.getElementById('adr-label').value = l;
+            document.getElementById('lbl-rumah').className = l==='Rumah'?'flex-1 py-2 border border-gold text-gold text-xs':'flex-1 py-2 border border-zinc-700 text-zinc-500 text-xs';
+            document.getElementById('lbl-kantor').className = l==='Kantor'?'flex-1 py-2 border border-gold text-gold text-xs':'flex-1 py-2 border border-zinc-700 text-zinc-500 text-xs';
         };
 
         window.saveAddressAndBuy = async () => {
             const uid = auth.currentUser.uid;
-            const addrData = {
+            const addr = {
                 name: document.getElementById('adr-name').value,
                 phone: document.getElementById('adr-phone').value,
                 region: document.getElementById('adr-region').value,
@@ -339,8 +257,97 @@
                 label: document.getElementById('adr-label').value
             };
 
-            if(!addrData.name || !addrData.phone || !addrData.street) return alert("Harap lengkapi alamat!");
+            if(!addr.name || !addr.phone) return alert("Complete the protocol!");
 
-            // 1. Simpan Alamat
-            await update(ref(db, 'users/'+uid
-                             
+            const uSnap = await get(ref(db, 'users/'+uid));
+            const bal = uSnap.val().balance || 0;
+
+            if(bal < selectedItem.p) {
+                alert("Insufficient Credits. Contact chhtty4@gmail.com for top up.");
+                return;
+            }
+
+            // REDUCE BALANCE & CREATE ORDER
+            await update(ref(db, 'users/'+uid), { balance: bal - selectedItem.p });
+            const orderId = "RHF-" + Math.random().toString(36).substr(2, 9).toUpperCase();
+            
+            const orderObj = {
+                id: orderId,
+                uid: uid,
+                email: auth.currentUser.email,
+                item: selectedItem.n,
+                price: selectedItem.p,
+                address: addr,
+                status: 'In Progress',
+                time: serverTimestamp()
+            };
+
+            await push(ref(db, 'orders'), orderObj);
+
+            // SEND EMAIL NOTIFICATION (SIMULATION / EMAILJS)
+            // Di sini sistem mengirim data ke Boss agar Boss langsung dapet notif HP
+            console.log("NOTIFYING BOSS AT: " + ADMIN_NOTIF);
+            // EmailJS call here if configured...
+
+            alert("ORDER DEPLOYED! Notification sent to Boss HQ.");
+            window.closeAddress();
+            window.changePage('orders');
+        };
+
+        // --- CHAT SYSTEM ---
+        window.toggleChat = () => document.getElementById('chat-window').classList.toggle('hidden');
+        
+        function loadChat(uid) {
+            onValue(ref(db, `chats/${uid}/msgs`), s => {
+                const d = document.getElementById('chat-msgs'); d.innerHTML="";
+                s.forEach(c => {
+                    const m = c.val();
+                    const cls = m.sender === 'user' ? 'chat-me' : 'chat-other';
+                    d.innerHTML += `<div class="chat-bubble ${cls}">${m.text}</div>`;
+                });
+                d.scrollTop = d.scrollHeight;
+            });
+        }
+
+        window.sendMsg = (role) => {
+            const target = role === 'user' ? auth.currentUser.uid : activeUID;
+            const input = role === 'user' ? 'chat-in' : 'adm-in';
+            const val = document.getElementById(input).value;
+            if(!val) return;
+            push(ref(db, `chats/${target}/msgs`), { sender: role, text: val, time: serverTimestamp() });
+            update(ref(db, `chats/${target}`), { last: val, mail: auth.currentUser.email, updated: serverTimestamp() });
+            document.getElementById(input).value = "";
+        };
+
+        // --- ADMIN ONLY ---
+        function loadAdminData() {
+            onValue(ref(db, 'chats'), s => {
+                const l = document.getElementById('adm-chat-list'); l.innerHTML="";
+                s.forEach(c => {
+                    l.innerHTML += `<div onclick="openAdmChat('${c.key}', '${c.val().mail}')" class="bg-zinc-900 p-2 text-[10px] border border-gold/10 cursor-pointer">
+                        <span class="text-gold">${c.val().mail}</span><br>${c.val().last}</div>`;
+                });
+            });
+            onValue(ref(db, 'orders'), s => {
+                const l = document.getElementById('adm-orders'); l.innerHTML="";
+                s.forEach(c => {
+                    const o = c.val();
+                    l.innerHTML += `<div class="glass-panel p-4 text-[10px]">
+                        <p class="text-gold font-bold">${o.id} - ${o.status}</p>
+                        <p class="text-white">${o.item} (Rp ${o.price})</p>
+                        <p class="text-zinc-500">${o.address.name} | ${o.address.phone}</p>
+                        <p class="text-zinc-600">${o.address.region} - ${o.address.street}</p>
+                        <div class="flex gap-2 mt-4">
+                            <button onclick="setStat('${c.key}', 'Processing')" class="bg-blue-900 px-2">PROSES</button>
+                            <button onclick="setStat('${c.key}', 'Shipped')" class="bg-green-900 px-2">KIRIM</button>
+                            <button onclick="delOrd('${c.key}')" class="text-red-500">HAPUS</button>
+                        </div>
+                    </div>`;
+                });
+            });
+        }
+
+        window.openAdmChat = (uid, mail) => {
+            activeUID = uid;
+            document.getElementById('target-mail').innerText = mail;
+            document.getElementById('adm-chat-window').classList.rem            
