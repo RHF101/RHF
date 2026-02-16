@@ -2,162 +2,173 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>RHF ELITE MARKET</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RHF SUPREME MARKET</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js"></script>
 
 <style>
-body{margin:0;background:#0a0a0a;color:white;font-family:Arial}
-header{background:black;padding:15px;border-bottom:2px solid gold;
-display:flex;justify-content:space-between}
-input,button{padding:8px;margin:5px;border-radius:5px;border:none}
-button{background:gold;cursor:pointer}
-.product{display:inline-block;background:#1a1a1a;
-padding:10px;margin:10px;width:200px;border:1px solid #333}
-.product img{width:180px;height:180px;object-fit:cover}
+*{margin:0;padding:0;box-sizing:border-box;font-family:Poppins}
+body{background:linear-gradient(135deg,#0a0a0a,#1a1a1a);color:white}
+header{display:flex;justify-content:space-between;align-items:center;padding:15px;background:#000;border-bottom:1px solid gold;position:sticky;top:0}
+.logo{color:gold;font-weight:600;letter-spacing:2px}
+.container{padding:20px;max-width:700px;margin:auto}
+.card{background:#111;padding:20px;border-radius:15px;margin-bottom:15px;border:1px solid #222}
+input{width:100%;padding:10px;margin:6px 0;background:#0f0f0f;border:1px solid #333;color:white;border-radius:8px}
+button{padding:10px;width:100%;margin-top:10px;border:none;border-radius:8px;background:linear-gradient(45deg,gold,#d4af37);font-weight:600;cursor:pointer}
+button:hover{opacity:0.85}
+.product{background:#1a1a1a;padding:15px;border-radius:10px;margin:10px 0;border:1px solid #222}
+.product img{width:100%;height:160px;object-fit:cover;border-radius:8px;margin-bottom:10px}
 .hidden{display:none}
-.badge{background:black;border:1px solid gold;color:gold;
-padding:10px;margin:10px;text-align:center}
-.cart{position:fixed;right:0;top:0;width:300px;height:100%;
-background:#111;padding:10px;overflow:auto;border-left:1px solid gold}
+.badge{padding:10px;border:1px solid gold;color:gold;border-radius:8px;margin-bottom:10px;text-align:center}
+.cart{background:#111;padding:15px;border-radius:10px;margin-top:15px;border:1px solid gold}
+.admin{border:1px solid gold}
+small{opacity:0.6}
 </style>
 </head>
 <body>
 
 <header>
-<div>RHF ELITE MARKET</div>
-<div>
-<span id="saldoTop"></span>
-<button onclick="logout()">Logout</button>
-</div>
+<div class="logo">RHF SUPREME</div>
+<div id="saldoTop"></div>
 </header>
 
-<div id="loginPage">
-<h3>Login</h3>
+<div class="container">
+
+<div id="loginBox" class="card">
+<h3>Login / Register</h3>
 <input id="username" placeholder="Username">
 <input id="password" type="password" placeholder="Password">
 <input id="pin" type="password" placeholder="PIN 4 Digit">
-<br>
 <button onclick="login()">Login</button>
 <button onclick="register()">Register</button>
 </div>
 
-<div id="mainPage" class="hidden">
+<div id="appBox" class="hidden">
+
 <div id="securityBadge"></div>
-<input id="search" placeholder="Search Produk" onkeyup="searchProduct()">
+
+<input id="search" placeholder="Cari Produk..." onkeyup="searchProduct()">
+
 <div id="productList"></div>
 
-<div id="adminPanel" class="hidden">
-<h3>ADMIN PANEL RHF</h3>
-<input id="pName" placeholder="Nama">
-<input id="pPrice" placeholder="Harga">
-<input id="pImage" placeholder="URL HTTPS">
-<button onclick="addProduct()">Tambah Produk</button>
-<hr>
-<input id="targetUser" placeholder="Username">
-<input id="saldoAmount" placeholder="Jumlah">
-<button onclick="addSaldo()">Tambah Saldo</button>
-<button onclick="reduceSaldo()">Kurangi Saldo</button>
-<hr>
-<input id="secureUser" placeholder="Username">
-<button onclick="activateHTTPS()">Aktifkan Verified</button>
-</div>
-</div>
-
-<div class="cart hidden" id="cartBox">
-<h3>Keranjang</h3>
+<div id="cartBox" class="cart hidden">
+<h4>Keranjang</h4>
 <div id="cartItems"></div>
 <button onclick="checkout()">Checkout</button>
 </div>
 
-<script type="module">
+<div id="adminPanel" class="card admin hidden">
+<h3>ADMIN RHF</h3>
 
-import { initializeApp } from 
-"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+<h4>Tambah Produk</h4>
+<input id="pName" placeholder="Nama">
+<input id="pPrice" placeholder="Harga">
+<input id="pImage" placeholder="URL HTTPS">
+<button onclick="addProduct()">Tambah</button>
 
-import { getDatabase, ref, set, get, update, push, onValue } 
-from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+<hr><br>
 
-const firebaseConfig = {
+<h4>Kelola Saldo</h4>
+<input id="targetUser" placeholder="Username">
+<input id="saldoAmount" placeholder="Jumlah">
+<button onclick="addSaldo()">Tambah Saldo</button>
+<button onclick="reduceSaldo()">Kurangi Saldo</button>
+
+<hr><br>
+
+<h4>Aktifkan Verified</h4>
+<input id="secureUser" placeholder="Username">
+<button onclick="activateHTTPS()">Aktifkan Verified</button>
+
+</div>
+
+<button onclick="logout()">Logout</button>
+
+</div>
+</div>
+
+<script>
+// FIREBASE CONFIG
+const firebaseConfig={
 apiKey:"AIzaSyDSSgsUkgH7k2zS7D1dAzGcnlygTK9j9Qo",
 authDomain:"rhf-shop-mafia.firebaseapp.com",
 databaseURL:"https://rhf-shop-mafia-default-rtdb.firebaseio.com",
 projectId:"rhf-shop-mafia",
 storageBucket:"rhf-shop-mafia.firebasestorage.app",
 messagingSenderId:"732783940571",
-appId:"1:732783940571:web:425b43340e654e829bcdfe",
-measurementId:"G-WDHKC3RFX3"
+appId:"1:732783940571:web:425b43340e654e829bcdfe"
 };
 
-const app=initializeApp(firebaseConfig);
-const db=getDatabase(app);
+firebase.initializeApp(firebaseConfig);
+const db=firebase.database();
 
 let currentUser=null;
-let users={};
+let usersCache={};
 let cart=[];
+let logoutTimer=null;
 
-// ===== HASH =====
+// HASH
 async function hash(text){
 const msg=new TextEncoder().encode(text);
-const buf=await crypto.subtle.digest("SHA-256",msg);
-return Array.from(new Uint8Array(buf))
-.map(b=>b.toString(16).padStart(2,"0")).join("");
+const buf=await crypto.subtle.digest('SHA-256',msg);
+return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
 }
 
-// ===== REGISTER =====
-window.register=async function(){
+// REGISTER
+async function register(){
 let u=username.value;
 let p=password.value;
 let pinCode=pin.value;
-if(!u||!p||pinCode.length!=4) return alert("Lengkapi data");
+if(!u||!p||pinCode.length!==4)return alert("Lengkapi data");
 
 let passHash=await hash(p);
 let pinHash=await hash(pinCode);
 
-await set(ref(db,"users/"+u),{
+db.ref("users/"+u).set({
 password:passHash,
 pin:pinHash,
-saldo:1000000,
+saldo:100000,
 role:"user",
 verified:false
 });
 
-alert("Register sukses");
+alert("Register berhasil");
 }
 
-// ===== LOGIN =====
-window.login=async function(){
-
+// LOGIN
+async function login(){
 let u=username.value;
 let p=password.value;
 let pinCode=pin.value;
 
-let snap=await get(ref(db,"users/"+u));
-if(!snap.exists()) return alert("User tidak ada");
+let snap=await db.ref("users/"+u).once("value");
+if(!snap.exists())return alert("User tidak ada");
 
 let data=snap.val();
-
 let passHash=await hash(p);
 let pinHash=await hash(pinCode);
 
-if(passHash!==data.password||pinHash!==data.pin)
-return alert("Login gagal");
+if(passHash!==data.password||pinHash!==data.pin)return alert("Login gagal");
 
 currentUser=u;
-users[u]=data;
+usersCache[u]=data;
+
 startApp();
 }
 
-// ===== START =====
+// START
 function startApp(){
-loginPage.classList.add("hidden");
-mainPage.classList.remove("hidden");
-saldoTop.innerText="Saldo: Rp "+users[currentUser].saldo;
+loginBox.classList.add("hidden");
+appBox.classList.remove("hidden");
 
-if(users[currentUser].verified){
-securityBadge.innerHTML=
-"<div class='badge'>🛡 VERIFIED SECURITY ACTIVE</div>";
+saldoTop.innerText="Saldo: Rp "+usersCache[currentUser].saldo;
+
+if(usersCache[currentUser].verified){
+securityBadge.innerHTML="<div class='badge'>🛡 VERIFIED SECURITY ACTIVE</div>";
 }
 
 if(currentUser==="RHF"){
@@ -165,13 +176,23 @@ adminPanel.classList.remove("hidden");
 }
 
 loadProducts();
+startAutoLogout();
 }
 
-// ===== LOAD PRODUK REALTIME =====
+// AUTO LOGOUT 1 JAM
+function startAutoLogout(){
+clearTimeout(logoutTimer);
+logoutTimer=setTimeout(()=>{
+alert("Session habis 1 jam");
+logout();
+},3600000);
+}
+
+// LOAD PRODUK
 function loadProducts(){
-onValue(ref(db,"products"),(snapshot)=>{
+db.ref("products").on("value",snap=>{
 productList.innerHTML="";
-snapshot.forEach(child=>{
+snap.forEach(child=>{
 let p=child.val();
 productList.innerHTML+=`
 <div class="product">
@@ -184,26 +205,15 @@ productList.innerHTML+=`
 });
 }
 
-// ===== ADD PRODUK =====
-window.addProduct=async function(){
-await push(ref(db,"products"),{
-name:pName.value,
-price:parseInt(pPrice.value),
-image:pImage.value
-});
-alert("Produk ditambah");
-}
-
-// ===== CART =====
-window.addCart=function(price){
+// CART
+function addCart(price){
 cart.push(price);
 cartBox.classList.remove("hidden");
 renderCart();
 }
-
 function renderCart(){
-cartItems.innerHTML="";
 let total=0;
+cartItems.innerHTML="";
 cart.forEach(p=>{
 total+=p;
 cartItems.innerHTML+="<p>Rp "+p+"</p>";
@@ -211,78 +221,80 @@ cartItems.innerHTML+="<p>Rp "+p+"</p>";
 cartItems.innerHTML+="<hr>Total: Rp "+total;
 }
 
-// ===== CHECKOUT =====
-window.checkout=async function(){
+// CHECKOUT
+function checkout(){
 let total=cart.reduce((a,b)=>a+b,0);
-if(users[currentUser].saldo<total)
-return alert("Saldo kurang");
+if(usersCache[currentUser].saldo<total)return alert("Saldo kurang");
 
-users[currentUser].saldo-=total;
-
-await update(ref(db,"users/"+currentUser),{
-saldo:users[currentUser].saldo
-});
-
-saldoTop.innerText="Saldo: Rp "+users[currentUser].saldo;
+usersCache[currentUser].saldo-=total;
+db.ref("users/"+currentUser).update({saldo:usersCache[currentUser].saldo});
+saldoTop.innerText="Saldo: Rp "+usersCache[currentUser].saldo;
 cart=[];
 renderCart();
-alert("Pembelian berhasil");
+alert("Berhasil beli");
 }
 
-// ===== SALDO ADMIN =====
-window.addSaldo=async function(){
-let snap=await get(ref(db,"users/"+targetUser.value));
-let data=snap.val();
-await update(ref(db,"users/"+targetUser.value),{
-saldo:data.saldo+parseInt(saldoAmount.value)
+// ADMIN
+function addProduct(){
+db.ref("products").push({
+name:pName.value,
+price:parseInt(pPrice.value),
+image:pImage.value
 });
+alert("Produk ditambah");
+}
+
+function addSaldo(){
+db.ref("users/"+targetUser.value).once("value").then(snap=>{
+let d=snap.val();
+db.ref("users/"+targetUser.value).update({saldo:d.saldo+parseInt(saldoAmount.value)});
 alert("Saldo ditambah");
-}
-window.reduceSaldo=async function(){
-let snap=await get(ref(db,"users/"+targetUser.value));
-let data=snap.val();
-await update(ref(db,"users/"+targetUser.value),{
-saldo:data.saldo-parseInt(saldoAmount.value)
 });
-alert("Saldo dikurangi");
 }
 
-// ===== VERIFIED =====
-window.activateHTTPS=async function(){
-await update(ref(db,"users/"+secureUser.value),{
-verified:true
+function reduceSaldo(){
+db.ref("users/"+targetUser.value).once("value").then(snap=>{
+let d=snap.val();
+db.ref("users/"+targetUser.value).update({saldo:d.saldo-parseInt(saldoAmount.value)});
+alert("Saldo dikurangi");
 });
+}
+
+function activateHTTPS(){
+db.ref("users/"+secureUser.value).update({verified:true});
 alert("Verified aktif");
 }
 
-// ===== SEARCH =====
-window.searchProduct=function(){
+// SEARCH
+function searchProduct(){
 let key=search.value.toLowerCase();
-document.querySelectorAll(".product")
-.forEach(p=>{
-p.style.display=p.innerText.toLowerCase()
-.includes(key)?"inline-block":"none";
+document.querySelectorAll(".product").forEach(p=>{
+p.style.display=p.innerText.toLowerCase().includes(key)?"block":"none";
 });
 }
 
-window.logout=function(){
+// LOGOUT
+function logout(){
 location.reload();
 }
 
-// ===== AUTO CREATE ADMIN =====
-(async()=>{
-let snap=await get(ref(db,"users/RHF"));
+// AUTO CREATE ADMIN
+db.ref("users/RHF").once("value").then(snap=>{
 if(!snap.exists()){
-await set(ref(db,"users/RHF"),{
-password:await hash("RHF"),
-pin:await hash("9999"),
+hash("RHF").then(hp=>{
+hash("9999").then(hpin=>{
+db.ref("users/RHF").set({
+password:hp,
+pin:hpin,
 saldo:999999999,
 role:"admin",
 verified:true
 });
+});
+});
 }
-})();
-
+});
 </script>
+
 </body>
-  </html>
+</html>
