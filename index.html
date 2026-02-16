@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RHF | LUXURY TERMINAL</title>
+    <title>RHF | BLACK COMMERCE</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        :root { --gold: #D4AF37; --dark: #050505; --glass: rgba(10, 10, 10, 0.98); }
+        :root { --gold: #D4AF37; --dark: #050505; --glass: rgba(10, 10, 10, 0.95); }
         body { 
             font-family: 'Rajdhani', sans-serif; background: var(--dark); color: #eee; margin: 0;
             background-image: radial-gradient(circle at 50% 0%, #1a1a1a 0%, #050505 80%);
@@ -21,133 +21,196 @@
             color: #000; font-weight: 800; border: none; cursor: pointer;
             clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
         }
-
-        /* ANIMASI CENTANG MEWAH */
-        .check-container { width: 100px; height: 100px; display: flex; align-items: center; justify-content: center; }
-        .check-circle { 
-            width: 80px; height: 80px; border-radius: 50%; border: 4px solid var(--gold);
-            display: flex; align-items: center; justify-content: center;
-            animation: pulse-gold 2s infinite; 
-        }
-        @keyframes pulse-gold { 
-            0% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.4); }
-            70% { box-shadow: 0 0 0 30px rgba(212, 175, 55, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0); }
-        }
+        .input-field { background: #000; border: 1px solid #333; color: white; padding: 10px; width: 100%; font-size: 12px; }
+        .input-field:focus { border-color: var(--gold); outline: none; }
+        
+        /* CHAT STYLES */
+        .chat-bubble { max-width: 80%; padding: 8px 12px; border-radius: 8px; font-size: 11px; margin-bottom: 5px; word-wrap: break-word; }
+        .chat-user { background: var(--gold); color: black; align-self: flex-end; border-bottom-right-radius: 0; margin-left: auto; }
+        .chat-admin { background: #333; color: white; align-self: flex-start; border-bottom-left-radius: 0; margin-right: auto; }
+        .chat-img { max-width: 150px; border-radius: 5px; margin-top: 5px; cursor: pointer; }
+        
+        /* SCROLLBAR */
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 5px; }
         
         .hidden { display: none !important; }
         .status-badge { padding: 2px 8px; font-size: 9px; font-weight: bold; text-transform: uppercase; border-radius: 2px; }
-        .bg-proses { background: #f39c12; color: #000; }
-        .bg-kirim { background: #2ecc71; color: #000; }
-        .bg-gagal { background: #e74c3c; color: #fff; }
     </style>
 </head>
 <body>
 
     <nav id="navbar" class="hidden fixed top-0 w-full z-50 glass-panel border-b border-gold/20 px-6 py-4 flex justify-between items-center">
         <h1 class="font-luxury text-gold text-xl font-bold">RHF</h1>
-        <div class="flex items-center gap-6">
-            <button onclick="changePage('shop')" class="text-[10px] text-white uppercase">Market</button>
-            <button onclick="changePage('orders')" class="text-[10px] text-white uppercase">Pesanan Saya</button>
-            <button id="god-btn" onclick="changePage('admin')" class="hidden text-[10px] text-red-500 border border-red-500 px-2 py-1 font-bold animate-pulse">GOD MODE</button>
+        <div class="flex items-center gap-4">
+            <div class="text-right mr-2">
+                <p class="text-[8px] text-zinc-500 uppercase">Balance</p>
+                <p id="user-bal" class="text-sm font-bold text-white">Rp 0</p>
+            </div>
+            <button onclick="changePage('shop')" class="text-[10px] text-white hover:text-gold uppercase"><i class="fa-solid fa-shop"></i></button>
+            <button onclick="changePage('orders')" class="text-[10px] text-white hover:text-gold uppercase"><i class="fa-solid fa-box"></i></button>
+            <button onclick="changePage('redeem')" class="text-[10px] text-white hover:text-gold uppercase"><i class="fa-solid fa-ticket"></i></button>
+            <button id="god-btn" onclick="changePage('admin')" class="hidden text-[10px] text-red-500 border border-red-500 px-2 py-1 font-bold animate-pulse">GOD</button>
             <button onclick="logout()" class="text-zinc-500 hover:text-white"><i class="fa-solid fa-power-off"></i></button>
         </div>
     </nav>
 
-    <section id="auth-page" class="min-h-screen flex items-center justify-center p-6">
-        <div class="glass-panel w-full max-w-sm p-8 text-center">
-            <h1 class="font-luxury text-gold text-2xl mb-6">LOGIN REQUIRED</h1>
-            <input type="email" id="email" placeholder="Email" class="w-full p-3 bg-black border border-zinc-800 text-xs mb-3">
-            <input type="password" id="pass" placeholder="Password" class="w-full p-3 bg-black border border-zinc-800 text-xs mb-4">
-            <button onclick="handleLogin()" class="btn-gold w-full py-3 text-xs mb-2">LOGIN</button>
-            <button onclick="handleReg()" class="text-[10px] text-zinc-500 underline">Register</button>
+    <section id="auth-page" class="min-h-screen flex items-center justify-center p-6 bg-[url('https://www.transparenttextures.com/patterns/dark-matter.png')]">
+        <div class="glass-panel w-full max-w-sm p-8 text-center relative z-10">
+            <h1 class="font-luxury text-gold text-3xl mb-1 tracking-widest">RHF</h1>
+            <p class="text-[9px] text-zinc-500 uppercase tracking-[0.5em] mb-8">Syndicate Access</p>
+            <input type="email" id="email" placeholder="CODENAME (EMAIL)" class="input-field mb-3">
+            <input type="password" id="pass" placeholder="PASSWORD" class="input-field mb-6">
+            <div class="flex gap-2">
+                <button onclick="handleLogin()" class="btn-gold w-1/2 py-3 text-xs">LOGIN</button>
+                <button onclick="handleReg()" class="border border-gold text-gold w-1/2 py-3 text-xs hover:bg-gold hover:text-black transition">JOIN</button>
+            </div>
         </div>
     </section>
 
     <div id="main-app" class="hidden">
         
-        <section id="page-shop" class="pt-28 px-6 pb-20 max-w-6xl mx-auto">
-            <div id="shop-grid" class="grid grid-cols-2 md:grid-cols-4 gap-6"></div>
+        <section id="page-shop" class="pt-24 px-4 pb-24 max-w-6xl mx-auto">
+            <h2 class="font-luxury text-gold text-xl mb-4 border-b border-white/10 pb-2">Black Market</h2>
+            <div id="shop-grid" class="grid grid-cols-2 md:grid-cols-4 gap-4"></div>
         </section>
 
-        <div id="invoice-modal" class="hidden fixed inset-0 bg-black/90 z-[100] flex items-center justify-center p-6 backdrop-blur-md">
-            <div class="glass-panel w-full max-w-md p-8 relative">
-                <button onclick="closeInvoice()" class="absolute top-4 right-4 text-zinc-500 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
-                <h3 class="font-luxury text-gold text-center text-xl mb-6 border-b border-gold/20 pb-4">RINCIAN PESANAN</h3>
-                
-                <div class="space-y-4 text-xs">
-                    <div class="flex justify-between">
-                        <span class="text-zinc-500">NO. PESANAN:</span>
-                        <span id="inv-id" class="text-white font-bold font-mono">#...</span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span class="text-zinc-500">PRODUK:</span>
-                        <span id="inv-name" class="text-white">...</span>
-                    </div>
-                    <div class="flex justify-between border-t border-white/5 pt-4">
-                        <span class="text-zinc-500">TOTAL TAGIHAN:</span>
-                        <span id="inv-price" class="text-gold font-bold text-lg">Rp 0</span>
-                    </div>
-                </div>
-
-                <div class="mt-8 p-4 bg-white/5 rounded border border-white/10 italic text-[10px] text-center text-zinc-400">
-                    Selesaikan pembayaran ke nomor dompet admin sebelum menekan tombol konfirmasi.
-                </div>
-
-                <button onclick="showAnimation()" class="btn-gold w-full py-4 text-xs font-bold mt-6 tracking-widest">CONFIRM PAYMENT</button>
-            </div>
-        </div>
-
-        <div id="anim-overlay" class="hidden fixed inset-0 bg-black z-[200] flex flex-col items-center justify-center">
-            <div class="check-container">
-                <div class="check-circle">
-                    <i class="fa-solid fa-check text-4xl text-gold"></i>
-                </div>
-            </div>
-            <p class="font-luxury text-gold mt-6 tracking-widest animate-pulse">PROCESSING IDENTITY...</p>
-        </div>
-
-        <section id="page-detail" class="hidden pt-28 px-6 pb-20 max-w-lg mx-auto">
-            <div class="glass-panel p-8">
-                <div class="text-center mb-8">
-                    <i class="fa-solid fa-circle-check text-5xl text-green-500 mb-4"></i>
-                    <h2 class="font-luxury text-2xl text-white uppercase">Payment Submitted</h2>
-                </div>
-                <div id="detail-content" class="space-y-4 text-xs border-y border-white/5 py-6">
-                    </div>
-                <button onclick="changePage('orders')" class="btn-gold w-full py-3 text-xs mt-8">LIHAT PESANAN SAYA</button>
+        <section id="page-redeem" class="hidden pt-24 px-6 pb-24">
+            <div class="max-w-md mx-auto glass-panel p-8 text-center">
+                <h2 class="font-luxury text-gold text-xl mb-6">Redeem Code</h2>
+                <input type="text" id="v-code" placeholder="ENTER CODE" class="input-field text-center text-lg tracking-widest mb-4">
+                <button onclick="executeRedeem()" class="btn-gold w-full py-3 text-xs font-bold">CLAIM ASSET</button>
             </div>
         </section>
 
-        <section id="page-orders" class="hidden pt-28 px-6 pb-20 max-w-2xl mx-auto">
-            <h2 class="font-luxury text-white text-xl mb-6 tracking-widest">HISTORY VAULT</h2>
-            <div id="order-list" class="space-y-4"></div>
+        <section id="page-orders" class="hidden pt-24 px-4 pb-24 max-w-md mx-auto">
+            <h2 class="font-luxury text-white text-lg mb-4">My Orders</h2>
+            <div id="order-list" class="space-y-3"></div>
         </section>
 
-        <section id="page-admin" class="hidden pt-28 px-6 pb-20">
-             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <section id="page-admin" class="hidden pt-24 px-4 pb-24">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
                 <div class="glass-panel p-4">
-                    <h3 class="text-gold text-xs mb-4 uppercase">Manage Products</h3>
-                    <input type="text" id="p-name" placeholder="Nama Produk" class="w-full p-2 bg-black border border-zinc-800 text-[10px] mb-2">
-                    <input type="number" id="p-price" placeholder="Harga" class="w-full p-2 bg-black border border-zinc-800 text-[10px] mb-2">
-                    <input type="text" id="p-img" placeholder="Direct Image URL (PENTING!)" class="w-full p-2 bg-black border border-zinc-800 text-[10px] mb-2">
-                    <button onclick="adminAddP()" class="btn-gold w-full py-2 text-xs">TAMBAH PRODUK</button>
+                    <h3 class="text-gold text-xs font-bold uppercase mb-2">Deploy Item</h3>
+                    <input id="p-name" placeholder="Name" class="input-field mb-2">
+                    <input id="p-price" type="number" placeholder="Price" class="input-field mb-2">
+                    <input id="p-img" placeholder="Image URL" class="input-field mb-2">
+                    <button onclick="adminAddP()" class="btn-gold w-full py-2 text-[10px]">ADD</button>
+                    <button onclick="generateVoucher()" class="bg-blue-900 text-white w-full py-2 text-[10px] mt-2">CREATE VOUCHER</button>
                 </div>
                 <div class="glass-panel p-4">
-                    <h3 class="text-gold text-xs mb-4 uppercase">Manage Orders Status</h3>
-                    <div id="adm-orders" class="space-y-2 h-96 overflow-y-auto"></div>
+                    <h3 class="text-gold text-xs font-bold uppercase mb-2">Live Chats</h3>
+                    <div id="adm-chat-list" class="space-y-2 h-64 overflow-y-auto"></div>
                 </div>
-             </div>
+                <div class="glass-panel p-4">
+                    <h3 class="text-gold text-xs font-bold uppercase mb-2">Incoming Orders</h3>
+                    <div id="adm-orders" class="space-y-2 h-64 overflow-y-auto"></div>
+                </div>
+            </div>
         </section>
 
     </div>
 
+    <div id="address-modal" class="hidden fixed inset-0 bg-black/95 z-[60] flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="glass-panel w-full max-w-md p-6 h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-4 border-b border-white/10 pb-2">
+                <h3 class="font-luxury text-gold text-lg">Alamat Pengiriman</h3>
+                <button onclick="closeAddress()" class="text-zinc-500"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            
+            <div class="space-y-3">
+                <div>
+                    <label class="text-[10px] text-zinc-400">Nama Lengkap</label>
+                    <input type="text" id="adr-name" class="input-field rounded-sm">
+                </div>
+                <div>
+                    <label class="text-[10px] text-zinc-400">Nomor Telepon</label>
+                    <input type="tel" id="adr-phone" class="input-field rounded-sm">
+                </div>
+                <div>
+                    <label class="text-[10px] text-zinc-400">Provinsi, Kota, Kecamatan, Kode Pos</label>
+                    <textarea id="adr-region" class="input-field rounded-sm h-16"></textarea>
+                </div>
+                <div>
+                    <label class="text-[10px] text-zinc-400">Nama Jalan, Gedung, No. Rumah</label>
+                    <textarea id="adr-street" class="input-field rounded-sm h-16"></textarea>
+                </div>
+                <div>
+                    <label class="text-[10px] text-zinc-400">Detail Lainnya (Patokan)</label>
+                    <input type="text" id="adr-detail" class="input-field rounded-sm">
+                </div>
+                
+                <div class="flex gap-2 mt-4">
+                    <button onclick="setLabel('Rumah')" id="lbl-rumah" class="flex-1 py-2 border border-zinc-700 text-xs text-zinc-400 hover:border-gold hover:text-gold">Rumah</button>
+                    <button onclick="setLabel('Kantor')" id="lbl-kantor" class="flex-1 py-2 border border-zinc-700 text-xs text-zinc-400 hover:border-gold hover:text-gold">Kantor</button>
+                </div>
+                <input type="hidden" id="adr-label" value="Rumah">
+
+                <div class="pt-4 mt-4 border-t border-white/10">
+                    <p class="text-[10px] text-zinc-500 mb-2 italic">*Pastikan data benar. Pembayaran via Pihak Ke-3.</p>
+                    <button onclick="saveAddressAndBuy()" class="btn-gold w-full py-3 text-xs font-bold tracking-widest">SIMPAN & PROSES PESANAN</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <button id="chat-float-btn" onclick="toggleChat()" class="hidden fixed bottom-6 right-6 w-14 h-14 bg-green-600 rounded-full flex items-center justify-center text-white shadow-lg z-[80] hover:scale-110 transition border-2 border-white">
+        <i class="fa-brands fa-whatsapp text-2xl"></i>
+    </button>
+
+    <div id="chat-window" class="hidden fixed bottom-24 right-6 w-80 h-96 glass-panel z-[90] flex flex-col">
+        <div class="bg-green-900/80 p-3 flex justify-between items-center border-b border-white/10">
+            <div class="flex items-center gap-2">
+                <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                <span class="text-xs font-bold text-white">CS - RHF SUPPORT</span>
+            </div>
+            <button onclick="toggleChat()" class="text-xs text-white"><i class="fa-solid fa-minus"></i></button>
+        </div>
+        
+        <div id="chat-messages" class="flex-1 overflow-y-auto p-3 flex flex-col gap-2 bg-black/50">
+            </div>
+
+        <div class="p-2 bg-zinc-900 border-t border-white/10 flex gap-2 items-center">
+            <label class="cursor-pointer text-zinc-400 hover:text-gold">
+                <i class="fa-solid fa-image"></i>
+                <input type="file" id="chat-file-input" class="hidden" accept="image/*" onchange="sendChatImage()">
+            </label>
+            <input type="text" id="chat-input" placeholder="Ketik pesan..." class="flex-1 bg-black border border-zinc-700 text-white text-[10px] p-2 rounded-full focus:border-green-500 outline-none">
+            <button onclick="sendChatText()" class="text-green-500 hover:text-white"><i class="fa-solid fa-paper-plane"></i></button>
+        </div>
+    </div>
+
+    <div id="admin-chat-modal" class="hidden fixed inset-0 bg-black/80 z-[100] flex items-center justify-center p-4">
+        <div class="glass-panel w-full max-w-md h-[500px] flex flex-col relative">
+            <button onclick="closeAdminChat()" class="absolute top-2 right-2 text-white bg-red-900 px-2 py-1 text-xs">CLOSE</button>
+            <div class="p-3 border-b border-white/10">
+                <h3 class="text-gold text-xs">Chatting with: <span id="adm-chat-target" class="text-white"></span></h3>
+            </div>
+            <div id="adm-chat-msgs" class="flex-1 overflow-y-auto p-3 flex flex-col gap-2 bg-black/50"></div>
+            <div class="p-2 border-t border-white/10 flex gap-2">
+                <input type="text" id="adm-chat-input" class="flex-1 bg-black border border-zinc-700 text-white p-2 text-xs">
+                <button onclick="sendAdminChat()" class="btn-gold px-4 text-xs">SEND</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="fixed top-24 right-4 bg-black border border-gold text-gold px-6 py-3 text-[10px] font-bold uppercase tracking-widest transform translate-x-full transition duration-300 z-[100]"></div>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getDatabase, ref, set, push, onValue, update, remove, get } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { getDatabase, ref, set, push, onValue, update, remove, get, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
+        // CONFIG (GANTI ALLOWED_IP dengan IP Publik Boss)
         const BOSS_EMAIL = "gacoruncek73@gmail.com";
+        const EMAIL_NOTIF = "chhtty4@gmail.com"; 
+        
+        // --- AUTO IP DETECTION ---
+        async function getIP() {
+            try { return (await (await fetch('https://api.ipify.org?format=json')).json()).ip; } 
+            catch { return "0.0.0.0"; }
+        }
+
         const firebaseConfig = {
             apiKey: "AIzaSyCs7Vnysf25BwhN2-fPTODd48xwzbPkbzI",
             authDomain: "rhf-shop-mafia-8d2e5.firebaseapp.com",
@@ -161,165 +224,123 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getDatabase(app);
-        let currentOrderData = null;
+        
+        let pendingItem = null; // Menyimpan item yg mau dibeli
+        let activeChatUID = null; // Untuk admin chatting
 
-        // -- EXPOSE TO WINDOW --
-        window.handleLogin = () => {
-            const e = document.getElementById('email').value;
-            const p = document.getElementById('pass').value;
-            signInWithEmailAndPassword(auth, e, p).catch(err => alert("Gagal Login"));
-        };
-
-        window.handleReg = () => {
-            const e = document.getElementById('email').value;
-            const p = document.getElementById('pass').value;
-            createUserWithEmailAndPassword(auth, e, p).then(u => {
-                set(ref(db, 'users/' + u.user.uid), { email: e, balance: 0 });
-            });
-        };
-
+        // --- AUTH & NAV ---
+        window.handleLogin = () => signInWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('pass').value).catch(e=>alert(e.message));
+        window.handleReg = () => createUserWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('pass').value).then(u=>{ set(ref(db,'users/'+u.user.uid),{email:u.user.email,balance:0}); });
         window.logout = () => signOut(auth);
 
-        window.changePage = (p) => {
-            ['shop', 'detail', 'orders', 'admin'].forEach(id => {
-                const el = document.getElementById('page-'+id);
-                if(el) el.classList.add('hidden');
-            });
-            document.getElementById('page-'+p).classList.remove('hidden');
+        window.changePage = async (p) => {
+            if(p === 'admin') {
+                const ip = await getIP();
+                const u = auth.currentUser;
+                // Cek IP dari Database
+                const allowedSnap = await get(ref(db, 'admin_settings/allowed_ip'));
+                const allowedIP = allowedSnap.val();
+
+                if(u && u.email === BOSS_EMAIL && ip === allowedIP) {
+                    showSection('page-admin');
+                    notify("WELCOME BOSS");
+                } else {
+                    alert("ACCESS DENIED: IP/ACCOUNT MISMATCH");
+                    window.changePage('shop');
+                }
+            } else {
+                showSection('page-'+p);
+            }
         };
 
-        // --- MARKET LOGIC ---
-        function syncMarket() {
-            onValue(ref(db, 'products'), (s) => {
-                const grid = document.getElementById('shop-grid');
-                grid.innerHTML = "";
-                s.forEach(c => {
-                    const p = c.val();
-                    // Tips Gambar: Pastikan URL berakhir dengan .jpg, .png atau link direct
-                    grid.innerHTML += `
-                        <div class="glass-panel p-4 group">
-                            <div class="h-40 overflow-hidden bg-black mb-4">
-                                <img src="${p.img}" onerror="this.src='https://via.placeholder.com/300x200?text=No+Image'" class="w-full h-full object-cover">
-                            </div>
-                            <h4 class="text-xs text-zinc-400 mb-1">${p.name}</h4>
-                            <p class="text-gold font-bold mb-4">Rp ${p.price.toLocaleString()}</p>
-                            <button onclick="openInvoice('${c.key}', '${p.name}', ${p.price})" class="btn-gold w-full py-2 text-[10px]">ACQUIRE</button>
-                        </div>`;
-                });
-            });
+        function showSection(id) {
+            document.querySelectorAll('section').forEach(s => s.classList.add('hidden'));
+            document.getElementById(id).classList.remove('hidden');
         }
 
-        window.openInvoice = (id, name, price) => {
-            currentOrderData = { id, name, price };
-            document.getElementById('inv-id').innerText = "#" + Math.random().toString(36).substr(2, 9).toUpperCase();
-            document.getElementById('inv-name').innerText = name;
-            document.getElementById('inv-price').innerText = "Rp " + price.toLocaleString();
-            document.getElementById('invoice-modal').classList.remove('hidden');
-        };
-
-        window.closeInvoice = () => document.getElementById('invoice-modal').classList.add('hidden');
-
-        window.showAnimation = () => {
-            document.getElementById('invoice-modal').classList.add('hidden');
-            document.getElementById('anim-overlay').classList.remove('hidden');
-            
-            // Simpan ke DB
-            const orderRef = push(ref(db, 'orders'));
-            const orderData = {
-                uid: auth.currentUser.uid,
-                email: auth.currentUser.email,
-                product: currentOrderData.name,
-                price: currentOrderData.price,
-                orderId: document.getElementById('inv-id').innerText,
-                status: 'proses', // Default: Proses
-                date: new Date().toLocaleString()
-            };
-
-            set(orderRef, orderData).then(() => {
-                setTimeout(() => {
-                    document.getElementById('anim-overlay').classList.add('hidden');
-                    showDetailPage(orderData);
-                }, 3000); // 3 detik animasi mewah
-            });
-        };
-
-        function showDetailPage(data) {
-            const content = document.getElementById('detail-content');
-            content.innerHTML = `
-                <div class="flex justify-between"><span>ID Pesanan</span><span class="text-white">${data.orderId}</span></div>
-                <div class="flex justify-between"><span>Status</span><span class="status-badge bg-proses">Dalam Proses</span></div>
-                <div class="flex justify-between"><span>Produk</span><span class="text-white">${data.product}</span></div>
-                <div class="flex justify-between"><span>Waktu</span><span class="text-white">${data.date}</span></div>
-            `;
-            changePage('detail');
-        }
-
-        function syncOrders() {
-            onValue(ref(db, 'orders'), (s) => {
-                const list = document.getElementById('order-list');
-                const admList = document.getElementById('adm-orders');
-                list.innerHTML = "";
-                if(admList) admList.innerHTML = "";
-
-                s.forEach(c => {
-                    const o = c.val();
-                    const k = c.key;
-                    
-                    // Dashboard User
-                    if(o.uid === auth.currentUser.uid) {
-                        list.innerHTML += `
-                            <div class="glass-panel p-4 flex justify-between items-center">
-                                <div>
-                                    <p class="text-[10px] text-zinc-500">${o.orderId}</p>
-                                    <h4 class="text-xs text-white font-bold">${o.product}</h4>
-                                </div>
-                                <span class="status-badge bg-${o.status}">${o.status}</span>
-                            </div>`;
-                    }
-
-                    // Dashboard Admin
-                    if(auth.currentUser.email === BOSS_EMAIL && admList) {
-                        admList.innerHTML += `
-                            <div class="bg-white/5 p-3 text-[10px] border border-white/10 mb-2">
-                                <p>${o.email} - ${o.product}</p>
-                                <div class="flex gap-2 mt-2">
-                                    <button onclick="updateStatus('${k}', 'proses')" class="bg-proses px-2 py-1 text-black">PROSES</button>
-                                    <button onclick="updateStatus('${k}', 'kirim')" class="bg-kirim px-2 py-1 text-black">KIRIM</button>
-                                    <button onclick="updateStatus('${k}', 'gagal')" class="bg-gagal px-2 py-1 text-white">GAGAL</button>
-                                </div>
-                            </div>`;
-                    }
-                });
-            });
-        }
-
-        window.updateStatus = (key, status) => update(ref(db, 'orders/' + key), { status });
-
-        window.adminAddP = () => {
-            const name = document.getElementById('p-name').value;
-            const price = parseInt(document.getElementById('p-price').value);
-            const img = document.getElementById('p-img').value;
-            if(name && price) push(ref(db, 'products'), { name, price, img });
-        };
-
-        // --- AUTH SYNC ---
-        onAuthStateChanged(auth, (u) => {
+        onAuthStateChanged(auth, async (u) => {
             if(u) {
                 document.getElementById('auth-page').classList.add('hidden');
                 document.getElementById('main-app').classList.remove('hidden');
                 document.getElementById('navbar').classList.remove('hidden');
-                if(u.email === BOSS_EMAIL) document.getElementById('god-btn').classList.remove('hidden');
+                document.getElementById('chat-float-btn').classList.remove('hidden');
+
+                // IP Sync for Boss
+                if(u.email === BOSS_EMAIL) {
+                    const myIP = await getIP();
+                    update(ref(db, 'admin_settings'), { allowed_ip: myIP });
+                    document.getElementById('god-btn').classList.remove('hidden');
+                    loadAdminData();
+                }
+
+                syncUser(u.uid);
                 syncMarket();
-                syncOrders();
-                changePage('shop');
+                loadUserChat(u.uid);
+                window.changePage('shop');
             } else {
                 document.getElementById('auth-page').classList.remove('hidden');
                 document.getElementById('main-app').classList.add('hidden');
                 document.getElementById('navbar').classList.add('hidden');
+                document.getElementById('chat-float-btn').classList.add('hidden');
             }
         });
 
-    </script>
-</body>
-    </html>
-    
+        // --- MARKET & ADDRESS SYSTEM ---
+        function syncMarket() {
+            onValue(ref(db, 'products'), s => {
+                const g = document.getElementById('shop-grid'); g.innerHTML="";
+                s.forEach(c => {
+                    const p = c.val();
+                    g.innerHTML += `
+                    <div class="glass-panel p-3">
+                        <img src="${p.img}" onerror="this.src='https://via.placeholder.com/150'" class="w-full h-32 object-cover mb-2 rounded">
+                        <h4 class="text-xs text-zinc-400">${p.name}</h4>
+                        <p class="text-gold font-bold text-sm">Rp ${p.price.toLocaleString()}</p>
+                        <button onclick="initBuy('${c.key}', '${p.name}', ${p.price})" class="btn-gold w-full py-2 text-[10px] mt-2">BELI</button>
+                    </div>`;
+                });
+            });
+        }
+
+        window.initBuy = (key, name, price) => {
+            pendingItem = { key, name, price };
+            // Cek apakah user sudah punya alamat
+            get(ref(db, 'users/'+auth.currentUser.uid+'/address')).then(snap => {
+                if(snap.exists()) {
+                    // Isi form dengan data lama
+                    const a = snap.val();
+                    document.getElementById('adr-name').value = a.name;
+                    document.getElementById('adr-phone').value = a.phone;
+                    document.getElementById('adr-region').value = a.region;
+                    document.getElementById('adr-street').value = a.street;
+                    document.getElementById('adr-detail').value = a.detail;
+                    window.setLabel(a.label);
+                }
+                document.getElementById('address-modal').classList.remove('hidden');
+            });
+        };
+
+        window.closeAddress = () => document.getElementById('address-modal').classList.add('hidden');
+        
+        window.setLabel = (lbl) => {
+            document.getElementById('adr-label').value = lbl;
+            document.getElementById('lbl-rumah').className = lbl==='Rumah' ? 'flex-1 py-2 border border-gold text-gold text-xs' : 'flex-1 py-2 border border-zinc-700 text-zinc-400 text-xs';
+            document.getElementById('lbl-kantor').className = lbl==='Kantor' ? 'flex-1 py-2 border border-gold text-gold text-xs' : 'flex-1 py-2 border border-zinc-700 text-zinc-400 text-xs';
+        };
+
+        window.saveAddressAndBuy = async () => {
+            const uid = auth.currentUser.uid;
+            const addrData = {
+                name: document.getElementById('adr-name').value,
+                phone: document.getElementById('adr-phone').value,
+                region: document.getElementById('adr-region').value,
+                street: document.getElementById('adr-street').value,
+                detail: document.getElementById('adr-detail').value,
+                label: document.getElementById('adr-label').value
+            };
+
+            if(!addrData.name || !addrData.phone || !addrData.street) return alert("Harap lengkapi alamat!");
+
+            // 1. Simpan Alamat
+            await update(ref(db, 'users/'+uid
+                             
