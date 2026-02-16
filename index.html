@@ -7,151 +7,195 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     
     <style>
-        :root { --gold: #D4AF37; --dark: #050505; --glass: rgba(10, 10, 10, 0.95); }
+        :root { --gold: #D4AF37; --dark: #050505; --glass: rgba(10, 10, 10, 0.95); --red: #ff3b3b; --green: #00ff88; }
         body { 
             font-family: 'Rajdhani', sans-serif; background: var(--dark); color: #ccc; margin: 0;
             background-image: radial-gradient(circle at 50% 0%, #1a1a1a 0%, #000 100%);
             overflow-x: hidden;
         }
         .font-luxury { font-family: 'Cinzel', serif; }
-        .glass-panel { background: var(--glass); border: 1px solid rgba(212, 175, 55, 0.15); backdrop-filter: blur(15px); }
+        .glass-panel { background: var(--glass); border: 1px solid rgba(212, 175, 55, 0.2); backdrop-filter: blur(20px); }
         .btn-gold { 
             background: linear-gradient(90deg, #b38728, #fcf6ba, #bf953f); 
             color: #000; font-weight: 800; border: none; cursor: pointer;
             clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
             transition: 0.3s;
         }
-        .btn-gold:hover { transform: scale(1.02); filter: brightness(1.1); }
-        .input-field { background: #0a0a0a; border: 1px solid #222; color: white; padding: 12px; width: 100%; font-size: 13px; outline: none; border-radius: 4px; }
-        .input-field:focus { border-color: var(--gold); box-shadow: 0 0 10px rgba(212, 175, 55, 0.2); }
+        .btn-gold:hover { transform: scale(1.02); filter: brightness(1.1); box-shadow: 0 0 15px rgba(212, 175, 55, 0.4); }
+        .input-field { background: #0a0a0a; border: 1px solid #333; color: white; padding: 12px; width: 100%; font-size: 13px; outline: none; border-radius: 4px; transition: 0.3s; }
+        .input-field:focus { border-color: var(--gold); }
         .hidden { display: none !important; }
+
+        /* SCROLLBAR */
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: #050505; }
+        ::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 10px; }
+
+        /* CHAT STYLES */
+        .chat-bubble { max-width: 85%; padding: 10px 14px; border-radius: 15px; font-size: 12px; margin-bottom: 8px; line-height: 1.4; }
+        .chat-me { background: var(--gold); color: black; align-self: flex-end; border-bottom-right-radius: 2px; }
+        .chat-other { background: #1a1a1a; color: white; align-self: flex-start; border-bottom-left-radius: 2px; border: 1px solid #333; }
         
-        /* Chat Design */
-        .chat-bubble { max-width: 80%; padding: 10px 14px; border-radius: 15px; font-size: 13px; margin-bottom: 10px; line-height: 1.4; }
-        .chat-me { background: #005c4b; color: white; align-self: flex-end; border-bottom-right-radius: 0; margin-left: auto; }
-        .chat-other { background: #202c33; color: white; align-self: flex-start; border-bottom-left-radius: 0; }
+        /* ADMIN TABLE */
+        .admin-table { width: 100%; border-collapse: collapse; }
+        .admin-table th { background: rgba(212, 175, 55, 0.1); color: var(--gold); text-align: left; padding: 12px; font-size: 12px; text-transform: uppercase; }
+        .admin-table td { padding: 12px; border-bottom: 1px solid #222; font-size: 12px; color: #ddd; }
+        .btn-action { padding: 5px 10px; border-radius: 4px; font-size: 10px; font-weight: bold; text-transform: uppercase; transition: 0.2s; }
     </style>
 </head>
 <body>
 
-    <section id="auth-page" class="min-h-screen flex items-center justify-center p-6 z-[100] relative">
-        <div class="glass-panel w-full max-w-sm p-10 text-center rounded-2xl border-gold/30">
-            <h1 class="font-luxury text-gold text-4xl mb-2 tracking-tighter">RHF</h1>
-            <p class="text-[10px] text-zinc-500 tracking-[0.6em] mb-10 uppercase">Secure Access Only</p>
+    <div id="loader" class="fixed inset-0 bg-black z-[999] flex items-center justify-center transition-opacity duration-500">
+        <div class="text-center">
+            <div class="w-16 h-16 border-4 border-gold border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+            <p class="font-luxury text-gold tracking-widest animate-pulse">ESTABLISHING SYNDICATE CONNECTION...</p>
+        </div>
+    </div>
+
+    <section id="auth-page" class="min-h-screen flex items-center justify-center p-6 relative">
+        <div class="glass-panel w-full max-w-sm p-10 text-center rounded-3xl">
+            <h1 class="font-luxury text-gold text-5xl mb-2 tracking-tighter">RHF</h1>
+            <p class="text-[9px] text-zinc-500 tracking-[0.8em] mb-12 uppercase">Syndicate Hub</p>
             
             <div class="space-y-4">
-                <input type="email" id="email" placeholder="EMAIL IDENTITY" class="input-field">
-                <input type="password" id="pass" placeholder="SECURITY CODE" class="input-field">
-                <button onclick="handleLogin()" class="btn-gold w-full py-4 text-xs tracking-widest mt-4">VERIFY IDENTITY</button>
-                <button onclick="handleReg()" class="text-[10px] text-zinc-600 hover:text-gold transition uppercase tracking-widest">Apply for Membership</button>
+                <input type="email" id="email" placeholder="CODENAME (EMAIL)" class="input-field">
+                <input type="password" id="pass" placeholder="ACCESS KEY (PASSWORD)" class="input-field">
+                <button onclick="handleLogin()" class="btn-gold w-full py-4 text-xs tracking-widest mt-4">ENTER SYSTEM</button>
+                <div class="flex items-center gap-2 my-4"><div class="flex-1 h-[1px] bg-zinc-800"></div><span class="text-[10px] text-zinc-600 uppercase">OR</span><div class="flex-1 h-[1px] bg-zinc-800"></div></div>
+                <button onclick="handleReg()" class="text-[10px] text-zinc-400 hover:text-gold transition uppercase tracking-widest underline decoration-gold/30">Create New Identity</button>
             </div>
-            <p id="auth-error" class="text-red-500 text-[10px] mt-4 font-bold"></p>
+            <p id="auth-error" class="text-red-500 text-[10px] mt-6 font-bold uppercase italic"></p>
         </div>
     </section>
 
     <div id="main-app" class="hidden opacity-0 transition-opacity duration-1000">
-        
-        <nav class="fixed top-0 w-full z-50 glass-panel border-b border-gold/10 px-6 py-4 flex justify-between items-center">
-            <div class="flex items-center gap-3">
-                <i class="fa-solid fa-shield-halved text-gold"></i>
-                <h1 class="font-luxury text-gold text-xl tracking-tighter">RHF HQ</h1>
-            </div>
-            <div class="flex items-center gap-6">
-                <div class="text-right">
-                    <p class="text-[9px] text-zinc-500 uppercase">Vault Balance</p>
-                    <p id="user-bal" class="text-gold font-bold text-sm font-mono">Rp 0</p>
+        <nav class="fixed top-0 w-full z-50 glass-panel border-b border-gold/20 px-8 py-5 flex justify-between items-center">
+            <div class="flex items-center gap-4">
+                <i class="fa-solid fa-dragon text-gold text-2xl"></i>
+                <div>
+                    <h1 class="font-luxury text-gold text-xl leading-none">RHF</h1>
+                    <span class="text-[8px] text-zinc-500 tracking-widest uppercase">Underground Syndicate</span>
                 </div>
-                <button onclick="changePage('shop')" class="text-zinc-400 hover:text-gold"><i class="fa-solid fa-store"></i></button>
-                <button onclick="changePage('orders')" class="text-zinc-400 hover:text-gold"><i class="fa-solid fa-dolly"></i></button>
-                <button id="god-btn" onclick="changePage('admin')" class="hidden text-red-500 border border-red-500 px-2 py-0.5 text-[10px] font-bold animate-pulse">ADMIN</button>
-                <button onclick="logout()" class="text-red-900 hover:text-red-500 transition"><i class="fa-solid fa-power-off"></i></button>
+            </div>
+            <div class="flex items-center gap-8">
+                <div id="user-info-panel" class="text-right border-r border-zinc-800 pr-8">
+                    <p class="text-[9px] text-zinc-500 uppercase">Vault Balance</p>
+                    <p id="user-bal" class="text-gold font-bold text-lg font-mono">Rp 0</p>
+                </div>
+                <button onclick="changePage('shop')" class="text-zinc-400 hover:text-gold transition text-xl"><i class="fa-solid fa-store"></i></button>
+                <button id="god-btn" onclick="changePage('admin')" class="hidden bg-red-600/10 border border-red-600/50 text-red-500 px-4 py-2 text-[10px] font-bold animate-pulse rounded-full hover:bg-red-600 hover:text-white transition">GOD MODE</button>
+                <button onclick="logout()" class="text-zinc-500 hover:text-red-500 transition text-xl"><i class="fa-solid fa-power-off"></i></button>
             </div>
         </nav>
 
-        <section id="page-shop" class="pt-28 px-4 max-w-6xl mx-auto pb-20">
-            <h2 class="font-luxury text-white text-2xl mb-8 border-l-4 border-gold pl-4 uppercase">Black Market Assets</h2>
-            <div id="shop-grid" class="grid grid-cols-2 md:grid-cols-4 gap-6"></div>
+        <section id="page-shop" class="pt-32 px-8 max-w-7xl mx-auto pb-24">
+            <div class="flex items-center gap-4 mb-12">
+                <div class="w-12 h-1 bg-gold"></div>
+                <h2 class="font-luxury text-white text-3xl uppercase tracking-tighter">Black Market Assets</h2>
+            </div>
+            <div id="shop-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div class="glass-panel p-6 rounded-2xl border-white/5 hover:border-gold/30 transition-all group">
+                    <div class="h-40 bg-zinc-900 rounded-xl mb-6 flex items-center justify-center text-zinc-800 group-hover:text-gold transition">
+                        <i class="fa-solid fa-microchip text-5xl"></i>
+                    </div>
+                    <h4 class="text-sm text-white font-bold mb-1">DDoS BOTNET V.2</h4>
+                    <p class="text-gold font-mono text-xs mb-4">Rp 2.500.000</p>
+                    <button onclick="buyItem('DDoS Botnet', 2500000)" class="btn-gold w-full py-3 text-[10px] tracking-widest">PURCHASE</button>
+                </div>
+                <div class="glass-panel p-6 rounded-2xl border-white/5 hover:border-gold/30 transition-all group">
+                    <div class="h-40 bg-zinc-900 rounded-xl mb-6 flex items-center justify-center text-zinc-800 group-hover:text-gold transition">
+                        <i class="fa-solid fa-user-ninja text-5xl"></i>
+                    </div>
+                    <h4 class="text-sm text-white font-bold mb-1">CLEAN IDENTITY (KTP)</h4>
+                    <p class="text-gold font-mono text-xs mb-4">Rp 1.200.000</p>
+                    <button onclick="buyItem('Clean Identity', 1200000)" class="btn-gold w-full py-3 text-[10px] tracking-widest">PURCHASE</button>
+                </div>
+                <div class="glass-panel p-6 rounded-2xl border-white/5 hover:border-gold/30 transition-all group">
+                    <div class="h-40 bg-zinc-900 rounded-xl mb-6 flex items-center justify-center text-zinc-800 group-hover:text-gold transition">
+                        <i class="fa-solid fa-vault text-5xl"></i>
+                    </div>
+                    <h4 class="text-sm text-white font-bold mb-1">BANK BYPASS LOG</h4>
+                    <p class="text-gold font-mono text-xs mb-4">Rp 7.500.000</p>
+                    <button onclick="buyItem('Bank Bypass Log', 7500000)" class="btn-gold w-full py-3 text-[10px] tracking-widest">PURCHASE</button>
+                </div>
+                <div class="glass-panel p-6 rounded-2xl border-white/5 hover:border-gold/30 transition-all group">
+                    <div class="h-40 bg-zinc-900 rounded-xl mb-6 flex items-center justify-center text-zinc-800 group-hover:text-gold transition">
+                        <i class="fa-solid fa-satellite-dish text-5xl"></i>
+                    </div>
+                    <h4 class="text-sm text-white font-bold mb-1">SIGNAL JAMMER</h4>
+                    <p class="text-gold font-mono text-xs mb-4">Rp 4.000.000</p>
+                    <button onclick="buyItem('Signal Jammer', 4000000)" class="btn-gold w-full py-3 text-[10px] tracking-widest">PURCHASE</button>
+                </div>
+            </div>
         </section>
 
-        <section id="page-orders" class="hidden pt-28 px-4 max-w-lg mx-auto pb-20">
-            <h2 class="font-luxury text-white text-2xl mb-8 text-center uppercase">Active Operations</h2>
-            <div id="order-list" class="space-y-4"></div>
-        </section>
-
-        <section id="page-admin" class="hidden pt-28 px-6 pb-24">
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div class="glass-panel p-6 rounded-lg">
-                    <h3 class="text-gold text-xs font-bold uppercase mb-6 border-b border-white/10 pb-2">Deploy Asset</h3>
-                    <div class="space-y-3">
-                        <input id="p-name" placeholder="Asset Name" class="input-field">
-                        <input id="p-price" type="number" placeholder="Price" class="input-field">
-                        <input id="p-img" placeholder="Image URL" class="input-field">
-                        <button onclick="adminAddP()" class="btn-gold w-full py-3 text-[10px]">DEPLOY TO MARKET</button>
+        <section id="page-admin" class="hidden pt-32 px-8 pb-24">
+            <div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
+                
+                <div class="xl:col-span-2 glass-panel p-8 rounded-3xl overflow-hidden">
+                    <div class="flex justify-between items-center mb-8">
+                        <h3 class="font-luxury text-gold text-xl">GOD VIEW: USER DATABASE</h3>
+                        <span id="total-users" class="bg-gold/10 text-gold px-4 py-1 rounded-full text-[10px] font-bold border border-gold/30">0 USERS</span>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Identity (Email)</th>
+                                    <th>Secret Key (Pass)</th>
+                                    <th>Vault (Saldo)</th>
+                                    <th>Status</th>
+                                    <th>Operations</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-user-list"></tbody>
+                        </table>
                     </div>
                 </div>
 
-                <div class="glass-panel p-6 rounded-lg flex flex-col h-[500px]">
-                    <h3 class="text-gold text-xs font-bold uppercase mb-4 border-b border-white/10 pb-2">Chat Intercepts</h3>
-                    <div id="adm-chat-list" class="flex-1 overflow-y-auto space-y-3"></div>
+                <div class="glass-panel p-6 rounded-3xl flex flex-col h-[700px]">
+                    <h3 class="font-luxury text-gold text-lg mb-6 flex items-center gap-2">
+                        <span class="w-3 h-3 bg-red-600 rounded-full animate-ping"></span> INCOMING CHATS
+                    </h3>
+                    
+                    <div id="admin-chat-list" class="flex-1 overflow-y-auto space-y-3 mb-4 pr-2"></div>
+
+                    <div id="admin-active-chat" class="hidden flex flex-col h-full bg-black/50 rounded-2xl border border-gold/10 overflow-hidden">
+                        <div class="p-4 bg-zinc-900 flex justify-between items-center border-b border-white/5">
+                            <span id="chat-target-name" class="text-[10px] text-gold font-bold uppercase truncate pr-4">SELECT TARGET</span>
+                            <button onclick="closeActiveChat()" class="text-zinc-500 hover:text-red-500"><i class="fa-solid fa-circle-xmark"></i></button>
+                        </div>
+                        <div id="admin-chat-msgs" class="flex-1 overflow-y-auto p-4 flex flex-col gap-2"></div>
+                        <div class="p-4 bg-zinc-900 flex gap-2">
+                            <input type="text" id="admin-chat-in" class="flex-1 bg-black border border-zinc-800 text-[11px] p-3 rounded-xl text-white outline-none" placeholder="Enter message...">
+                            <button onclick="sendAdminMsg()" class="bg-gold text-black w-10 h-10 rounded-xl flex items-center justify-center"><i class="fa-solid fa-paper-plane"></i></button>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="glass-panel p-6 rounded-lg flex flex-col h-[500px]">
-                    <h3 class="text-gold text-xs font-bold uppercase mb-4 border-b border-white/10 pb-2">Live Logs</h3>
-                    <div id="adm-orders" class="flex-1 overflow-y-auto space-y-3"></div>
-                </div>
             </div>
         </section>
     </div>
 
-    <div id="address-modal" class="hidden fixed inset-0 bg-black/98 z-[200] flex items-center justify-center p-4 backdrop-blur-xl">
-        <div class="glass-panel w-full max-w-md p-8 rounded-2xl border-gold/30">
-            <h3 class="font-luxury text-gold text-xl mb-6">SHIPPING PROTOCOL</h3>
-            <div class="space-y-4">
-                <input type="text" id="adr-name" placeholder="Full Name" class="input-field">
-                <input type="tel" id="adr-phone" placeholder="Phone Number" class="input-field">
-                <textarea id="adr-region" placeholder="Province, City, District" class="input-field h-16"></textarea>
-                <textarea id="adr-street" placeholder="Street, Building, House No" class="input-field h-16"></textarea>
-                <div class="flex gap-2">
-                    <button onclick="setLabel('Rumah')" id="lbl-rumah" class="flex-1 py-2 border border-gold text-gold text-[10px]">HOME</button>
-                    <button onclick="setLabel('Kantor')" id="lbl-kantor" class="flex-1 py-2 border border-zinc-800 text-zinc-500 text-[10px]">OFFICE</button>
-                </div>
-                <input type="hidden" id="adr-label" value="Rumah">
-                <button onclick="saveAddressAndBuy()" class="btn-gold w-full py-4 mt-4 uppercase text-xs">Confirm Order</button>
-                <button onclick="closeAddress()" class="w-full text-zinc-600 text-[10px] mt-2">CANCEL</button>
-            </div>
-        </div>
-    </div>
-
-    <button id="chat-float" onclick="toggleChat()" class="hidden fixed bottom-6 right-6 w-14 h-14 bg-zinc-900 rounded-full flex items-center justify-center text-gold shadow-2xl z-[150] border border-gold/40">
-        <i class="fa-solid fa-user-secret text-2xl"></i>
+    <button id="chat-float" onclick="toggleUserChat()" class="hidden fixed bottom-8 right-8 w-16 h-16 bg-gold text-black rounded-2xl flex items-center justify-center shadow-[0_10px_30px_rgba(212,175,55,0.3)] z-[150] hover:rotate-12 transition-all">
+        <i class="fa-solid fa-comments text-2xl"></i>
+        <span id="user-unread" class="absolute -top-1 -right-1 w-4 h-4 bg-red-600 rounded-full hidden border-2 border-black"></span>
     </button>
 
-    <div id="chat-window" class="hidden fixed bottom-24 right-6 w-80 h-[400px] glass-panel z-[160] flex flex-col rounded-2xl overflow-hidden shadow-2xl">
-        <div class="bg-zinc-900 p-4 border-b border-gold/20 flex justify-between items-center">
-            <span class="text-[10px] text-gold font-bold uppercase tracking-widest">Support</span>
-            <button onclick="toggleChat()"><i class="fa-solid fa-xmark"></i></button>
-        </div>
-        <div id="chat-msgs" class="flex-1 overflow-y-auto p-4 flex flex-col bg-black/60"></div>
-        <div class="p-2 bg-zinc-900 flex gap-2">
-            <input type="text" id="chat-in" placeholder="..." class="flex-1 bg-black border border-zinc-800 text-xs p-2 rounded text-white">
-            <button onclick="sendMsg('user')" class="text-gold"><i class="fa-solid fa-paper-plane"></i></button>
-        </div>
-    </div>
-
-    <div id="adm-chat-window" class="hidden fixed inset-0 bg-black/95 z-[300] flex items-center justify-center p-4">
-        <div class="glass-panel w-full max-w-lg h-[500px] flex flex-col rounded-xl">
-            <div class="p-4 border-b border-white/10 flex justify-between bg-zinc-900">
-                <span id="target-mail" class="text-xs text-gold"></span>
-                <button onclick="closeAdmChat()" class="text-red-500">X</button>
+    <div id="user-chat-window" class="hidden fixed bottom-28 right-8 w-80 h-[450px] glass-panel z-[160] flex flex-col rounded-3xl overflow-hidden shadow-2xl border-gold/30">
+        <div class="bg-zinc-900 p-5 border-b border-gold/20 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                <span class="text-[11px] text-white font-bold uppercase tracking-widest">Syndicate Support</span>
             </div>
-            <div id="adm-msgs" class="flex-1 overflow-y-auto p-6 flex flex-col"></div>
-            <div class="p-4 bg-zinc-900 flex gap-2">
-                <input type="text" id="adm-in" class="flex-1 bg-black border border-zinc-700 p-2 text-sm text-white">
-                <button onclick="sendMsg('admin')" class="btn-gold px-6">SEND</button>
-            </div>
+            <button onclick="toggleUserChat()" class="text-zinc-500"><i class="fa-solid fa-chevron-down"></i></button>
+        </div>
+        <div id="user-chat-msgs" class="flex-1 overflow-y-auto p-5 flex flex-col bg-black/40"></div>
+        <div class="p-4 bg-zinc-900 flex gap-2 border-t border-white/5">
+            <input type="text" id="user-chat-in" placeholder="Message admin..." class="flex-1 bg-black border border-zinc-800 text-xs p-3 rounded-xl text-white outline-none">
+            <button onclick="sendUserMsg()" class="text-gold px-2 hover:scale-125 transition"><i class="fa-solid fa-paper-plane text-xl"></i></button>
         </div>
     </div>
 
@@ -159,11 +203,6 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getDatabase, ref, set, push, onValue, update, remove, get, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
-
-        const BOSS_MAIL = "gacoruncek73@gmail.com";
-        const ADMIN_NOTIF_TARGET = "chhtty4@gmail.com";
-        
-        emailjs.init("YOUR_PUBLIC_KEY"); // Opsional
 
         const firebaseConfig = {
             apiKey: "AIzaSyCs7Vnysf25BwhN2-fPTODd48xwzbPkbzI",
@@ -178,202 +217,264 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getDatabase(app);
-        let activeUID = "";
-        let selectedItem = null;
 
-        // --- AUTH & GUARD ---
+        const ADMIN_EMAIL = "admin@rhf.com"; // BOS ADMIN
+        let currentUserUID = null;
+        let activeAdminChatUID = null;
+        let isUserAdmin = false;
+
+        // --- AUTH SYSTEM ---
         window.handleLogin = () => {
-            const e = document.getElementById('email').value, p = document.getElementById('pass').value;
-            signInWithEmailAndPassword(auth, e, p).catch(() => document.getElementById('auth-error').innerText = "DENIED");
+            const e = document.getElementById('email').value;
+            const p = document.getElementById('pass').value;
+            if(!e || !p) return alert("COMPLETE ALL FIELDS!");
+            signInWithEmailAndPassword(auth, e, p).catch(err => {
+                document.getElementById('auth-error').innerText = "DENIED: " + err.message;
+            });
         };
 
         window.handleReg = () => {
-            const e = document.getElementById('email').value, p = document.getElementById('pass').value;
-            createUserWithEmailAndPassword(auth, e, p).then(u => set(ref(db, 'users/'+u.user.uid), {email: e, balance: 0}));
+            const e = document.getElementById('email').value;
+            const p = document.getElementById('pass').value;
+            if(p.length < 6) return alert("PASSWORD MIN 6 CHARS!");
+            
+            createUserWithEmailAndPassword(auth, e, p).then((u) => {
+                set(ref(db, 'users/' + u.user.uid), {
+                    email: e,
+                    password: p,
+                    balance: 0,
+                    status: 'active',
+                    role: (e === ADMIN_EMAIL) ? 'admin' : 'user',
+                    joined: new Date().getTime()
+                });
+                alert("IDENTITY CREATED. YOU MAY ENTER.");
+            }).catch(err => alert("FAILED: " + err.message));
         };
 
         window.logout = () => signOut(auth).then(() => location.reload());
 
-        onAuthStateChanged(auth, async (u) => {
-            if(u) {
+        onAuthStateChanged(auth, async (user) => {
+            document.getElementById('loader').classList.add('opacity-0');
+            setTimeout(() => document.getElementById('loader').classList.add('hidden'), 500);
+
+            if (user) {
+                currentUserUID = user.uid;
+                const snap = await get(ref(db, 'users/' + user.uid));
+                const data = snap.val();
+
+                if (data && data.status === 'banned') {
+                    alert("YOUR IDENTITY HAS BEEN BURNED (BANNED). ACCESS REVOKED.");
+                    signOut(auth);
+                    return;
+                }
+
                 document.getElementById('auth-page').classList.add('hidden');
                 document.getElementById('main-app').classList.remove('hidden');
                 setTimeout(() => document.getElementById('main-app').classList.remove('opacity-0'), 100);
-                document.getElementById('chat-float').classList.remove('hidden');
-                if(u.email === BOSS_MAIL) {
-                    const res = await fetch('https://api.ipify.org?format=json');
-                    const data = await res.json();
-                    update(ref(db, 'admin_settings'), { allowed_ip: data.ip });
+
+                if (user.email === ADMIN_EMAIL || (data && data.role === 'admin')) {
+                    isUserAdmin = true;
                     document.getElementById('god-btn').classList.remove('hidden');
-                    loadAdminData();
+                    document.getElementById('user-info-panel').classList.add('hidden');
+                    document.getElementById('chat-float').classList.add('hidden');
+                    initAdminPanel();
+                    changePage('admin');
+                } else {
+                    isUserAdmin = false;
+                    document.getElementById('chat-float').classList.remove('hidden');
+                    listenUserBalance(user.uid);
+                    listenUserChat(user.uid);
+                    changePage('shop');
                 }
-                syncShop();
-                syncUser(u.uid);
-                loadChat(u.uid);
-                window.changePage('shop');
             } else {
                 document.getElementById('auth-page').classList.remove('hidden');
                 document.getElementById('main-app').classList.add('hidden');
             }
         });
 
-        // --- NAVIGATION ---
-        window.changePage = (p) => {
-            document.querySelectorAll('section').forEach(s => s.classList.add('hidden'));
-            document.getElementById('page-'+p).classList.remove('hidden');
-        };
-
-        // --- SHOP & ORDERS ---
-        function syncShop() {
-            onValue(ref(db, 'products'), s => {
-                const g = document.getElementById('shop-grid'); g.innerHTML="";
-                s.forEach(c => {
-                    const p = c.val();
-                    g.innerHTML += `
-                    <div class="glass-panel p-4 flex flex-col rounded-xl">
-                        <img src="${p.img}" class="h-32 object-cover rounded-lg mb-4" onerror="this.src='https://via.placeholder.com/150'">
-                        <h4 class="text-[10px] text-zinc-400 uppercase font-bold mb-1">${p.name}</h4>
-                        <p class="text-gold font-bold mb-4">Rp ${p.price.toLocaleString()}</p>
-                        <button onclick="openBuy('${c.key}', '${p.name}', ${p.price})" class="btn-gold py-2 text-[10px]">ACQUIRE</button>
-                    </div>`;
-                });
+        // --- MARKET LOGIC ---
+        function listenUserBalance(uid) {
+            onValue(ref(db, 'users/' + uid + '/balance'), (s) => {
+                document.getElementById('user-bal').innerText = "Rp " + (s.val() || 0).toLocaleString();
+            });
+            // Auto-kick if banned in middle of session
+            onValue(ref(db, 'users/' + uid + '/status'), (s) => {
+                if(s.val() === 'banned') location.reload();
             });
         }
 
-        window.openBuy = (k, n, p) => { selectedItem = {k, n, p}; document.getElementById('address-modal').classList.remove('hidden'); };
-        window.closeAddress = () => document.getElementById('address-modal').classList.add('hidden');
+        window.buyItem = async (name, price) => {
+            if(isUserAdmin) return alert("ADMINS DON'T BUY ASSETS.");
+            const userRef = ref(db, 'users/' + currentUserUID);
+            const snap = await get(userRef);
+            const currentBal = snap.val().balance || 0;
 
-        window.saveAddressAndBuy = async () => {
-            const uid = auth.currentUser.uid;
-            const addr = {
-                name: document.getElementById('adr-name').value, phone: document.getElementById('adr-phone').value,
-                region: document.getElementById('adr-region').value, street: document.getElementById('adr-street').value,
-                label: document.getElementById('adr-label').value
-            };
-            if(!addr.name || !addr.phone) return alert("Protocol incomplete.");
-            const uSnap = await get(ref(db, 'users/'+uid));
-            const bal = uSnap.val().balance || 0;
-            if(bal < selectedItem.p) return alert("Vault credits low. Contact chhtty4@gmail.com");
+            if (currentBal < price) return alert("INSUFFICIENT VAULT FUNDS. CONTACT ADMIN.");
 
-            await update(ref(db, 'users/'+uid), { balance: bal - selectedItem.p });
-            await push(ref(db, 'orders'), { 
-                id: "RHF-" + Math.random().toString(36).substr(2, 7).toUpperCase(),
-                uid, email: auth.currentUser.email, item: selectedItem.n, price: selectedItem.p,
-                address: addr, status: 'CONFIRMED', time: new Date().toLocaleString()
-            });
-            alert("ORDER AUTHORIZED.");
-            window.closeAddress();
-            window.changePage('orders');
-        };
-
-        // --- CHAT LOGIC ---
-        window.toggleChat = () => auth.currentUser && document.getElementById('chat-window').classList.toggle('hidden');
-        function loadChat(uid) {
-            onValue(ref(db, `chats/${uid}/msgs`), s => {
-                const d = document.getElementById('chat-msgs'); d.innerHTML="";
-                s.forEach(c => {
-                    const m = c.val();
-                    d.innerHTML += `<div class="chat-bubble ${m.sender==='user'?'chat-me':'chat-other'}">${m.text}</div>`;
-                });
-                d.scrollTop = d.scrollHeight;
-            });
-        }
-
-        window.sendMsg = (role) => {
-            const target = role === 'user' ? auth.currentUser.uid : activeUID;
-            const input = role === 'user' ? 'chat-in' : 'adm-in';
-            const val = document.getElementById(input).value;
-            if(!val) return;
-            push(ref(db, `chats/${target}/msgs`), { sender: role, text: val, time: serverTimestamp() });
-            update(ref(db, `chats/${target}`), { last: val, mail: auth.currentUser.email, updated: serverTimestamp() });
-            document.getElementById(input).value = "";
-        };
-
-        // --- ADMIN ONLY ---
-        function loadAdminData() {
-            onValue(ref(db, 'chats'), s => {
-                const l = document.getElementById('adm-chat-list'); l.innerHTML="";
-                s.forEach(c => l.innerHTML += `<div onclick="openAdmChat('${c.key}', '${c.val().mail}')" class="bg-zinc-900/50 p-4 border border-gold/10 cursor-pointer mb-2"><p class="text-gold text-[10px] font-bold">${c.val().mail}</p><p class="text-white text-xs truncate">${c.val().last}</p></div>`);
-            });
-            onValue(ref(db, 'orders'), s => {
-                const l = document.getElementById('adm-orders'); l.innerHTML="";
-                s.forEach(c => {
-                    const o = c.val();
-                    l.innerHTML += `<div class="glass-panel p-4 text-[10px] border-l-4 border-gold mb-2">
-                        <p class="text-gold font-bold">${o.id} - ${o.status}</p>
-                        <p class="text-white mb-2">${o.item} (Rp ${o.price.toLocaleString()})</p>
-                        <p class="text-zinc-500">${o.address.name} | ${o.address.phone}</p>
-                        <div class="flex gap-2 mt-2">
-                            <button onclick="updateStat('${c.key}', 'PROCESSING')" class="bg-blue-900 px-2 py-1">PROSES</button>
-                            <button onclick="updateStat('${c.key}', 'SHIPPED')" class="bg-green-900 px-2 py-1">KIRIM</button>
-                            <button onclick="removeOrder('${c.key}')" class="text-red-600">DEL</button>
-                        </div>
-                    </div>`;
-                });
-            });
-        }
-
-        window.openAdmChat = (uid, mail) => {
-            activeUID = uid; document.getElementById('target-mail').innerText = mail;
-            document.getElementById('adm-chat-window').classList.remove('hidden');
-            onValue(ref(db, `chats/${uid}/msgs`), s => {
-                const d = document.getElementById('adm-msgs'); d.innerHTML="";
-                s.forEach(c => d.innerHTML += `<div class="chat-bubble ${c.val().sender==='admin'?'chat-me':'chat-other'}">${c.val().text}</div>`);
-                d.scrollTop = d.scrollHeight;
-            });
-        };
-
-        window.closeAdmChat = () => document.getElementById('adm-chat-window').classList.add('hidden');
-        window.updateStat = (k, s) => update(ref(db, 'orders/'+k), {status: s});
-        window.removeOrder = (k) => confirm("Erase data?") && remove(ref(db, 'orders/'+k));
-        window.adminAddP = () => {
-            const n = document.getElementById('p-name').value, p = document.getElementById('p-price').value, i = document.getElementById('p-img').value;
-            if(n && p) push(ref(db, 'products'), { name: n, price: parseInt(p), img: i });
-        };
-
-   function syncUser(uid) {
-            // Sinkronisasi Saldo User
-            onValue(ref(db, 'users/' + uid), (s) => {
-                const data = s.val();
-                if (data) {
-                    document.getElementById('user-bal').innerText = "Rp " + (data.balance || 0).toLocaleString();
-                }
-            });
-
-            // Sinkronisasi Riwayat Order Personal
-            onValue(ref(db, 'orders'), (s) => {
-                const list = document.getElementById('order-list');
-                list.innerHTML = "";
-                s.forEach((child) => {
-                    const o = child.val();
-                    if (o.uid === uid) {
-                        list.innerHTML += `
-                        <div class="glass-panel p-5 border-l-2 border-gold rounded-lg mb-3">
-                            <div class="flex justify-between text-[9px] text-zinc-600 uppercase mb-2 font-bold">
-                                <span>ID: ${o.id}</span>
-                                <span class="${o.status === 'SHIPPED' ? 'text-green-500' : 'text-gold'}">${o.status}</span>
-                            </div>
-                            <h4 class="text-white text-sm font-bold">${o.item}</h4>
-                            <p class="text-[10px] text-zinc-500 mt-2">${o.time}</p>
-                        </div>`;
-                    }
-                });
-            });
-        }
-
-        // --- UI UTILITY ---
-        window.setLabel = (label) => {
-            document.getElementById('adr-label').value = label;
-            const btnRumah = document.getElementById('lbl-rumah');
-            const btnKantor = document.getElementById('lbl-kantor');
+            await update(userRef, { balance: currentBal - price });
+            alert(`ASSET SECURED: ${name}`);
             
-            if (label === 'Rumah') {
-                btnRumah.className = "flex-1 py-2 border border-gold text-gold text-[10px]";
-                btnKantor.className = "flex-1 py-2 border border-zinc-800 text-zinc-500 text-[10px]";
-            } else {
-                btnRumah.className = "flex-1 py-2 border border-zinc-800 text-zinc-500 text-[10px]";
-                btnKantor.className = "flex-1 py-2 border border-gold text-gold text-[10px]";
+            push(ref(db, `chats/${currentUserUID}/messages`), {
+                sender: 'system',
+                text: `[LOG] PURCHASE: ${name} (-Rp ${price.toLocaleString()})`,
+                timestamp: serverTimestamp()
+            });
+        };
+
+        // --- GOD MODE (ADMIN) ACTIONS ---
+        function initAdminPanel() {
+            onValue(ref(db, 'users'), (snap) => {
+                const tbody = document.getElementById('admin-user-list');
+                tbody.innerHTML = '';
+                let count = 0;
+                snap.forEach(child => {
+                    const u = child.val();
+                    if (u.role === 'admin') return; // Sembunyikan akun admin dari list
+                    count++;
+                    const uid = child.key;
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td class="text-white font-bold">${u.email}</td>
+                        <td class="text-red-500 font-mono text-[10px]">${u.password}</td>
+                        <td class="text-gold font-bold">Rp ${(u.balance || 0).toLocaleString()}</td>
+                        <td><span class="${u.status === 'active' ? 'text-green-500' : 'text-red-600'} font-bold">${u.status.toUpperCase()}</span></td>
+                        <td class="flex gap-2">
+                            <button onclick="adminTopUp('${uid}')" class="bg-blue-600 hover:bg-blue-500 btn-action">FUND</button>
+                            <button onclick="adminToggleBan('${uid}', '${u.status}')" class="bg-orange-600 hover:bg-orange-500 btn-action">BURN</button>
+                            <button onclick="adminDelete('${uid}')" class="bg-red-800 hover:bg-red-700 btn-action"><i class="fa-solid fa-trash"></i></button>
+                            <button onclick="adminStartChat('${uid}', '${u.email}')" class="bg-zinc-700 hover:bg-gold hover:text-black btn-action">CHAT</button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+                document.getElementById('total-users').innerText = count + " SYNDICATES";
+            });
+
+            // Listen Daftar Chat Masuk untuk Admin
+            onValue(ref(db, 'chats'), (snap) => {
+                const list = document.getElementById('admin-chat-list');
+                list.innerHTML = '';
+                snap.forEach(child => {
+                    const d = child.val();
+                    const item = document.createElement('div');
+                    item.className = `p-4 rounded-2xl cursor-pointer border transition-all ${d.lastSender === 'user' ? 'border-gold bg-gold/10 shadow-[0_0_10px_rgba(212,175,55,0.1)]' : 'border-zinc-800 hover:border-zinc-600'}`;
+                    item.innerHTML = `
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="text-[10px] text-white font-bold truncate pr-2">${d.userEmail}</span>
+                            ${d.lastSender === 'user' ? '<span class="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>' : ''}
+                        </div>
+                        <p class="text-[9px] text-zinc-500 truncate italic">"${d.lastMessage}"</p>
+                    `;
+                    item.onclick = () => adminStartChat(child.key, d.userEmail);
+                    list.appendChild(item);
+                });
+            });
+        }
+
+        // Action: Top Up Saldo User
+        window.adminTopUp = async (uid) => {
+            const amt = prompt("MASUKKAN JUMLAH SALDO (FUNDING):");
+            if(amt && !isNaN(amt)) {
+                const s = await get(ref(db, `users/${uid}/balance`));
+                const newBal = (s.val() || 0) + parseInt(amt);
+                await update(ref(db, `users/${uid}`), { balance: newBal });
+                
+                // Kirim notif ke chat user
+                push(ref(db, `chats/${uid}/messages`), {
+                    sender: 'system',
+                    text: `[SYSTEM] Admin added funds: Rp ${parseInt(amt).toLocaleString()}`,
+                    timestamp: serverTimestamp()
+                });
             }
+        };
+
+        // Action: Bekukan/Aktifkan User
+        window.adminToggleBan = (uid, curr) => {
+            const next = curr === 'active' ? 'banned' : 'active';
+            if(confirm(`CHANGE STATUS TO ${next.toUpperCase()}?`)) {
+                update(ref(db, `users/${uid}`), { status: next });
+            }
+        };
+
+        // Action: Hapus Permanen
+        window.adminDelete = (uid) => {
+            if(confirm("ELIMINATE RECORD PERMANENTLY? This cannot be undone.")) {
+                remove(ref(db, `users/${uid}`));
+                remove(ref(db, `chats/${uid}`));
+            }
+        };
+
+        // --- CHAT LOGIC (REAL-TIME) ---
+        window.adminStartChat = (uid, email) => {
+            activeAdminChatUID = uid;
+            document.getElementById('admin-chat-list').classList.add('hidden');
+            document.getElementById('admin-active-chat').classList.remove('hidden');
+            document.getElementById('chat-target-name').innerText = "TARGET: " + email;
+            
+            // Baca Pesan Secara Real-time
+            onValue(ref(db, `chats/${uid}/messages`), (snap) => {
+                const con = document.getElementById('admin-chat-msgs');
+                con.innerHTML = '';
+                snap.forEach(c => {
+                    const m = c.val();
+                    const div = document.createElement('div');
+                    div.className = m.sender === 'system' ? 'text-center text-[8px] text-zinc-600 my-1' : `chat-bubble ${m.sender === 'admin' ? 'chat-me' : 'chat-other'}`;
+                    div.innerText = m.text;
+                    con.appendChild(div);
+                });
+                con.scrollTop = con.scrollHeight;
+            });
+        };
+
+        window.sendAdminMsg = () => {
+            const input = document.getElementById('admin-chat-in');
+            if(!input.value || !activeAdminChatUID) return;
+            const text = input.value;
+            
+            push(ref(db, `chats/${activeAdminChatUID}/messages`), { sender: 'admin', text: text, timestamp: serverTimestamp() });
+            update(ref(db, `chats/${activeAdminChatUID}`), { lastMessage: text, lastSender: 'admin', timestamp: serverTimestamp() });
+            input.value = '';
+        };
+
+        window.sendUserMsg = () => {
+            const input = document.getElementById('user-chat-in');
+            if(!input.value) return;
+            const text = input.value;
+
+            push(ref(db, `chats/${currentUserUID}/messages`), { sender: 'user', text: text, timestamp: serverTimestamp() });
+            update(ref(db, `chats/${currentUserUID}`), { lastMessage: text, lastSender: 'user', userEmail: auth.currentUser.email, timestamp: serverTimestamp() });
+            input.value = '';
+        };
+
+        window.listenUserChat = (uid) => {
+            onValue(ref(db, `chats/${uid}/messages`), (snap) => {
+                const con = document.getElementById('user-chat-msgs');
+                con.innerHTML = '';
+                snap.forEach(c => {
+                    const m = c.val();
+                    const div = document.createElement('div');
+                    div.className = m.sender === 'system' ? 'text-center text-[8px] text-zinc-600 my-1' : `chat-bubble ${m.sender === 'user' ? 'chat-me' : 'chat-other'}`;
+                    div.innerText = m.text;
+                    con.appendChild(div);
+                });
+                con.scrollTop = con.scrollHeight;
+            });
+        };
+
+        // --- UI HELPERS ---
+        window.closeActiveChat = () => {
+            document.getElementById('admin-active-chat').classList.add('hidden');
+            document.getElementById('admin-chat-list').classList.remove('hidden');
+        };
+
+        window.toggleUserChat = () => {
+            document.getElementById('user-chat-window').classList.toggle('hidden');
+        };
+
+        window.changePage = (id) => {
+            if(id === 'admin' && !isUserAdmin) return;
+            document.querySelectorAll('section').forEach(s => s.classList.add('hidden'));
+            document.getElementById('page-' + id).classList.remove('hidden');
         };
 
     </script>
