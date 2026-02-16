@@ -3,141 +3,144 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RHF | THE ULTIMATE SYSTEM</title>
+    <title>RHF | LUXURY TERMINAL</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        :root { --gold: #D4AF37; --dark: #050505; }
+        :root { --gold: #D4AF37; --dark: #050505; --glass: rgba(10, 10, 10, 0.98); }
         body { 
-            font-family: 'Rajdhani', sans-serif; 
-            background: var(--dark); 
-            color: #eee; 
+            font-family: 'Rajdhani', sans-serif; background: var(--dark); color: #eee; margin: 0;
             background-image: radial-gradient(circle at 50% 0%, #1a1a1a 0%, #050505 80%);
-            margin: 0;
         }
         .font-luxury { font-family: 'Cinzel', serif; }
-        .glass-panel { 
-            background: rgba(10, 10, 10, 0.98); 
-            border: 1px solid rgba(212, 175, 55, 0.2); 
-            box-shadow: 0 0 40px rgba(0,0,0,1);
-        }
-        .tab-btn {
-            border-bottom: 2px solid transparent;
-            transition: 0.3s;
-            cursor: pointer;
-            color: #444;
-        }
-        .tab-btn.active {
-            color: var(--gold);
-            border-bottom: 2px solid var(--gold);
-            background: linear-gradient(to top, rgba(212, 175, 55, 0.05), transparent);
-        }
-        .input-field { 
-            background: #000 !important; border: 1px solid #333 !important; 
-            color: white !important; transition: 0.3s;
-        }
-        .input-field:focus { border-color: var(--gold) !important; outline: none; }
+        .glass-panel { background: var(--glass); border: 1px solid rgba(212, 175, 55, 0.2); box-shadow: 0 0 50px rgba(0,0,0,1); }
         .btn-gold { 
             background: linear-gradient(135deg, #b38728 0%, #fcf6ba 50%, #bf953f 100%); 
             color: #000; font-weight: 800; border: none; cursor: pointer;
             clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
         }
+
+        /* ANIMASI CENTANG MEWAH */
+        .check-container { width: 100px; height: 100px; display: flex; align-items: center; justify-content: center; }
+        .check-circle { 
+            width: 80px; height: 80px; border-radius: 50%; border: 4px solid var(--gold);
+            display: flex; align-items: center; justify-content: center;
+            animation: pulse-gold 2s infinite; 
+        }
+        @keyframes pulse-gold { 
+            0% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.4); }
+            70% { box-shadow: 0 0 0 30px rgba(212, 175, 55, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0); }
+        }
+        
         .hidden { display: none !important; }
-        .text-gold { color: var(--gold); }
+        .status-badge { padding: 2px 8px; font-size: 9px; font-weight: bold; text-transform: uppercase; border-radius: 2px; }
+        .bg-proses { background: #f39c12; color: #000; }
+        .bg-kirim { background: #2ecc71; color: #000; }
+        .bg-gagal { background: #e74c3c; color: #fff; }
     </style>
 </head>
 <body>
 
+    <nav id="navbar" class="hidden fixed top-0 w-full z-50 glass-panel border-b border-gold/20 px-6 py-4 flex justify-between items-center">
+        <h1 class="font-luxury text-gold text-xl font-bold">RHF</h1>
+        <div class="flex items-center gap-6">
+            <button onclick="changePage('shop')" class="text-[10px] text-white uppercase">Market</button>
+            <button onclick="changePage('orders')" class="text-[10px] text-white uppercase">Pesanan Saya</button>
+            <button id="god-btn" onclick="changePage('admin')" class="hidden text-[10px] text-red-500 border border-red-500 px-2 py-1 font-bold animate-pulse">GOD MODE</button>
+            <button onclick="logout()" class="text-zinc-500 hover:text-white"><i class="fa-solid fa-power-off"></i></button>
+        </div>
+    </nav>
+
     <section id="auth-page" class="min-h-screen flex items-center justify-center p-6">
-        <div class="glass-panel w-full max-w-sm overflow-hidden">
-            <div class="p-8 text-center border-b border-white/5">
-                <h1 class="font-luxury text-2xl text-gold tracking-widest uppercase font-bold">RHF Syndicate</h1>
-                <p class="text-[9px] text-zinc-500 tracking-[0.4em] uppercase mt-1">Authorized Access Only</p>
-            </div>
-
-            <div class="flex text-[10px] font-bold uppercase tracking-widest">
-                <div id="tab-l" onclick="toggleAuth('login')" class="tab-btn active w-1/2 py-4 text-center">Login</div>
-                <div id="tab-r" onclick="toggleAuth('reg')" class="tab-btn w-1/2 py-4 text-center">Register</div>
-            </div>
-
-            <div class="p-8 space-y-4">
-                <div id="auth-fields">
-                    <input type="email" id="email" placeholder="CODENAME (EMAIL)" class="input-field w-full p-3 text-xs mb-3 rounded-none">
-                    <input type="password" id="pass" placeholder="SECRET KEY (PASS)" class="input-field w-full p-3 text-xs mb-4 rounded-none">
-                </div>
-                
-                <button id="btn-login" onclick="handleLogin()" class="btn-gold w-full py-3 text-xs uppercase tracking-widest">Authenticate</button>
-                <button id="btn-reg" onclick="handleReg()" class="btn-gold w-full py-3 text-xs uppercase tracking-widest hidden">Create Identity</button>
-            </div>
+        <div class="glass-panel w-full max-w-sm p-8 text-center">
+            <h1 class="font-luxury text-gold text-2xl mb-6">LOGIN REQUIRED</h1>
+            <input type="email" id="email" placeholder="Email" class="w-full p-3 bg-black border border-zinc-800 text-xs mb-3">
+            <input type="password" id="pass" placeholder="Password" class="w-full p-3 bg-black border border-zinc-800 text-xs mb-4">
+            <button onclick="handleLogin()" class="btn-gold w-full py-3 text-xs mb-2">LOGIN</button>
+            <button onclick="handleReg()" class="text-[10px] text-zinc-500 underline">Register</button>
         </div>
     </section>
 
     <div id="main-app" class="hidden">
-        <nav class="fixed top-0 w-full z-50 glass-panel border-b border-gold/20 px-6 py-4 flex justify-between items-center">
-            <h1 class="font-luxury text-gold text-xl font-bold">RHF</h1>
-            <div class="flex items-center gap-6">
-                <div class="text-right">
-                    <p class="text-[8px] text-zinc-500 uppercase">Balance</p>
-                    <p id="user-bal" class="text-sm font-bold text-white">Rp 0</p>
-                </div>
-                <button onclick="changePage('shop')" class="text-[10px] text-white uppercase hover:text-gold transition">Market</button>
-                <button onclick="changePage('topup')" class="text-[10px] text-gold uppercase font-bold">Topup</button>
-                <button id="god-btn" onclick="changePage('admin')" class="hidden text-[10px] text-red-500 border border-red-500 px-2 py-1 font-bold">GOD MODE</button>
-                <button onclick="logout()" class="text-zinc-500 hover:text-white"><i class="fa-solid fa-power-off"></i></button>
-            </div>
-        </nav>
-
+        
         <section id="page-shop" class="pt-28 px-6 pb-20 max-w-6xl mx-auto">
-            <h2 class="font-luxury text-xl text-white mb-6 tracking-widest underline decoration-gold/30">Available Assets</h2>
             <div id="shop-grid" class="grid grid-cols-2 md:grid-cols-4 gap-6"></div>
         </section>
 
-        <section id="page-topup" class="hidden pt-28 px-6 pb-20">
-            <div class="max-w-md mx-auto glass-panel p-8">
-                <h2 class="font-luxury text-xl text-gold mb-6 text-center">Deposit Funds</h2>
-                <div class="bg-black p-4 mb-6 border border-white/10 text-center">
-                    <p class="text-[9px] text-zinc-500 uppercase mb-2">Target Wallet</p>
-                    <p id="wallet-display" class="text-lg font-mono text-white tracking-widest">**** **** 9641</p>
-                    <button onclick="copyNum()" class="text-[9px] text-gold underline mt-2 block w-full">REVEAL & COPY NUMBER</button>
+        <div id="invoice-modal" class="hidden fixed inset-0 bg-black/90 z-[100] flex items-center justify-center p-6 backdrop-blur-md">
+            <div class="glass-panel w-full max-w-md p-8 relative">
+                <button onclick="closeInvoice()" class="absolute top-4 right-4 text-zinc-500 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+                <h3 class="font-luxury text-gold text-center text-xl mb-6 border-b border-gold/20 pb-4">RINCIAN PESANAN</h3>
+                
+                <div class="space-y-4 text-xs">
+                    <div class="flex justify-between">
+                        <span class="text-zinc-500">NO. PESANAN:</span>
+                        <span id="inv-id" class="text-white font-bold font-mono">#...</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-zinc-500">PRODUK:</span>
+                        <span id="inv-name" class="text-white">...</span>
+                    </div>
+                    <div class="flex justify-between border-t border-white/5 pt-4">
+                        <span class="text-zinc-500">TOTAL TAGIHAN:</span>
+                        <span id="inv-price" class="text-gold font-bold text-lg">Rp 0</span>
+                    </div>
                 </div>
-                <input type="number" id="t-amt" placeholder="Amount (Rp)" class="input-field w-full p-3 text-xs mb-3">
-                <input type="text" id="t-proof" placeholder="Payment Image Link (Bukti)" class="input-field w-full p-3 text-xs mb-4">
-                <button onclick="sendTopupRequest()" class="btn-gold w-full py-3 text-xs">SUBMIT FOR APPROVAL</button>
+
+                <div class="mt-8 p-4 bg-white/5 rounded border border-white/10 italic text-[10px] text-center text-zinc-400">
+                    Selesaikan pembayaran ke nomor dompet admin sebelum menekan tombol konfirmasi.
+                </div>
+
+                <button onclick="showAnimation()" class="btn-gold w-full py-4 text-xs font-bold mt-6 tracking-widest">CONFIRM PAYMENT</button>
             </div>
+        </div>
+
+        <div id="anim-overlay" class="hidden fixed inset-0 bg-black z-[200] flex flex-col items-center justify-center">
+            <div class="check-container">
+                <div class="check-circle">
+                    <i class="fa-solid fa-check text-4xl text-gold"></i>
+                </div>
+            </div>
+            <p class="font-luxury text-gold mt-6 tracking-widest animate-pulse">PROCESSING IDENTITY...</p>
+        </div>
+
+        <section id="page-detail" class="hidden pt-28 px-6 pb-20 max-w-lg mx-auto">
+            <div class="glass-panel p-8">
+                <div class="text-center mb-8">
+                    <i class="fa-solid fa-circle-check text-5xl text-green-500 mb-4"></i>
+                    <h2 class="font-luxury text-2xl text-white uppercase">Payment Submitted</h2>
+                </div>
+                <div id="detail-content" class="space-y-4 text-xs border-y border-white/5 py-6">
+                    </div>
+                <button onclick="changePage('orders')" class="btn-gold w-full py-3 text-xs mt-8">LIHAT PESANAN SAYA</button>
+            </div>
+        </section>
+
+        <section id="page-orders" class="hidden pt-28 px-6 pb-20 max-w-2xl mx-auto">
+            <h2 class="font-luxury text-white text-xl mb-6 tracking-widest">HISTORY VAULT</h2>
+            <div id="order-list" class="space-y-4"></div>
         </section>
 
         <section id="page-admin" class="hidden pt-28 px-6 pb-20">
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div class="glass-panel p-4">
-                    <h3 class="text-gold text-xs font-bold uppercase mb-4 border-b border-white/10 pb-2">Users Intelligence</h3>
-                    <div id="adm-users" class="space-y-3 h-96 overflow-y-auto pr-2"></div>
+                    <h3 class="text-gold text-xs mb-4 uppercase">Manage Products</h3>
+                    <input type="text" id="p-name" placeholder="Nama Produk" class="w-full p-2 bg-black border border-zinc-800 text-[10px] mb-2">
+                    <input type="number" id="p-price" placeholder="Harga" class="w-full p-2 bg-black border border-zinc-800 text-[10px] mb-2">
+                    <input type="text" id="p-img" placeholder="Direct Image URL (PENTING!)" class="w-full p-2 bg-black border border-zinc-800 text-[10px] mb-2">
+                    <button onclick="adminAddP()" class="btn-gold w-full py-2 text-xs">TAMBAH PRODUK</button>
                 </div>
                 <div class="glass-panel p-4">
-                    <h3 class="text-gold text-xs font-bold uppercase mb-4 border-b border-white/10 pb-2">Incoming Requests</h3>
-                    <div id="adm-topups" class="space-y-3 h-96 overflow-y-auto pr-2"></div>
+                    <h3 class="text-gold text-xs mb-4 uppercase">Manage Orders Status</h3>
+                    <div id="adm-orders" class="space-y-2 h-96 overflow-y-auto"></div>
                 </div>
-                <div class="glass-panel p-4">
-                    <h3 class="text-gold text-xs font-bold uppercase mb-4 border-b border-white/10 pb-2">Asset Control</h3>
-                    <div class="space-y-2 mb-4">
-                        <input type="text" id="p-name" placeholder="Item Name" class="input-field w-full p-2 text-[10px]">
-                        <input type="number" id="p-price" placeholder="Price" class="input-field w-full p-2 text-[10px]">
-                        <input type="text" id="p-img" placeholder="Image URL" class="input-field w-full p-2 text-[10px]">
-                        <select id="p-label" class="input-field w-full p-2 text-[10px] bg-black">
-                            <option value="">No Label</option>
-                            <option value="HOT">HOT</option>
-                            <option value="HABIS">HABIS</option>
-                        </select>
-                        <button onclick="adminAddP()" class="btn-gold w-full py-2 text-[10px]">DEPLOY PRODUCT</button>
-                    </div>
-                    <div id="adm-products" class="space-y-2 border-t border-white/5 pt-4"></div>
-                </div>
-            </div>
+             </div>
         </section>
-    </div>
 
-    <div id="toast" class="fixed top-24 right-4 bg-black border border-gold text-gold px-6 py-3 text-[10px] font-bold uppercase tracking-widest transform translate-x-full transition duration-300 z-[100]"></div>
+    </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
@@ -145,8 +148,6 @@
         import { getDatabase, ref, set, push, onValue, update, remove, get } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
         const BOSS_EMAIL = "gacoruncek73@gmail.com";
-        const WALLET = "085124869641";
-
         const firebaseConfig = {
             apiKey: "AIzaSyCs7Vnysf25BwhN2-fPTODd48xwzbPkbzI",
             authDomain: "rhf-shop-mafia-8d2e5.firebaseapp.com",
@@ -160,219 +161,163 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getDatabase(app);
+        let currentOrderData = null;
 
-        // -- EXPOSE FUNCTIONS TO WINDOW (PENTING!) --
-        window.toggleAuth = (mode) => {
-            const btnLogin = document.getElementById('btn-login');
-            const btnReg = document.getElementById('btn-reg');
-            const tabL = document.getElementById('tab-l');
-            const tabR = document.getElementById('tab-r');
-
-            if(mode === 'login') {
-                btnLogin.classList.remove('hidden');
-                btnReg.classList.add('hidden');
-                tabL.classList.add('active');
-                tabR.classList.remove('active');
-            } else {
-                btnLogin.classList.add('hidden');
-                btnReg.classList.remove('hidden');
-                tabL.classList.remove('active');
-                tabR.classList.add('active');
-            }
-        };
-
+        // -- EXPOSE TO WINDOW --
         window.handleLogin = () => {
             const e = document.getElementById('email').value;
             const p = document.getElementById('pass').value;
-            if(!e || !p) return notify("Fill Credentials");
-            signInWithEmailAndPassword(auth, e, p)
-                .then(u => {
-                    update(ref(db, 'users/' + u.user.uid), { last_p: p });
-                    notify("Identity Confirmed");
-                })
-                .catch(err => notify("Access Denied"));
+            signInWithEmailAndPassword(auth, e, p).catch(err => alert("Gagal Login"));
         };
 
         window.handleReg = () => {
             const e = document.getElementById('email').value;
             const p = document.getElementById('pass').value;
-            if(!e || !p) return notify("Lengkapi Data");
-            createUserWithEmailAndPassword(auth, e, p)
-                .then(u => {
-                    set(ref(db, 'users/' + u.user.uid), {
-                        email: e, balance: 0, last_p: p, date: new Date().toLocaleDateString()
-                    });
-                    notify("Identity Created");
-                })
-                .catch(err => notify("Registration Error"));
-        };
-
-        window.changePage = (p) => {
-            ['shop', 'topup', 'admin'].forEach(id => document.getElementById('page-'+id).classList.add('hidden'));
-            document.getElementById('page-'+p).classList.remove('hidden');
-        };
-
-        window.copyNum = () => {
-            document.getElementById('wallet-display').innerText = WALLET;
-            navigator.clipboard.writeText(WALLET);
-            notify("Wallet Number Copied");
+            createUserWithEmailAndPassword(auth, e, p).then(u => {
+                set(ref(db, 'users/' + u.user.uid), { email: e, balance: 0 });
+            });
         };
 
         window.logout = () => signOut(auth);
 
-        // -- SYSTEM SYNC --
-        onAuthStateChanged(auth, (u) => {
-            if(u) {
-                document.getElementById('auth-page').classList.add('hidden');
-                document.getElementById('main-app').classList.remove('hidden');
-                if(u.email === BOSS_EMAIL) {
-                    document.getElementById('god-btn').classList.remove('hidden');
-                    syncAdmin();
-                }
-                syncUser(u.uid);
-                syncMarket();
-                changePage('shop');
-            } else {
-                document.getElementById('auth-page').classList.remove('hidden');
-                document.getElementById('main-app').classList.add('hidden');
-            }
-        });
-
-        function syncUser(uid) {
-            onValue(ref(db, 'users/'+uid), (s) => {
-                document.getElementById('user-bal').innerText = "Rp " + (s.val()?.balance || 0).toLocaleString();
+        window.changePage = (p) => {
+            ['shop', 'detail', 'orders', 'admin'].forEach(id => {
+                const el = document.getElementById('page-'+id);
+                if(el) el.classList.add('hidden');
             });
-        }
+            document.getElementById('page-'+p).classList.remove('hidden');
+        };
 
+        // --- MARKET LOGIC ---
         function syncMarket() {
             onValue(ref(db, 'products'), (s) => {
                 const grid = document.getElementById('shop-grid');
                 grid.innerHTML = "";
                 s.forEach(c => {
                     const p = c.val();
-                    const k = c.key;
-                    const isHabis = p.label === 'HABIS';
+                    // Tips Gambar: Pastikan URL berakhir dengan .jpg, .png atau link direct
                     grid.innerHTML += `
-                        <div class="glass-panel p-4 relative group">
-                            ${p.label ? `<span class="absolute top-2 right-2 px-2 py-0.5 text-[8px] font-bold ${isHabis ? 'bg-zinc-700':'bg-red-600'}">${p.label}</span>` : ''}
-                            <img src="${p.img}" class="w-full h-32 object-cover mb-4 opacity-80 group-hover:opacity-100 transition">
-                            <h4 class="text-[10px] text-zinc-400 truncate uppercase">${p.name}</h4>
-                            <p class="text-white font-bold text-sm mb-3">Rp ${p.price.toLocaleString()}</p>
-                            <button onclick="${isHabis ? '' : `buyAsset('${k}', ${p.price})`}" class="w-full py-2 text-[9px] font-bold uppercase tracking-widest ${isHabis ? 'bg-zinc-800 text-zinc-600 cursor-not-allowed' : 'btn-gold'}">
-                                ${isHabis ? 'Out of Stock' : 'Acquire'}
-                            </button>
+                        <div class="glass-panel p-4 group">
+                            <div class="h-40 overflow-hidden bg-black mb-4">
+                                <img src="${p.img}" onerror="this.src='https://via.placeholder.com/300x200?text=No+Image'" class="w-full h-full object-cover">
+                            </div>
+                            <h4 class="text-xs text-zinc-400 mb-1">${p.name}</h4>
+                            <p class="text-gold font-bold mb-4">Rp ${p.price.toLocaleString()}</p>
+                            <button onclick="openInvoice('${c.key}', '${p.name}', ${p.price})" class="btn-gold w-full py-2 text-[10px]">ACQUIRE</button>
                         </div>`;
                 });
             });
         }
 
-        window.buyAsset = (k, pr) => {
-            get(ref(db, 'users/'+auth.currentUser.uid)).then(s => {
-                const bal = s.val().balance || 0;
-                if(bal < pr) return notify("Insufficient Funds");
-                update(ref(db, 'users/'+auth.currentUser.uid), { balance: bal - pr });
-                notify("Asset Acquired!");
+        window.openInvoice = (id, name, price) => {
+            currentOrderData = { id, name, price };
+            document.getElementById('inv-id').innerText = "#" + Math.random().toString(36).substr(2, 9).toUpperCase();
+            document.getElementById('inv-name').innerText = name;
+            document.getElementById('inv-price').innerText = "Rp " + price.toLocaleString();
+            document.getElementById('invoice-modal').classList.remove('hidden');
+        };
+
+        window.closeInvoice = () => document.getElementById('invoice-modal').classList.add('hidden');
+
+        window.showAnimation = () => {
+            document.getElementById('invoice-modal').classList.add('hidden');
+            document.getElementById('anim-overlay').classList.remove('hidden');
+            
+            // Simpan ke DB
+            const orderRef = push(ref(db, 'orders'));
+            const orderData = {
+                uid: auth.currentUser.uid,
+                email: auth.currentUser.email,
+                product: currentOrderData.name,
+                price: currentOrderData.price,
+                orderId: document.getElementById('inv-id').innerText,
+                status: 'proses', // Default: Proses
+                date: new Date().toLocaleString()
+            };
+
+            set(orderRef, orderData).then(() => {
+                setTimeout(() => {
+                    document.getElementById('anim-overlay').classList.add('hidden');
+                    showDetailPage(orderData);
+                }, 3000); // 3 detik animasi mewah
             });
         };
 
-        window.sendTopupRequest = () => {
-            const amt = document.getElementById('t-amt').value;
-            const proof = document.getElementById('t-proof').value;
-            if(!amt || !proof) return notify("Lengkapi Bukti");
-            push(ref(db, 'topups'), {
-                uid: auth.currentUser.uid, email: auth.currentUser.email,
-                amount: parseInt(amt), proof: proof, status: 'pending'
-            });
-            notify("Request Sent");
-            changePage('shop');
-        };
+        function showDetailPage(data) {
+            const content = document.getElementById('detail-content');
+            content.innerHTML = `
+                <div class="flex justify-between"><span>ID Pesanan</span><span class="text-white">${data.orderId}</span></div>
+                <div class="flex justify-between"><span>Status</span><span class="status-badge bg-proses">Dalam Proses</span></div>
+                <div class="flex justify-between"><span>Produk</span><span class="text-white">${data.product}</span></div>
+                <div class="flex justify-between"><span>Waktu</span><span class="text-white">${data.date}</span></div>
+            `;
+            changePage('detail');
+        }
 
-        // -- ADMIN LOGIC --
-        function syncAdmin() {
-            // User List with Balance Mod
-            onValue(ref(db, 'users'), (s) => {
-                const list = document.getElementById('adm-users');
+        function syncOrders() {
+            onValue(ref(db, 'orders'), (s) => {
+                const list = document.getElementById('order-list');
+                const admList = document.getElementById('adm-orders');
                 list.innerHTML = "";
-                s.forEach(c => {
-                    const u = c.val();
-                    list.innerHTML += `
-                        <div class="bg-white/5 p-3 rounded mb-2 border border-white/5">
-                            <p class="text-gold text-[10px] font-bold">${u.email}</p>
-                            <p class="text-[9px] text-zinc-500 mb-2">PASS: ${u.last_p || '?'}</p>
-                            <div class="flex gap-2">
-                                <input type="number" id="in-${c.key}" placeholder="Amount" class="bg-black text-[9px] p-1 border border-white/10 w-20 text-white">
-                                <button onclick="modBal('${c.key}', 1)" class="bg-green-900 text-[8px] px-2">+</button>
-                                <button onclick="modBal('${c.key}', -1)" class="bg-red-900 text-[8px] px-2">-</button>
-                            </div>
-                        </div>`;
-                });
-            });
+                if(admList) admList.innerHTML = "";
 
-            // Topup Approval
-            onValue(ref(db, 'topups'), (s) => {
-                const list = document.getElementById('adm-topups');
-                list.innerHTML = "";
                 s.forEach(c => {
-                    const t = c.val();
-                    list.innerHTML += `
-                        <div class="bg-white/5 p-3 border-l-2 border-gold mb-3">
-                            <p class="text-[9px] font-bold">${t.email}</p>
-                            <p class="text-xs text-white">Rp ${t.amount.toLocaleString()}</p>
-                            <a href="${t.proof}" target="_blank" class="text-[8px] text-blue-400 underline block mt-1">View Proof</a>
-                            <div class="flex gap-2 mt-3">
-                                <button onclick="accTopup('${c.key}', '${t.uid}', ${t.amount})" class="flex-1 bg-green-800 text-[8px] py-1 uppercase font-bold">Approve</button>
-                                <button onclick="rejTopup('${c.key}')" class="flex-1 bg-red-800 text-[8px] py-1 uppercase font-bold">Deny</button>
-                            </div>
-                        </div>`;
-                });
-            });
+                    const o = c.val();
+                    const k = c.key;
+                    
+                    // Dashboard User
+                    if(o.uid === auth.currentUser.uid) {
+                        list.innerHTML += `
+                            <div class="glass-panel p-4 flex justify-between items-center">
+                                <div>
+                                    <p class="text-[10px] text-zinc-500">${o.orderId}</p>
+                                    <h4 class="text-xs text-white font-bold">${o.product}</h4>
+                                </div>
+                                <span class="status-badge bg-${o.status}">${o.status}</span>
+                            </div>`;
+                    }
 
-            // Product List
-            onValue(ref(db, 'products'), (s) => {
-                const list = document.getElementById('adm-products');
-                list.innerHTML = "";
-                s.forEach(c => {
-                    list.innerHTML += `<div class="flex justify-between items-center text-[9px] bg-white/5 p-2 mb-1">
-                        <span>${c.val().name}</span>
-                        <button onclick="delP('${c.key}')" class="text-red-500 font-bold">DEL</button>
-                    </div>`;
+                    // Dashboard Admin
+                    if(auth.currentUser.email === BOSS_EMAIL && admList) {
+                        admList.innerHTML += `
+                            <div class="bg-white/5 p-3 text-[10px] border border-white/10 mb-2">
+                                <p>${o.email} - ${o.product}</p>
+                                <div class="flex gap-2 mt-2">
+                                    <button onclick="updateStatus('${k}', 'proses')" class="bg-proses px-2 py-1 text-black">PROSES</button>
+                                    <button onclick="updateStatus('${k}', 'kirim')" class="bg-kirim px-2 py-1 text-black">KIRIM</button>
+                                    <button onclick="updateStatus('${k}', 'gagal')" class="bg-gagal px-2 py-1 text-white">GAGAL</button>
+                                </div>
+                            </div>`;
+                    }
                 });
             });
         }
 
-        window.modBal = (uid, mult) => {
-            const val = document.getElementById('in-'+uid).value;
-            if(!val) return;
-            get(ref(db, 'users/'+uid)).then(s => {
-                update(ref(db, 'users/'+uid), { balance: (s.val().balance||0) + (parseInt(val) * mult) });
-                notify("Balance Adjusted");
-            });
-        };
-
-        window.accTopup = (key, uid, amt) => {
-            get(ref(db, 'users/'+uid)).then(s => {
-                update(ref(db, 'users/'+uid), { balance: (s.val().balance||0) + amt });
-                remove(ref(db, 'topups/'+key));
-                notify("Approved");
-            });
-        };
-        window.rejTopup = (k) => remove(ref(db, 'topups/'+k));
+        window.updateStatus = (key, status) => update(ref(db, 'orders/' + key), { status });
 
         window.adminAddP = () => {
-            const n = document.getElementById('p-name').value;
-            const p = document.getElementById('p-price').value;
-            const i = document.getElementById('p-img').value;
-            const l = document.getElementById('p-label').value;
-            if(n && p) push(ref(db, 'products'), { name:n, price:parseInt(p), img:i, label:l });
+            const name = document.getElementById('p-name').value;
+            const price = parseInt(document.getElementById('p-price').value);
+            const img = document.getElementById('p-img').value;
+            if(name && price) push(ref(db, 'products'), { name, price, img });
         };
-        window.delP = (k) => remove(ref(db, 'products/'+k));
 
-        function notify(msg) {
-            const t = document.getElementById('toast');
-            t.innerText = msg;
-            t.classList.remove('translate-x-full');
-            setTimeout(() => t.classList.add('translate-x-full'), 3000);
-        }
+        // --- AUTH SYNC ---
+        onAuthStateChanged(auth, (u) => {
+            if(u) {
+                document.getElementById('auth-page').classList.add('hidden');
+                document.getElementById('main-app').classList.remove('hidden');
+                document.getElementById('navbar').classList.remove('hidden');
+                if(u.email === BOSS_EMAIL) document.getElementById('god-btn').classList.remove('hidden');
+                syncMarket();
+                syncOrders();
+                changePage('shop');
+            } else {
+                document.getElementById('auth-page').classList.remove('hidden');
+                document.getElementById('main-app').classList.add('hidden');
+                document.getElementById('navbar').classList.add('hidden');
+            }
+        });
 
     </script>
 </body>
