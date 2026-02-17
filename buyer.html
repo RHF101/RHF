@@ -2,96 +2,133 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>RHF | EXCLUSIVE MARKETPLACE</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RHF | EXCLUSIVE MARKET</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root { --gold: #D4AF37; --dark: #050505; }
-        body { font-family: 'Rajdhani', sans-serif; background: var(--dark); color: #ccc; overflow-x: hidden; }
-        .font-luxury { font-family: 'Cinzel', serif; }
-        .glass-panel { background: rgba(10, 10, 10, 0.95); border: 1px solid rgba(212, 175, 55, 0.1); }
-        .btn-buy { background: var(--gold); color: #000; font-weight: 800; transition: 0.3s; clip-path: polygon(10% 0, 100% 0, 100% 70%, 90% 100%, 0 100%, 0 30%); }
-        .btn-buy:hover { filter: brightness(1.2); transform: translateY(-2px); }
-        .input-address { background: #fff; color: #333; border-bottom: 1px solid #ddd; padding: 12px; width: 100%; font-size: 14px; outline: none; }
-        .modal-overlay { background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); }
+        body { background: var(--dark); color: #ccc; font-family: sans-serif; }
+        .glass-panel { background: rgba(15, 15, 15, 0.95); border: 1px solid rgba(212, 175, 55, 0.1); }
+        .btn-logout { color: #666; font-size: 12px; transition: 0.3s; }
+        .btn-logout:hover { color: #ff4d4d; }
         .hidden { display: none !important; }
+        /* Modal Style */
+        .modal-overlay { background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); }
+        .input-address { background: #fff; color: #333; border-bottom: 1px solid #ddd; padding: 12px; width: 100%; outline: none; }
     </style>
 </head>
-<body class="pb-20">
+<body class="pb-10">
 
     <nav class="fixed top-0 w-full z-50 glass-panel border-b border-white/5 px-6 py-4 flex justify-between items-center">
         <div class="flex items-center gap-2">
-            <div class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div>
-            <span class="font-luxury text-gold tracking-widest text-sm">RHF SYNDICATE</span>
+            <span class="text-gold font-bold tracking-widest text-sm uppercase">RHF MARKET</span>
         </div>
-        <div class="flex items-center gap-6">
-            <div class="text-right border-r border-zinc-800 pr-6">
-                <span class="text-[8px] text-zinc-500 uppercase block tracking-widest">Vault Balance</span>
+        
+        <div class="flex items-center gap-5">
+            <div class="text-right border-r border-zinc-800 pr-5">
+                <span class="text-[9px] text-zinc-500 block uppercase">Vault Balance</span>
                 <span id="user-bal" class="text-gold font-bold font-mono">Rp 0</span>
             </div>
-            <button onclick="logout()" class="text-zinc-700 hover:text-red-500 transition"><i class="fa-solid fa-power-off"></i></button>
+            
+            <button onclick="handleLogout()" class="btn-logout flex flex-col items-center gap-1">
+                <i class="fa-solid fa-power-off text-lg"></i>
+                <span class="text-[8px] uppercase font-bold">Exit</span>
+            </button>
         </div>
     </nav>
 
-    <main class="pt-32 px-6 max-w-7xl mx-auto">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8" id="market-items"></div>
+    <main class="pt-24 px-6 max-w-6xl mx-auto">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6" id="market-items">
+            </div>
     </main>
 
-    <div id="address-modal" class="hidden fixed inset-0 z-[200] modal-overlay flex items-end md:items-center justify-center">
-        <div class="bg-white w-full max-w-lg rounded-t-2xl md:rounded-2xl overflow-hidden shadow-2xl animate-slide-up">
+    <div id="address-modal" class="hidden fixed inset-0 z-[100] modal-overlay flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-md rounded-2xl overflow-hidden shadow-2xl">
             <div class="p-4 border-b flex items-center gap-4">
-                <button onclick="closeAddressModal()" class="text-red-500 text-xl"><i class="fa-solid fa-arrow-left"></i></button>
-                <h2 class="text-lg font-bold text-gray-800">Alamat Baru</h2>
+                <button onclick="closeAddressModal()" class="text-red-500"><i class="fa-solid fa-xmark"></i></button>
+                <h2 class="font-bold text-gray-800">Detail Pengiriman</h2>
             </div>
-            
-            <div class="p-4 bg-red-50/50 m-4 rounded-lg border border-red-100 flex gap-3">
-                <i class="fa-solid fa-file-invoice text-red-400 mt-1"></i>
-                <div class="text-xs text-red-800">
-                    <p class="font-bold">Tempel dan Isi Otomatis</p>
-                    <p>Tempel alamat dari chat di sini untuk mengisi data secara instan.</p>
-                </div>
+            <div class="p-4 space-y-2">
+                <input type="text" id="ship-name" placeholder="Nama Penerima" class="input-address">
+                <input type="text" id="ship-phone" placeholder="Nomor HP" class="input-address">
+                <input type="text" id="ship-street" placeholder="Alamat Lengkap (Jalan, No Rumah, Blok)" class="input-address">
+                <input type="text" id="ship-detail" placeholder="Patokan / Catatan (Opsional)" class="input-address">
             </div>
-
-            <div class="p-4 space-y-1">
-                <p class="text-[10px] font-bold text-gray-400 px-3 uppercase">Informasi Kontak</p>
-                <input type="text" id="ship-name" placeholder="Nama Lengkap" class="input-address">
-                <input type="text" id="ship-phone" placeholder="Nomor Telepon" class="input-address">
-                
-                <p class="text-[10px] font-bold text-gray-400 px-3 pt-4 uppercase">Detail Lokasi</p>
-                <input type="text" id="ship-area" placeholder="Provinsi, Kota, Kecamatan, Kode Pos" class="input-address">
-                <input type="text" id="ship-street" placeholder="Nama Jalan, Gedung, No. Rumah" class="input-address">
-                <input type="text" id="ship-detail" placeholder="Detail Lainnya (Cth: Blok / Unit No., Patokan)" class="input-address">
-            </div>
-
-            <div class="p-6 bg-gray-50 flex flex-col gap-4">
-                <div class="flex justify-between items-center">
-                    <span class="text-sm text-gray-600">Tandai Sebagai:</span>
-                    <div class="flex gap-2">
-                        <button onclick="setTag('Kantor')" class="tag-btn border px-4 py-1 rounded text-xs">Kantor</button>
-                        <button onclick="setTag('Rumah')" class="tag-btn border px-4 py-1 rounded text-xs bg-red-500 text-white border-red-500">Rumah</button>
-                    </div>
-                </div>
-                <button id="confirm-purchase-btn" class="w-full bg-red-500 text-white py-4 rounded-xl font-bold shadow-lg active:scale-95 transition">Simpan & Beli</button>
+            <div class="p-4 bg-gray-50">
+                <button id="confirm-buy-btn" class="w-full bg-red-600 text-white py-3 rounded-xl font-bold active:scale-95 transition">
+                    SIMPAN & PROSES BELI
+                </button>
             </div>
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getDatabase, ref, onValue, push, update, get, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
-        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getDatabase, ref, onValue, get, update, push, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-        // CONFIG (Gunakan punya kamu)
-        const firebaseConfig = { ... };
+        const firebaseConfig = { 
+            apiKey: "AIzaSyCs7Vnysf25BwhN2-fPTODd48xwzbPkbzI",
+            authDomain: "rhf-shop-mafia-8d2e5.firebaseapp.com",
+            databaseURL: "https://rhf-shop-mafia-8d2e5-default-rtdb.firebaseio.com",
+            projectId: "rhf-shop-mafia-8d2e5",
+            storageBucket: "rhf-shop-mafia-8d2e5.firebasestorage.app",
+            messagingSenderId: "158711184948",
+            appId: "1:158711184948:web:9223f07fa6658601189461"
+        };
+
         const app = initializeApp(firebaseConfig);
-        const db = getDatabase(app);
         const auth = getAuth(app);
-
+        const db = getDatabase(app);
         let selectedItem = null;
-        let currentTag = "Rumah";
 
-        window.buyAsset = (id, name, price) => {
+        // --- PROTEKSI LOGIN & LOGOUT ---
+        onAuthStateChanged(auth, (user) => {
+            if (!user) {
+                // Jika user logout/tidak login, langsung tendang ke index.html
+                window.location.replace("index.html");
+            } else {
+                // Ambil Saldo User
+                onValue(ref(db, `users/${user.uid}`), (s) => {
+                    const d = s.val();
+                    if(d && d.status === 'burned') { 
+                        signOut(auth); 
+                        window.location.replace("https://www.google.com");
+                    }
+                    document.getElementById('user-bal').innerText = "Rp " + (d?.balance || 0).toLocaleString();
+                });
+            }
+        });
+
+        // FUNGSI LOGOUT (Dipanggil oleh tombol Exit)
+        window.handleLogout = () => {
+            if(confirm("Apakah anda yakin ingin keluar dari sesi aman?")) {
+                signOut(auth).then(() => {
+                    window.location.replace("index.html");
+                });
+            }
+        };
+
+        // --- LOGIKA MARKET ---
+        onValue(ref(db, 'market_items'), (snap) => {
+            const con = document.getElementById('market-items');
+            con.innerHTML = '';
+            snap.forEach(c => {
+                const d = c.val();
+                con.innerHTML += `
+                <div class="glass-panel p-5 rounded-xl">
+                    <img src="${d.img}" class="w-full h-40 object-cover rounded-lg mb-4">
+                    <h3 class="font-bold text-white uppercase">${d.name}</h3>
+                    <div class="flex justify-between items-center mt-4">
+                        <span class="text-gold font-mono font-bold">Rp ${d.price.toLocaleString()}</span>
+                        <button onclick="openBuyModal('${c.key}', '${d.name}', ${d.price})" class="bg-gold text-black px-4 py-2 rounded text-[10px] font-bold">BELI</button>
+                    </div>
+                </div>`;
+            });
+        });
+
+        window.openBuyModal = (id, name, price) => {
             selectedItem = { id, name, price };
             document.getElementById('address-modal').classList.remove('hidden');
         };
@@ -100,49 +137,34 @@
             document.getElementById('address-modal').classList.add('hidden');
         };
 
-        window.setTag = (tag) => {
-            currentTag = tag;
-            // Update UI tombol tag jika perlu
-        };
+        document.getElementById('confirm-buy-btn').onclick = async () => {
+            const name = document.getElementById('ship-name').value;
+            const phone = document.getElementById('ship-phone').value;
+            const street = document.getElementById('ship-street').value;
 
-        document.getElementById('confirm-purchase-btn').onclick = async () => {
-            const addr = {
-                name: document.getElementById('ship-name').value,
-                phone: document.getElementById('ship-phone').value,
-                area: document.getElementById('ship-area').value,
-                street: document.getElementById('ship-street').value,
-                detail: document.getElementById('ship-detail').value,
-                tag: currentTag
-            };
+            if(!name || !phone || !street) return alert("Lengkapi alamat!");
 
-            if(!addr.name || !addr.phone || !addr.street) return alert("Mohon lengkapi alamat pengiriman!");
-
-            const userRef = ref(db, 'users/' + auth.currentUser.uid);
+            const userRef = ref(db, `users/${auth.currentUser.uid}`);
             const userSnap = await get(userRef);
             
             if(userSnap.val().balance < selectedItem.price) {
-                alert("Saldo tidak cukup!");
-                return closeAddressModal();
+                return alert("Saldo tidak cukup!");
             }
 
-            // PROSES TRANSAKSI
+            // Potong Saldo & Kirim Alamat ke Chat Admin
             const newBal = userSnap.val().balance - selectedItem.price;
             await update(userRef, { balance: newBal });
 
-            // KIRIM DATA KE ADMIN (Via Chat System)
-            const orderMsg = `[BARU] PESANAN: ${selectedItem.name}\nALAMAT: ${addr.street}, ${addr.area} (${addr.tag})\nPENERIMA: ${addr.name} (${addr.phone})`;
-            
+            const orderDetail = `[ORDER BARU]\nBarang: ${selectedItem.name}\nPenerima: ${name}\nHP: ${phone}\nAlamat: ${street}`;
             await push(ref(db, `chats/${auth.currentUser.uid}/messages`), {
                 sender: 'user',
-                text: orderMsg,
+                text: orderDetail,
                 timestamp: serverTimestamp()
             });
 
-            alert("Pesanan Berhasil! Alamat telah dikirim ke pusat.");
+            alert("Pesanan Berhasil!");
             closeAddressModal();
         };
-
-        // ... Load items & auth logic tetap sama ...
     </script>
 </body>
 </html>
