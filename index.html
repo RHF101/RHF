@@ -3,174 +3,130 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>404 NOT FOUND</title> <script src="https://cdn.tailwindcss.com"></script>
+    <title>404 NOT FOUND</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        :root { --gold: #D4AF37; --dark: #050505; --glass: rgba(10, 10, 10, 0.95); --red: #ff3b3b; }
-        body { 
-            font-family: 'Rajdhani', sans-serif; background: var(--dark); color: #ccc; margin: 0;
-            overflow-x: hidden;
-        }
+        :root { --gold: #D4AF37; --dark: #050505; --red: #ff1a1a; }
+        body { font-family: 'Rajdhani', sans-serif; background: var(--dark); color: #ccc; overflow-x: hidden; -webkit-user-select: none; user-select: none; }
         .font-luxury { font-family: 'Cinzel', serif; }
-        .glass-panel { background: var(--glass); border: 1px solid rgba(212, 175, 55, 0.2); backdrop-filter: blur(20px); }
-        .btn-gold { 
-            background: linear-gradient(90deg, #b38728, #fcf6ba, #bf953f); 
-            color: #000; font-weight: 800; border: none; cursor: pointer;
-            clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
-            transition: 0.3s;
-        }
-        .btn-gold:hover { transform: scale(1.02); filter: brightness(1.1); box-shadow: 0 0 15px rgba(212, 175, 55, 0.4); }
-        .input-field { background: #0a0a0a; border: 1px solid #333; color: white; padding: 12px; width: 100%; font-size: 13px; outline: none; border-radius: 4px; transition: 0.3s; }
-        .input-field:focus { border-color: var(--gold); }
+        .glass-panel { background: rgba(10, 10, 10, 0.98); border: 1px solid rgba(212, 175, 55, 0.1); backdrop-filter: blur(25px); }
+        .btn-gold { background: linear-gradient(90deg, #b38728, #fcf6ba, #bf953f); color: #000; font-weight: 800; transition: 0.3s; clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px); }
+        .btn-gold:hover { filter: brightness(1.2); transform: translateY(-2px); box-shadow: 0 0 20px rgba(212, 175, 55, 0.4); }
+        .input-field { background: #000; border: 1px solid #222; color: white; padding: 12px; border-radius: 4px; outline: none; transition: 0.3s; width: 100%; }
+        .input-field:focus { border-color: var(--gold); box-shadow: 0 0 10px rgba(212, 175, 55, 0.1); }
+        .chat-bubble { max-width: 80%; padding: 10px; border-radius: 12px; font-size: 12px; margin-bottom: 8px; }
+        .chat-me { background: var(--gold); color: black; align-self: flex-end; }
+        .chat-other { background: #1a1a1a; color: white; align-self: flex-start; border: 1px solid #333; }
         .hidden { display: none !important; }
-
-        /* DECOY STYLE (TAMPILAN PALSU) */
-        .decoy-mode { background: white; color: #333; font-family: sans-serif; }
-        
-        /* CHAT & SCROLL */
-        ::-webkit-scrollbar { width: 5px; }
-        ::-webkit-scrollbar-track { background: #050505; }
-        ::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 10px; }
-        .chat-bubble { max-width: 85%; padding: 10px 14px; border-radius: 15px; font-size: 12px; margin-bottom: 8px; line-height: 1.4; }
-        .chat-me { background: var(--gold); color: black; align-self: flex-end; border-bottom-right-radius: 2px; }
-        .chat-other { background: #1a1a1a; color: white; align-self: flex-start; border-bottom-left-radius: 2px; border: 1px solid #333; }
-        
-        .admin-table { width: 100%; border-collapse: collapse; }
-        .admin-table th { background: rgba(212, 175, 55, 0.1); color: var(--gold); text-align: left; padding: 12px; font-size: 12px; text-transform: uppercase; }
-        .admin-table td { padding: 12px; border-bottom: 1px solid #222; font-size: 12px; color: #ddd; }
-        .btn-action { padding: 5px 10px; border-radius: 4px; font-size: 10px; font-weight: bold; text-transform: uppercase; transition: 0.2s; }
+        @media print { body { display: none !important; } }
     </style>
 </head>
 <body>
 
-    <div id="ip-loader" class="fixed inset-0 bg-black z-[1000] flex items-center justify-center">
+    <div id="ip-loader" class="fixed inset-0 bg-black z-[9999] flex items-center justify-center">
         <div class="text-center">
-            <div class="w-16 h-16 border-4 border-zinc-800 border-t-white rounded-full animate-spin mx-auto mb-4"></div>
-            <p class="font-mono text-zinc-500 text-xs tracking-[0.5em] animate-pulse">CHECKING PROTOCOL...</p>
+            <div class="w-16 h-16 border-2 border-zinc-800 border-t-gold rounded-full animate-spin mx-auto mb-4"></div>
+            <p class="font-mono text-gold text-[10px] tracking-[0.5em] animate-pulse">ENCRYPTING CONNECTION...</p>
         </div>
     </div>
 
-    <section id="decoy-page" class="hidden min-h-screen flex flex-col items-center justify-center bg-gray-100 text-center p-6">
-        <div class="max-w-lg">
-            <i class="fa-solid fa-triangle-exclamation text-6xl text-gray-300 mb-6"></i>
-            <h1 class="text-4xl font-bold text-gray-800 mb-4">SITE SHUT DOWN</h1>
-            <p class="text-gray-600 mb-8">This domain has been seized by Law Enforcement pursuant to a seizure warrant. This site is no longer operational.</p>
-            <div class="bg-white p-4 rounded shadow-sm border border-gray-200">
-                <p class="text-xs text-gray-400 font-mono">CASE ID: #882-XJ-291</p>
-                <p class="text-xs text-gray-400 font-mono mt-1">STATUS: CLOSED / INVESTIGATION ONGOING</p>
-            </div>
-            <button onclick="forceLoginPanel()" class="mt-20 opacity-0 hover:opacity-10 text-[9px]">.</button>
+    <section id="decoy-page" class="hidden min-h-screen flex items-center justify-center bg-white text-center p-6">
+        <div class="max-w-md">
+            <h1 class="text-6xl font-bold text-gray-900 mb-4">404</h1>
+            <p class="text-xl text-gray-600 mb-8">This site has been permanently removed due to a copyright claim or law enforcement request.</p>
+            <div class="p-4 border border-gray-200 rounded text-xs text-gray-400 font-mono">REF ID: 882-RHF-SEC</div>
+            <button onclick="emergencyBypass()" class="mt-20 opacity-0 cursor-default">.</button>
         </div>
     </section>
 
     <div id="syndicate-app" class="hidden">
         
-        <section id="auth-page" class="min-h-screen flex items-center justify-center p-6 relative">
-            <div class="glass-panel w-full max-w-sm p-10 text-center rounded-3xl">
-                <h1 class="font-luxury text-gold text-5xl mb-2 tracking-tighter">RHF</h1>
-                <p class="text-[9px] text-zinc-500 tracking-[0.8em] mb-12 uppercase">Syndicate Hub</p>
-                
+        <section id="auth-page" class="min-h-screen flex items-center justify-center p-4">
+            <div class="glass-panel w-full max-w-sm p-10 rounded-3xl text-center">
+                <h1 class="font-luxury text-gold text-5xl mb-1">RHF</h1>
+                <p class="text-[8px] tracking-[1em] text-zinc-500 uppercase mb-10">Ghost Protocol v.4</p>
                 <div class="space-y-4">
-                    <input type="email" id="email" placeholder="CODENAME (EMAIL)" class="input-field">
-                    <input type="password" id="pass" placeholder="ACCESS KEY (PASSWORD)" class="input-field">
-                    <button onclick="handleLogin()" class="btn-gold w-full py-4 text-xs tracking-widest mt-4">ENTER SYSTEM</button>
-                    <div class="flex items-center gap-2 my-4"><div class="flex-1 h-[1px] bg-zinc-800"></div><span class="text-[10px] text-zinc-600 uppercase">OR</span><div class="flex-1 h-[1px] bg-zinc-800"></div></div>
-                    <button onclick="handleReg()" class="text-[10px] text-zinc-400 hover:text-gold transition uppercase tracking-widest underline decoration-gold/30">Create New Identity</button>
+                    <input type="email" id="email" placeholder="EMAIL IDENTITY" class="input-field">
+                    <input type="password" id="pass" placeholder="ACCESS KEY" class="input-field">
+                    <button onclick="handleLogin()" class="btn-gold w-full py-4 text-[10px] tracking-widest uppercase">Sync Identity</button>
+                    <button onclick="handleReg()" class="text-[10px] text-zinc-600 underline uppercase mt-4 block mx-auto">New Ghost Account</button>
                 </div>
-                <p id="auth-error" class="text-red-500 text-[10px] mt-6 font-bold uppercase italic"></p>
-                <p id="my-ip-display" class="mt-6 text-[9px] font-mono text-zinc-700"></p>
+                <p id="auth-error" class="text-red-500 text-[10px] mt-4 font-bold uppercase"></p>
+                <div id="my-ip-tag" class="mt-8 text-[9px] text-zinc-800 font-mono"></div>
             </div>
         </section>
 
-        <div id="main-interface" class="hidden opacity-0 transition-opacity duration-1000">
-            <nav class="fixed top-0 w-full z-50 glass-panel border-b border-gold/20 px-8 py-5 flex justify-between items-center">
-                <div class="flex items-center gap-4">
-                    <i class="fa-solid fa-dragon text-gold text-2xl"></i>
-                    <div>
-                        <h1 class="font-luxury text-gold text-xl leading-none">RHF</h1>
-                        <span class="text-[8px] text-zinc-500 tracking-widest uppercase">Ghost Protocol Active</span>
-                    </div>
+        <div id="main-interface" class="hidden">
+            <nav class="fixed top-0 w-full z-50 glass-panel border-b border-white/5 px-8 py-4 flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <div class="w-2 h-2 bg-gold rounded-full animate-pulse"></div>
+                    <span class="font-luxury text-gold tracking-widest">RHF SYNDICATE</span>
                 </div>
-                <div class="flex items-center gap-8">
-                    <div id="user-info-panel" class="text-right border-r border-zinc-800 pr-8">
-                        <p class="text-[9px] text-zinc-500 uppercase">Vault Balance</p>
-                        <p id="user-bal" class="text-gold font-bold text-lg font-mono">Rp 0</p>
+                <div class="flex items-center gap-6">
+                    <div id="user-bal-container" class="text-right border-r border-zinc-800 pr-6">
+                        <span class="text-[8px] text-zinc-500 uppercase block">Vault Balance</span>
+                        <span id="user-bal" class="text-gold font-bold font-mono">Rp 0</span>
                     </div>
-                    <button onclick="changePage('shop')" class="text-zinc-400 hover:text-gold transition text-xl"><i class="fa-solid fa-store"></i></button>
-                    <button id="god-btn" onclick="changePage('admin')" class="hidden bg-red-600/10 border border-red-600/50 text-red-500 px-4 py-2 text-[10px] font-bold animate-pulse rounded-full hover:bg-red-600 hover:text-white transition">GOD MODE</button>
-                    <button onclick="logout()" class="text-zinc-500 hover:text-red-500 transition text-xl"><i class="fa-solid fa-power-off"></i></button>
+                    <button onclick="changePage('shop')" class="text-zinc-500 hover:text-white"><i class="fa-solid fa-store"></i></button>
+                    <button id="god-btn" onclick="changePage('admin')" class="hidden bg-red-600/10 border border-red-600/50 text-red-500 px-3 py-1 text-[9px] font-bold rounded-full">GOD MODE</button>
+                    <button onclick="logout()" class="text-zinc-500 hover:text-red-500"><i class="fa-solid fa-power-off"></i></button>
                 </div>
             </nav>
 
-            <section id="page-shop" class="pt-32 px-8 max-w-7xl mx-auto pb-24">
-                <div class="flex items-center gap-4 mb-12">
-                    <div class="w-12 h-1 bg-gold"></div>
-                    <h2 class="font-luxury text-white text-3xl uppercase tracking-tighter">Black Market Assets</h2>
-                </div>
-                <div id="shop-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                    <div class="glass-panel p-6 rounded-2xl border-white/5 hover:border-gold/30 transition-all group">
-                        <div class="h-40 bg-zinc-900 rounded-xl mb-6 flex items-center justify-center text-zinc-800 group-hover:text-gold transition"><i class="fa-solid fa-microchip text-5xl"></i></div>
-                        <h4 class="text-sm text-white font-bold mb-1">DDoS BOTNET V.2</h4>
-                        <p class="text-gold font-mono text-xs mb-4">Rp 2.500.000</p>
-                        <button onclick="buyItem('DDoS Botnet', 2500000)" class="btn-gold w-full py-3 text-[10px] tracking-widest">PURCHASE</button>
-                    </div>
-                     <div class="glass-panel p-6 rounded-2xl border-white/5 hover:border-gold/30 transition-all group">
-                        <div class="h-40 bg-zinc-900 rounded-xl mb-6 flex items-center justify-center text-zinc-800 group-hover:text-gold transition"><i class="fa-solid fa-gun text-5xl"></i></div>
-                        <h4 class="text-sm text-white font-bold mb-1">GHOST GLOCK 19</h4>
-                        <p class="text-gold font-mono text-xs mb-4">Rp 7.500.000</p>
-                        <button onclick="buyItem('Ghost Glock 19', 7500000)" class="btn-gold w-full py-3 text-[10px] tracking-widest">PURCHASE</button>
+            <section id="page-shop" class="pt-32 px-8 max-w-7xl mx-auto pb-20">
+                <h2 class="font-luxury text-2xl text-white mb-10 border-l-4 border-gold pl-4">BLACK MARKET ASSETS</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6" id="market-items">
+                    <div class="glass-panel p-6 rounded-2xl hover:border-gold/40 transition">
+                        <div class="h-40 bg-zinc-900/50 rounded-xl mb-4 flex items-center justify-center"><i class="fa-solid fa-user-secret text-4xl text-zinc-800"></i></div>
+                        <h3 class="text-white font-bold text-sm">ENCRYPTED DATABASE V.1</h3>
+                        <p class="text-gold text-xs font-mono mb-4">Rp 5.000.000</p>
+                        <button onclick="buyItem('DB V.1', 5000000)" class="btn-gold w-full py-2 text-[9px]">PURCHASE</button>
                     </div>
                 </div>
             </section>
 
-            <section id="page-admin" class="hidden pt-32 px-8 pb-24">
-                
-                <div class="glass-panel p-6 rounded-2xl mb-8 border border-red-900/30">
-                    <h3 class="font-luxury text-red-500 text-lg mb-4 flex items-center gap-2"><i class="fa-solid fa-shield-halved"></i> IP ACCESS CONTROL (WHITELIST)</h3>
-                    <div class="flex gap-2 mb-4">
-                        <input type="text" id="new-ip-input" placeholder="Enter IP Address (e.g. 192.168.1.1)" class="bg-black border border-zinc-700 text-white p-2 text-xs w-64 rounded">
-                        <button onclick="adminAddIP()" class="bg-red-900 hover:bg-red-700 text-white px-4 py-2 text-xs font-bold rounded">GRANT ACCESS</button>
+            <section id="page-admin" class="hidden pt-32 px-8 pb-20">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <div class="glass-panel p-6 rounded-3xl">
+                        <h3 class="font-luxury text-gold mb-6 uppercase text-sm"><i class="fa-solid fa-shield-halved"></i> IP Access Control</h3>
+                        <div class="flex gap-2 mb-6">
+                            <input type="text" id="new-ip-input" placeholder="Enter Target IP" class="input-field py-2 text-xs">
+                            <button onclick="adminAddIP()" class="bg-gold text-black px-4 font-bold text-[10px] rounded">GRANT</button>
+                        </div>
+                        <div id="ip-list-container" class="space-y-2 max-h-60 overflow-y-auto pr-2"></div>
                     </div>
-                    <div id="ip-list-container" class="flex flex-wrap gap-2">
-                        </div>
-                </div>
 
-                <div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
-                    <div class="xl:col-span-2 glass-panel p-8 rounded-3xl overflow-hidden">
-                        <div class="flex justify-between items-center mb-8">
-                            <h3 class="font-luxury text-gold text-xl">USER DATABASE</h3>
-                            <span id="total-users" class="bg-gold/10 text-gold px-4 py-1 rounded-full text-[10px] font-bold border border-gold/30">0 USERS</span>
-                        </div>
+                    <div class="lg:col-span-2 glass-panel p-6 rounded-3xl overflow-hidden">
+                        <h3 class="font-luxury text-gold mb-6 uppercase text-sm">User Database</h3>
                         <div class="overflow-x-auto">
-                            <table class="admin-table">
-                                <thead>
+                            <table class="w-full text-left text-[11px]">
+                                <thead class="text-zinc-500 uppercase border-b border-zinc-800">
                                     <tr>
-                                        <th>Identity</th>
-                                        <th>Key</th>
-                                        <th>Vault</th>
-                                        <th>Status</th>
-                                        <th>Ops</th>
+                                        <th class="pb-3">Identity</th>
+                                        <th class="pb-3">Vault</th>
+                                        <th class="pb-3">Status</th>
+                                        <th class="pb-3">Actions</th>
                                     </tr>
                                 </thead>
-                                <tbody id="admin-user-list"></tbody>
+                                <tbody id="admin-user-list" class="text-zinc-300"></tbody>
                             </table>
                         </div>
                     </div>
+                </div>
 
-                    <div class="glass-panel p-6 rounded-3xl flex flex-col h-[600px]">
-                        <h3 class="font-luxury text-gold text-lg mb-6 flex items-center gap-2"><span class="w-3 h-3 bg-red-600 rounded-full animate-ping"></span> COMMS CHANNEL</h3>
-                        <div id="admin-chat-list" class="flex-1 overflow-y-auto space-y-3 mb-4 pr-2"></div>
-                        <div id="admin-active-chat" class="hidden flex flex-col h-full bg-black/50 rounded-2xl border border-gold/10 overflow-hidden">
-                            <div class="p-4 bg-zinc-900 flex justify-between items-center border-b border-white/5">
-                                <span id="chat-target-name" class="text-[10px] text-gold font-bold uppercase truncate pr-4">TARGET</span>
-                                <button onclick="closeActiveChat()" class="text-zinc-500 hover:text-red-500"><i class="fa-solid fa-circle-xmark"></i></button>
-                            </div>
+                <div class="mt-8 glass-panel p-6 rounded-3xl">
+                    <h3 class="font-luxury text-gold mb-6 uppercase text-sm">Comms Channel (Intercepted)</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 h-[400px]">
+                        <div id="admin-chat-list" class="overflow-y-auto border-r border-zinc-800 pr-4"></div>
+                        <div id="admin-active-chat" class="md:col-span-3 flex flex-col hidden">
+                            <div id="chat-target-header" class="pb-4 border-b border-zinc-800 text-gold font-bold text-xs uppercase"></div>
                             <div id="admin-chat-msgs" class="flex-1 overflow-y-auto p-4 flex flex-col gap-2"></div>
-                            <div class="p-4 bg-zinc-900 flex gap-2">
-                                <input type="text" id="admin-chat-in" class="flex-1 bg-black border border-zinc-800 text-[11px] p-3 rounded-xl text-white outline-none" placeholder="Reply...">
-                                <button onclick="sendAdminMsg()" class="bg-gold text-black w-10 h-10 rounded-xl flex items-center justify-center"><i class="fa-solid fa-paper-plane"></i></button>
+                            <div class="flex gap-2 mt-4">
+                                <input type="text" id="admin-chat-in" class="input-field" placeholder="Reply...">
+                                <button onclick="sendAdminMsg()" class="btn-gold px-6">SEND</button>
                             </div>
                         </div>
                     </div>
@@ -178,22 +134,18 @@
             </section>
         </div>
 
-        <button id="chat-float" onclick="toggleUserChat()" class="hidden fixed bottom-8 right-8 w-16 h-16 bg-gold text-black rounded-2xl flex items-center justify-center shadow-[0_10px_30px_rgba(212,175,55,0.3)] z-[150] hover:rotate-12 transition-all">
-            <i class="fa-solid fa-comments text-2xl"></i>
-            <span id="user-unread" class="absolute -top-1 -right-1 w-4 h-4 bg-red-600 rounded-full hidden border-2 border-black"></span>
-        </button>
-
-        <div id="user-chat-window" class="hidden fixed bottom-28 right-8 w-80 h-[450px] glass-panel z-[160] flex flex-col rounded-3xl overflow-hidden shadow-2xl border-gold/30">
-            <div class="bg-zinc-900 p-5 border-b border-gold/20 flex justify-between items-center">
-                <span class="text-[11px] text-white font-bold uppercase tracking-widest">Encrypted Line</span>
-                <button onclick="toggleUserChat()" class="text-zinc-500"><i class="fa-solid fa-chevron-down"></i></button>
-            </div>
-            <div id="user-chat-msgs" class="flex-1 overflow-y-auto p-5 flex flex-col bg-black/40"></div>
-            <div class="p-4 bg-zinc-900 flex gap-2 border-t border-white/5">
-                <input type="text" id="user-chat-in" placeholder="Message..." class="flex-1 bg-black border border-zinc-800 text-xs p-3 rounded-xl text-white outline-none">
-                <button onclick="sendUserMsg()" class="text-gold px-2 hover:scale-125 transition"><i class="fa-solid fa-paper-plane text-xl"></i></button>
+        <div id="user-chat-window" class="hidden fixed bottom-24 right-8 w-80 h-[400px] glass-panel rounded-2xl flex flex-col z-[100] shadow-2xl border-gold/20">
+            <div class="p-4 bg-zinc-900 rounded-t-2xl font-bold text-[10px] text-gold uppercase tracking-widest border-b border-gold/10">Secure Comms</div>
+            <div id="user-chat-msgs" class="flex-1 overflow-y-auto p-4 flex flex-col gap-2"></div>
+            <div class="p-4 flex gap-2">
+                <input type="text" id="user-chat-in" class="input-field py-1" placeholder="Message Admin...">
+                <button onclick="sendUserMsg()" class="text-gold"><i class="fa-solid fa-paper-plane"></i></button>
             </div>
         </div>
+        <button id="chat-float-btn" onclick="toggleUserChat()" class="fixed bottom-6 right-6 w-14 h-14 bg-gold rounded-2xl flex items-center justify-center text-black shadow-xl z-[100] hover:scale-110 transition">
+            <i class="fa-solid fa-comment-dots text-xl"></i>
+        </button>
+
     </div>
 
     <script type="module">
@@ -201,7 +153,6 @@
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getDatabase, ref, set, push, onValue, update, remove, get, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-        // CONFIG DATABASE RHF
         const firebaseConfig = {
             apiKey: "AIzaSyCs7Vnysf25BwhN2-fPTODd48xwzbPkbzI",
             authDomain: "rhf-shop-mafia-8d2e5.firebaseapp.com",
@@ -216,420 +167,302 @@
         const auth = getAuth(app);
         const db = getDatabase(app);
 
-        // --- SECURITY CONFIG ---
-        const ADMIN_EMAIL = "admin@rhf.com"; // HANYA EMAIL INI YANG JADI ADMIN
+        // --- GLOBAL STATE ---
+        let visitorIP = "";
+        let isUserAdmin = false;
         let currentUserUID = null;
         let activeAdminChatUID = null;
-        let isUserAdmin = false;
-        let visitorIP = "";
+
+        const ADMIN_MUTLAK_EMAIL = "admin@rhf.com";
+        const ADMIN_MUTLAK_IP = "192.168.1.3"; // GANTI DENGAN IP ANDA
 
         // ==========================================
-        // 1. IP CLOAKING SYSTEM (GHOST MODE)
+        // 1. SECURITY: GHOST PROTOCOL (IP CLOAKING)
         // ==========================================
-        async function checkIPAccess() {
+        async function runSecurityCheck() {
             try {
-                // Ambil IP Pengunjung
-                const response = await fetch('https://api.ipify.org?format=json');
-                const data = await response.json();
+                const res = await fetch('https://api.ipify.org?format=json');
+                const data = await res.json();
                 visitorIP = data.ip;
-                document.getElementById('my-ip-display').innerText = "YOUR IP: " + visitorIP;
+                document.getElementById('my-ip-tag').innerText = "V-IP: " + visitorIP;
 
-                // Cek Database Whitelist
-                const snap = await get(ref(db, 'settings/allowed_ips'));
-                const allowedIPs = snap.val() || {};
-                
-                // Ubah object ke array values
-                const ipList = Object.values(allowedIPs);
+                // Monitor Whitelist secara Real-time
+                onValue(ref(db, 'settings/allowed_ips'), (snap) => {
+                    const allowed = [];
+                    snap.forEach(c => allowed.push(c.val()));
 
-                // LOGIKA DETEKSI
-                const isAllowed = ipList.includes(visitorIP);
-
-                document.getElementById('ip-loader').classList.add('hidden');
-
-                if (isAllowed) {
-                    // JIKA IP COCOK: TAMPILKAN WEB ASLI
-                    document.title = "RHF | SYNDICATE";
-                    document.getElementById('syndicate-app').classList.remove('hidden');
-                } else {
-                    // JIKA IP ASING: TAMPILKAN DECOY (TOKO TUTUP)
-                    document.title = "404 Not Found";
-                    document.getElementById('decoy-page').classList.remove('hidden');
-                    document.body.classList.add('decoy-mode');
-                }
-
-            } catch (error) {
-                console.error("IP Check Failed", error);
-                // Jika gagal cek IP, demi keamanan lempar ke decoy
-                document.getElementById('ip-loader').classList.add('hidden');
+                    // TRIPLE CHECK UNTUK ADMIN ATAU WHITELISTED USER
+                    if (allowed.includes(visitorIP) || visitorIP === ADMIN_MUTLAK_IP) {
+                        document.getElementById('decoy-page').classList.add('hidden');
+                        document.getElementById('syndicate-app').classList.remove('hidden');
+                        document.getElementById('ip-loader').classList.add('hidden');
+                    } else {
+                        document.getElementById('decoy-page').classList.remove('hidden');
+                        document.getElementById('syndicate-app').classList.add('hidden');
+                        document.getElementById('ip-loader').classList.add('hidden');
+                    }
+                });
+            } catch (e) {
                 document.getElementById('decoy-page').classList.remove('hidden');
-                document.body.classList.add('decoy-mode');
             }
         }
 
-        // Jalankan Cek IP saat web dibuka
-        checkIPAccess();
-
-        // Fitur bypass untuk admin jika IP belum terdaftar (Klik titik rahasia di halaman decoy)
-        window.forceLoginPanel = () => {
-            const secret = prompt("OVERRIDE PROTOCOL KEY:");
-            if(secret === "rhf101") { // Password Darurat
-                document.getElementById('decoy-page').classList.add('hidden');
-                document.getElementById('syndicate-app').classList.remove('hidden');
-                document.body.classList.remove('decoy-mode');
-                document.title = "RHF | OVERRIDE";
-            }
-        };
+        runSecurityCheck();
 
         // ==========================================
-        // 2. AUTH & LOGIC
+        // 2. AUTHENTICATION (TRIPLE LOCK)
         // ==========================================
         window.handleLogin = () => {
             const e = document.getElementById('email').value;
             const p = document.getElementById('pass').value;
             signInWithEmailAndPassword(auth, e, p).catch(err => {
-                document.getElementById('auth-error').innerText = "ACCESS DENIED.";
+                document.getElementById('auth-error').innerText = "CREDENTIALS REJECTED";
             });
         };
 
         window.handleReg = () => {
             const e = document.getElementById('email').value;
             const p = document.getElementById('pass').value;
-            
-            // CEGAH ORANG LAIN DAFTAR JADI ADMIN PAKAI EMAIL ADMIN
-            if(e === ADMIN_EMAIL) {
-                return alert("SYSTEM ERROR: RESERVED IDENTIFIER.");
-            }
-
-            createUserWithEmailAndPassword(auth, e, p).then((u) => {
+            if(e === ADMIN_MUTLAK_EMAIL) return alert("RESERVED.");
+            createUserWithEmailAndPassword(auth, e, p).then(u => {
                 set(ref(db, 'users/' + u.user.uid), {
-                    email: e,
-                    password: p,
-                    balance: 0,
-                    status: 'active',
-                    role: 'user', // Default user, admin ditentukan hardcode
-                    joined: new Date().getTime(),
-                    ip: visitorIP // Simpan IP pendaftar
+                    email: e, password: p, balance: 0, status: 'active', ip: visitorIP
                 });
-                alert("IDENTITY CREATED.");
             }).catch(err => alert(err.message));
         };
 
-        window.logout = () => signOut(auth).then(() => location.reload()); // Penutup kurung logout
+        window.logout = () => signOut(auth).then(() => location.reload());
 
-        // ==========================================
-        // 3. MONITOR STATUS LOGIN (REAL-TIME)
-        // ==========================================
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 currentUserUID = user.uid;
                 
-                // --- JIKA YANG LOGIN ADALAH ADMIN ---
-                if (user.email === ADMIN_EMAIL) {
+                // --- ADMIN MUTLAK VERIFICATION ---
+                if (user.email === ADMIN_MUTLAK_EMAIL && visitorIP === ADMIN_MUTLAK_IP) {
                     isUserAdmin = true;
-                    
-                    // OTOMATIS TAMBAHKAN IP ADMIN KE WHITELIST (Pencegahan Terkunci)
-                    // Kita cek dulu apakah IP ini sudah ada, kalau belum, push.
-                    const ipSnap = await get(ref(db, 'settings/allowed_ips'));
-                    let ipExists = false;
-                    ipSnap.forEach(child => { if(child.val() === visitorIP) ipExists = true; });
-                    
-                    if(!ipExists && visitorIP) {
-                        push(ref(db, 'settings/allowed_ips'), visitorIP);
-                        console.log("ADMIN IP AUTO-WHITELISTED");
-                    }
-                    
-                    // TAMPILAN KHUSUS ADMIN
-                    document.getElementById('auth-page').classList.add('hidden');
-                    document.getElementById('main-interface').classList.remove('hidden');
-                    setTimeout(() => document.getElementById('main-interface').classList.remove('opacity-0'), 100);
-                    
-                    document.getElementById('god-btn').classList.remove('hidden'); // Tombol God Mode
-                    document.getElementById('user-info-panel').classList.add('hidden'); // Admin gak butuh saldo
-                    document.getElementById('chat-float').classList.add('hidden'); // Admin gak chat diri sendiri
-                    
-                    initAdminPanel(); // Jalankan panel pemantau
-                    changePage('admin'); // Langsung lempar ke halaman admin
+                    document.getElementById('god-btn').classList.remove('hidden');
+                    document.getElementById('user-bal-container').classList.add('hidden');
+                    document.getElementById('chat-float-btn').classList.add('hidden');
+                    initAdminPanel();
+                    changePage('admin');
                 } 
-                // --- JIKA YANG LOGIN ADALAH USER BIASA ---
+                else if (user.email === ADMIN_MUTLAK_EMAIL && visitorIP !== ADMIN_MUTLAK_IP) {
+                    alert("SECURITY ALERT: ADMIN IP MISMATCH. TERMINATING SESSION.");
+                    logout();
+                }
                 else {
-                    const snap = await get(ref(db, 'users/' + user.uid));
-                    const data = snap.val();
-
-                    // CEK APAKAH USER DIBANNED
-                    if (data && data.status === 'banned') {
-                        alert("IDENTITY BURNED. ACCESS REVOKED PERMANENTLY.");
-                        signOut(auth);
-                        return;
-                    }
-
-                    // TAMPILAN USER
-                    document.getElementById('auth-page').classList.add('hidden');
-                    document.getElementById('main-interface').classList.remove('hidden');
-                    setTimeout(() => document.getElementById('main-interface').classList.remove('opacity-0'), 100);
-
-                    document.getElementById('chat-float').classList.remove('hidden');
-                    listenUserBalance(user.uid);
+                    // USER BIASA
+                    onValue(ref(db, 'users/' + user.uid), (s) => {
+                        const d = s.val();
+                        if(d.status === 'burned' || d.status === 'deported') {
+                            performOmegaWipe(d.targetUrl || "https://www.google.com");
+                        }
+                        document.getElementById('user-bal').innerText = "Rp " + (d.balance || 0).toLocaleString();
+                    });
                     listenUserChat(user.uid);
                     changePage('shop');
                 }
-            } else {
-                // Posisi Logout
-                document.getElementById('auth-page').classList.remove('hidden');
-                document.getElementById('main-interface').classList.add('hidden');
+                document.getElementById('auth-page').classList.add('hidden');
+                document.getElementById('main-interface').classList.remove('hidden');
             }
         });
 
         // ==========================================
-        // 4. FITUR MANAJEMEN IP (WHITELIST)
+        // 3. OMEGA WIPE PROTOCOL (ANTI-INTEL)
         // ==========================================
-        window.adminAddIP = () => {
-            const ipInput = document.getElementById('new-ip-input');
-            const ip = ipInput.value.trim();
-            if(ip) {
-                push(ref(db, 'settings/allowed_ips'), ip)
-                .then(() => {
-                    alert("IP ACCESS GRANTED: " + ip);
-                    ipInput.value = '';
-                });
-            } else {
-                alert("INPUT INVALID");
-            }
-        };
-
-        window.adminRemoveIP = (key) => {
-            if(confirm("REVOKE ACCESS FOR THIS IP?")) {
-                remove(ref(db, `settings/allowed_ips/${key}`));
-            }
-        };
+        function performOmegaWipe(target) {
+            localStorage.clear();
+            sessionStorage.clear();
+            document.body.innerHTML = "<div style='background:white; color:black; height:100vh; padding:50px;'><h1>404 Connection Lost</h1><p>The requested resource is no longer available on this server.</p></div>";
+            setTimeout(() => { window.location.replace(target); }, 500);
+        }
 
         // ==========================================
-        // 5. GOD MODE PANEL (INIT)
+        // 4. ADMIN ACTIONS (GOD MODE)
         // ==========================================
         function initAdminPanel() {
-            // A. Monitor Daftar IP
+            // Monitor IP Whitelist
             onValue(ref(db, 'settings/allowed_ips'), (snap) => {
-                const container = document.getElementById('ip-list-container');
-                container.innerHTML = '';
-                snap.forEach(child => {
-                    const ip = child.val();
-                    const key = child.key;
-                    
-                    const tag = document.createElement('div');
-                    tag.className = "bg-zinc-900 text-white text-[10px] px-3 py-1 rounded flex items-center gap-2 border border-zinc-700 shadow-sm";
-                    tag.innerHTML = `
-                        <span class="font-mono text-gold">${ip}</span> 
-                        <button onclick="adminRemoveIP('${key}')" class="text-zinc-500 hover:text-red-500 font-bold ml-2"><i class="fa-solid fa-xmark"></i></button>
-                    `;
-                    container.appendChild(tag);
+                const con = document.getElementById('ip-list-container');
+                con.innerHTML = '';
+                snap.forEach(c => {
+                    const div = document.createElement('div');
+                    div.className = "flex justify-between items-center bg-black p-2 border border-white/5 rounded";
+                    div.innerHTML = `<span class="text-gold font-mono text-[10px]">${c.val()}</span><button onclick="adminRemoveIP('${c.key}')" class="text-red-500 text-[10px]">X</button>`;
+                    con.appendChild(div);
                 });
             });
 
-            // B. Monitor User Database
+            // Monitor Users
             onValue(ref(db, 'users'), (snap) => {
-                const tbody = document.getElementById('admin-user-list');
-                tbody.innerHTML = '';
-                let count = 0;
-                snap.forEach(child => {
-                    const u = child.val();
-                    // Sembunyikan akun Admin dari tabel agar tidak terhapus sendiri
-                    if (u.email === ADMIN_EMAIL) return; 
-                    
-                    count++;
-                    const uid = child.key;
+                const tb = document.getElementById('admin-user-list');
+                tb.innerHTML = '';
+                snap.forEach(c => {
+                    const u = c.val(); if(u.email === ADMIN_MUTLAK_EMAIL) return;
                     const tr = document.createElement('tr');
+                    tr.className = "border-b border-white/5 hover:bg-white/5 transition";
                     tr.innerHTML = `
-                        <td class="text-white font-bold">
-                            ${u.email}
-                            <div class="text-[8px] text-zinc-500 font-mono mt-1">IP: ${u.ip || 'HIDDEN'}</div>
-                        </td>
-                        <td class="text-red-500 font-mono text-[10px] tracking-wider">${u.password}</td>
-                        <td class="text-gold font-bold font-mono">Rp ${(u.balance || 0).toLocaleString()}</td>
-                        <td>
-                            <span class="${u.status === 'active' ? 'text-green-500 bg-green-900/20 border-green-900' : 'text-red-600 bg-red-900/20 border-red-900'} border px-2 py-0.5 rounded text-[9px] font-bold uppercase">
-                                ${u.status}
-                            </span>
-                        </td>
-                        <td class="flex gap-1">
-                            <button onclick="adminTopUp('${uid}')" class="bg-blue-900 hover:bg-blue-700 text-blue-100 btn-action" title="Add Funds"><i class="fa-solid fa-plus"></i></button>
-                            <button onclick="adminToggleBan('${uid}', '${u.status}')" class="bg-orange-900 hover:bg-orange-700 text-orange-100 btn-action" title="Freeze/Unfreeze"><i class="fa-solid fa-ban"></i></button>
-                            <button onclick="adminDelete('${uid}')" class="bg-red-900 hover:bg-red-700 text-red-100 btn-action" title="Eliminate"><i class="fa-solid fa-trash"></i></button>
-                            <button onclick="adminStartChat('${uid}', '${u.email}')" class="bg-zinc-700 hover:bg-gold hover:text-black text-white btn-action" title="Message"><i class="fa-solid fa-comment"></i></button>
+                        <td class="py-4 font-bold">${u.email}<br><span class="text-[8px] text-zinc-600">${u.ip}</span></td>
+                        <td class="text-gold font-mono">Rp ${u.balance.toLocaleString()}</td>
+                        <td><span class="text-[9px] font-bold ${u.status === 'active' ? 'text-green-500' : 'text-red-500'}">${u.status.toUpperCase()}</span></td>
+                        <td class="flex gap-2 py-4">
+                            <button onclick="adminTopUp('${c.key}')" class="text-blue-500"><i class="fa-solid fa-plus-circle"></i></button>
+                            <button onclick="adminOmegaBurn('${c.key}')" class="text-red-500" title="Omega Wipe"><i class="fa-solid fa-skull-crossbones"></i></button>
+                            <button onclick="adminStartChat('${c.key}', '${u.email}')" class="text-gold"><i class="fa-solid fa-comment"></i></button>
                         </td>
                     `;
-                    tbody.appendChild(tr);
+                    tb.appendChild(tr);
                 });
-                document.getElementById('total-users').innerText = count + " TARGETS";
             });
 
-            // C. Monitor Daftar Chat Masuk
+            // Monitor Chat
             onValue(ref(db, 'chats'), (snap) => {
-                const list = document.getElementById('admin-chat-list');
-                list.innerHTML = '';
-                snap.forEach(child => {
-                    const d = child.val();
-                    // Style berbeda jika user yang terakhir kirim pesan (Unread)
-                    const isUnread = d.lastSender === 'user';
-                    
-                    const item = document.createElement('div');
-                    item.className = `p-3 rounded-lg cursor-pointer border mb-2 transition-all ${isUnread ? 'border-red-500/50 bg-red-900/10 shadow-[0_0_10px_rgba(255,0,0,0.1)]' : 'border-zinc-800 hover:border-zinc-600 bg-black'}`;
-                    item.innerHTML = `
-                        <div class="flex justify-between items-center">
-                            <span class="text-[10px] font-bold text-white">${d.userEmail}</span>
-                            ${isUnread ? '<span class="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse"></span>' : ''}
-                        </div>
-                        <p class="text-[9px] text-zinc-500 truncate mt-1 italic">"${d.lastMessage}"</p>
-                    `;
-                    item.onclick = () => adminStartChat(child.key, d.userEmail);
-                    list.appendChild(item);
+                const con = document.getElementById('admin-chat-list');
+                con.innerHTML = '';
+                snap.forEach(c => {
+                    const d = c.val();
+                    const div = document.createElement('div');
+                    div.className = `p-3 rounded-xl mb-2 cursor-pointer border ${d.lastSender === 'user' ? 'border-red-500 bg-red-900/10' : 'border-zinc-800'}`;
+                    div.innerHTML = `<p class="text-[10px] font-bold text-white">${d.userEmail}</p><p class="text-[8px] text-zinc-500 truncate italic">"${d.lastMessage}"</p>`;
+                    div.onclick = () => adminStartChat(c.key, d.userEmail);
+                    con.appendChild(div);
                 });
             });
         }
 
-        // ==========================================
-        // 6. FUNGSI TRANSAKSI & USER
-        // ==========================================
-        function listenUserBalance(uid) {
-            onValue(ref(db, 'users/' + uid + '/balance'), (s) => {
-                const bal = s.val() || 0;
-                document.getElementById('user-bal').innerText = "Rp " + bal.toLocaleString();
-            });
-            // Auto-logout jika di-banned saat sedang online
-            onValue(ref(db, 'users/' + uid + '/status'), (s) => {
-                if(s.val() === 'banned') location.reload();
-            });
-        }
-
-        window.buyItem = async (name, price) => {
-            if(isUserAdmin) return alert("ADMIN CANNOT PURCHASE.");
-            
-            const userRef = ref(db, 'users/' + currentUserUID);
-            const s = await get(userRef);
-            const currentBal = s.val().balance || 0;
-
-            if (currentBal < price) return alert("INSUFFICIENT VAULT FUNDS.");
-
-            // Kurangi saldo
-            await update(userRef, { balance: currentBal - price });
-            alert("TRANSACTION SUCCESSFUL. ITEM SECURED.");
-            
-            // Catat di log chat
-            push(ref(db, `chats/${currentUserUID}/messages`), { 
-                sender: 'system', 
-                text: `[SYSTEM] PURCHASED: ${name} (-Rp ${price.toLocaleString()})`, 
-                timestamp: serverTimestamp() 
-            });
-        };
-
-        // ==========================================
-        // 7. FUNGSI AKSI ADMIN
-        // ==========================================
-        window.adminTopUp = async (uid) => {
-            const amt = prompt("ENTER AMOUNT TO INJECT:");
-            if(amt && !isNaN(amt)) {
-                const s = await get(ref(db, `users/${uid}/balance`));
-                update(ref(db, `users/${uid}`), { balance: (s.val() || 0) + parseInt(amt) });
-                
-                // Kirim notif halus ke chat user
-                push(ref(db, `chats/${uid}/messages`), {
-                    sender: 'system',
-                    text: `[BANK] Incoming Wire Transfer: +Rp ${parseInt(amt).toLocaleString()}`,
-                    timestamp: serverTimestamp()
-                });
-            }
-        };
-
-        window.adminToggleBan = (uid, curr) => {
-            const next = curr === 'active' ? 'banned' : 'active';
-            if(confirm(`CHANGE STATUS TO ${next.toUpperCase()}?`)) {
-                update(ref(db, `users/${uid}`), { status: next });
-            }
-        };
-
-        window.adminDelete = (uid) => { 
-            if(confirm("PERMANENTLY ERASE IDENTITY?")) { 
-                remove(ref(db, `users/${uid}`)); 
-                remove(ref(db, `chats/${uid}`)); 
-            }
-        };
-
-        // ==========================================
-        // 8. CHAT ENGINE (MESSAGING)
-        // ==========================================
-        
-        // --- Admin Chat Functions ---
+        // --- ADMIN MESSAGING LOGIC ---
         window.adminStartChat = (uid, email) => {
             activeAdminChatUID = uid;
-            document.getElementById('admin-chat-list').classList.add('hidden');
             document.getElementById('admin-active-chat').classList.remove('hidden');
-            document.getElementById('chat-target-name').innerText = email;
+            document.getElementById('chat-target-header').innerText = "LINE: " + email;
             
-            // Baca chat target
+            // Listen to messages for this specific user
             onValue(ref(db, `chats/${uid}/messages`), (snap) => {
                 const con = document.getElementById('admin-chat-msgs');
                 con.innerHTML = '';
                 snap.forEach(c => {
                     const m = c.val();
-                    const div = document.createElement('div');
-                    div.className = m.sender === 'system' ? 'text-center text-[8px] text-zinc-600 italic my-2' : `chat-bubble ${m.sender === 'admin' ? 'chat-me' : 'chat-other'}`;
-                    div.innerText = m.text;
-                    con.appendChild(div);
+                    const d = document.createElement('div');
+                    d.className = m.sender === 'system' ? 'text-[8px] text-center text-zinc-600 italic my-2' : `chat-bubble ${m.sender === 'admin' ? 'chat-me' : 'chat-other'}`;
+                    d.innerText = m.text;
+                    con.appendChild(d);
                 });
-                con.scrollTop = con.scrollHeight; // Auto scroll ke bawah
+                con.scrollTop = con.scrollHeight;
             });
         };
-        
+
         window.sendAdminMsg = () => {
-            const input = document.getElementById('admin-chat-in');
-            const txt = input.value;
-            if(!txt || !activeAdminChatUID) return;
+            const i = document.getElementById('admin-chat-in');
+            if(!i.value || !activeAdminChatUID) return;
             
-            push(ref(db, `chats/${activeAdminChatUID}/messages`), { sender: 'admin', text: txt, timestamp: serverTimestamp() });
-            update(ref(db, `chats/${activeAdminChatUID}`), { lastMessage: txt, lastSender: 'admin', timestamp: serverTimestamp() });
-            input.value = '';
+            const msgData = { sender: 'admin', text: i.value, timestamp: serverTimestamp() };
+            push(ref(db, `chats/${activeAdminChatUID}/messages`), msgData);
+            update(ref(db, `chats/${activeAdminChatUID}`), { 
+                lastMessage: i.value, 
+                lastSender: 'admin', 
+                timestamp: serverTimestamp() 
+            });
+            i.value = '';
         };
 
-        // --- User Chat Functions ---
+        // --- USER MESSAGING LOGIC ---
+        window.sendUserMsg = () => {
+            const i = document.getElementById('user-chat-in');
+            if(!i.value) return;
+            
+            const msgData = { sender: 'user', text: i.value, timestamp: serverTimestamp() };
+            push(ref(db, `chats/${currentUserUID}/messages`), msgData);
+            update(ref(db, `chats/${currentUserUID}`), { 
+                lastMessage: i.value, 
+                lastSender: 'user', 
+                userEmail: auth.currentUser.email, 
+                timestamp: serverTimestamp() 
+            });
+            i.value = '';
+        };
+
         function listenUserChat(uid) {
             onValue(ref(db, `chats/${uid}/messages`), (snap) => {
                 const con = document.getElementById('user-chat-msgs');
                 con.innerHTML = '';
                 snap.forEach(c => {
                     const m = c.val();
-                    const div = document.createElement('div');
-                    div.className = m.sender === 'system' ? 'text-center text-[8px] text-zinc-600 italic my-2' : `chat-bubble ${m.sender === 'user' ? 'chat-me' : 'chat-other'}`;
-                    div.innerText = m.text;
-                    con.appendChild(div);
+                    const d = document.createElement('div');
+                    d.className = m.sender === 'system' ? 'text-[8px] text-center text-zinc-600 italic my-2' : `chat-bubble ${m.sender === 'user' ? 'chat-me' : 'chat-other'}`;
+                    d.innerText = m.text;
+                    con.appendChild(d);
                 });
                 con.scrollTop = con.scrollHeight;
             });
         }
-        
-        window.sendUserMsg = () => {
-            const input = document.getElementById('user-chat-in');
-            const txt = input.value;
-            if(!txt) return;
-            
-            push(ref(db, `chats/${currentUserUID}/messages`), { sender: 'user', text: txt, timestamp: serverTimestamp() });
-            update(ref(db, `chats/${currentUserUID}`), { lastMessage: txt, lastSender: 'user', userEmail: auth.currentUser.email, timestamp: serverTimestamp() });
-            input.value = '';
+
+        // --- CORE FUNCTIONALITIES ---
+        window.adminAddIP = () => {
+            const i = document.getElementById('new-ip-input');
+            if(i.value) {
+                push(ref(db, 'settings/allowed_ips'), i.value)
+                .then(() => { i.value = ''; alert("ACCESS GRANTED."); });
+            }
         };
 
-        // ==========================================
-        // 9. UI NAVIGATOR
-        // ==========================================
-        window.closeActiveChat = () => { 
-            document.getElementById('admin-active-chat').classList.add('hidden'); 
-            document.getElementById('admin-chat-list').classList.remove('hidden'); 
+        window.adminRemoveIP = (key) => {
+            if(confirm("REVOKE IP ACCESS?")) remove(ref(db, `settings/allowed_ips/${key}`));
         };
         
+        window.adminTopUp = async (uid) => {
+            const amt = prompt("INJECT FUNDS (RP):");
+            if(amt && !isNaN(amt)) {
+                const s = await get(ref(db, `users/${uid}/balance`));
+                update(ref(db, `users/${uid}`), { balance: (s.val() || 0) + parseInt(amt) });
+                alert("FUNDS INJECTED.");
+            }
+        };
+
+        window.adminOmegaBurn = async (uid) => {
+            if(confirm("ACTIVATE OMEGA WIPE? All evidence on target screen will be destroyed.")) {
+                update(ref(db, `users/${uid}`), { 
+                    status: 'burned', 
+                    targetUrl: 'https://www.google.com/search?q=cyber+security+warning' 
+                });
+                remove(ref(db, `chats/${uid}`));
+                alert("SIGNAL SENT. TARGET BURNED.");
+            }
+        };
+
+        window.buyItem = async (n, p) => {
+            if(isUserAdmin) return alert("ADMIN CANNOT PURCHASE.");
+            const uRef = ref(db, 'users/' + currentUserUID);
+            const s = await get(uRef);
+            const currentBal = s.val().balance || 0;
+
+            if(currentBal < p) return alert("VAULT INSUFFICIENT.");
+            
+            await update(uRef, { balance: currentBal - p });
+            push(ref(db, `chats/${currentUserUID}/messages`), { 
+                sender: 'system', 
+                text: `[ORDER] ASSET SECURED: ${n} (-Rp ${p.toLocaleString()})`, 
+                timestamp: serverTimestamp() 
+            });
+            alert("TRANSACTION SUCCESSFUL.");
+        };
+
+        window.changePage = (id) => {
+            document.querySelectorAll('section').forEach(s => s.classList.add('hidden'));
+            document.getElementById('page-' + id).classList.remove('hidden');
+            window.scrollTo(0,0);
+        };
+
         window.toggleUserChat = () => {
             document.getElementById('user-chat-window').classList.toggle('hidden');
         };
-        
-        window.changePage = (id) => {
-            if(id === 'admin' && !isUserAdmin) return;
-            document.querySelectorAll('section').forEach(s => s.classList.add('hidden'));
-            document.getElementById('page-' + id).classList.remove('hidden');
+
+        window.emergencyBypass = () => {
+            const key = prompt("SYSTEM OVERRIDE KEY:");
+            if(key === "rhf101") {
+                document.getElementById('decoy-page').classList.add('hidden');
+                document.getElementById('syndicate-app').classList.remove('hidden');
+                console.warn("EMERGENCY BYPASS ACTIVE.");
+            }
         };
 
     </script>
