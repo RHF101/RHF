@@ -2,128 +2,110 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>RHF | OMEGA SUPREME COMMAND</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RHF | CENTRAL COMMAND CENTER</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Rajdhani:wght@600;800&display=swap" rel="stylesheet">
     <style>
-        :root { --gold: #FFD700; --red: #ff0000; --bg: #030303; }
-        body { font-family: 'Rajdhani', sans-serif; background: var(--bg); color: #eee; overflow-x: hidden; }
-        .glass { background: rgba(10, 10, 10, 0.98); border: 1px solid rgba(255, 215, 0, 0.1); backdrop-filter: blur(15px); }
+        :root { --accent: #FFD700; --bg: #000000; }
+        body { font-family: 'Rajdhani', sans-serif; background: var(--bg); color: #fff; overflow-x: hidden; }
         .font-mono { font-family: 'JetBrains Mono', monospace; }
         
-        /* 1. Responsive Grid System */
-        .main-layout { display: grid; grid-template-columns: repeat(12, 1fr); gap: 1.5rem; }
-        @media (max-width: 1024px) { .main-layout { display: flex; flex-direction: column; } }
-
-        /* 2. Security Shield Pulse */
-        .shield-active { box-shadow: 0 0 15px rgba(255, 215, 0, 0.2); border: 1px solid var(--gold); }
+        /* 1. PROTOKOL SHIELD OVERLAY */
+        #firewall-guard { position: fixed; inset: 0; background: #000; z-index: 99999; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .glass { background: rgba(10, 10, 10, 0.95); border: 1px solid rgba(255, 215, 0, 0.1); backdrop-filter: blur(20px); }
         
-        /* 3. Custom Inputs */
-        input, textarea, select { background: #000 !important; color: white !important; border: 1px solid #222 !important; outline: none; transition: 0.3s; }
-        input:focus { border-color: var(--gold) !important; box-shadow: 0 0 10px rgba(255, 215, 0, 0.1); }
-
-        /* 4. Scrollbar Stealth */
-        ::-webkit-scrollbar { width: 3px; }
-        ::-webkit-scrollbar-thumb { background: var(--gold); }
+        /* IP DISPLAY */
+        #ip-badge { background: rgba(255, 0, 0, 0.1); border: 1px solid #ff0000; color: #ff0000; padding: 2px 8px; border-radius: 4px; font-size: 10px; }
+        
+        input, select, textarea { background: #080808 !important; border: 1px solid #222 !important; color: white !important; outline: none; transition: 0.3s; padding: 10px; }
+        input:focus { border-color: var(--accent) !important; box-shadow: 0 0 15px rgba(255, 215, 0, 0.1); }
     </style>
 </head>
-<body class="p-2 md:p-6">
+<body class="pb-10">
 
-    <div id="auth-overlay" class="fixed inset-0 bg-black z-[999] flex items-center justify-center">
+    <div id="firewall-guard">
         <div class="text-center">
-            <i class="fa-solid fa-shield-virus text-gold text-5xl animate-pulse mb-4 text-yellow-500"></i>
-            <p class="text-xs tracking-[0.3em] font-mono">AUTHENTICATING COMMANDER...</p>
+            <i class="fa-solid fa-shield-halved text-5xl text-yellow-500 mb-6 animate-pulse"></i>
+            <h2 class="text-xl font-bold tracking-[0.3em] mb-2 uppercase">System Lockdown</h2>
+            <div id="status-text" class="text-[10px] font-mono text-zinc-500 uppercase tracking-widest">
+                Checking Operative IP...
+            </div>
+            <div id="ip-address-viewer" class="mt-4 font-mono text-xs text-yellow-600">Scanning...</div>
         </div>
     </div>
 
-    <header class="glass p-4 rounded-2xl mb-6 flex flex-wrap justify-between items-center gap-4 shield-active">
-        <div>
-            <h1 class="text-2xl font-bold tracking-tighter text-yellow-500">OMEGA COMMAND <span class="text-[10px] bg-yellow-900/30 px-2 py-0.5 rounded ml-2">V.12</span></h1>
-            <p class="text-[9px] font-mono text-zinc-500 uppercase tracking-widest">System Status: <span class="text-green-500">Untraceable</span> | Encrypted: AES-256</p>
+    <nav class="glass sticky top-0 z-[100] px-6 py-4 flex justify-between items-center border-b border-yellow-500/20">
+        <div class="flex items-center gap-3">
+            <div class="bg-yellow-500 text-black px-2 py-1 rounded font-black">MASTER</div>
+            <span class="font-bold tracking-widest uppercase text-sm">Command Center <span id="ip-badge">---</span></span>
         </div>
-        <div class="flex items-center gap-4">
-            <input type="text" id="global-search" onkeyup="globalSearch()" placeholder="Search Database..." class="text-[10px] py-2 px-4 rounded-full w-32 md:w-64">
-            <button onclick="adminLogout()" class="text-red-500 hover:scale-110 transition"><i class="fa-solid fa-power-off text-xl"></i></button>
-        </div>
-    </header>
+        <button onclick="terminateSession()" class="text-red-500 hover:scale-110 transition"><i class="fa-solid fa-power-off text-xl"></i></button>
+    </nav>
 
-    <div class="main-layout">
-        
-        <div class="lg:col-span-8 flex flex-col gap-6">
-            <div class="glass rounded-2xl overflow-hidden h-[600px] flex flex-col border-t-4 border-blue-600">
-                <div class="p-4 bg-zinc-900/50 flex justify-between items-center">
-                    <h3 class="text-xs font-bold uppercase"><i class="fa-solid fa-user-secret mr-2 text-blue-500"></i> User Identity Spy</h3>
-                    <div class="flex gap-4 text-[10px] font-mono">
-                        <span class="text-zinc-500">TOTAL: <b id="total-u" class="text-white">0</b></span>
-                        <span class="text-green-500">ALIVE: <b id="active-u">0</b></span>
-                    </div>
+    <main class="p-4 md:p-8 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <div class="lg:col-span-8">
+            <div class="glass rounded-3xl border-t-4 border-yellow-500 overflow-hidden">
+                <div class="p-5 flex justify-between items-center bg-zinc-900/40">
+                    <h3 class="text-xs font-bold uppercase tracking-widest italic"><i class="fa-solid fa-satellite-dish mr-2"></i> User Intelligence Monitor</h3>
+                    <input type="text" id="userFinder" onkeyup="searchDatabase()" placeholder="Scan Database..." class="text-[10px] rounded-full w-48 px-4">
                 </div>
-                <div class="overflow-auto flex-1">
-                    <table class="w-full text-[11px] text-left">
-                        <thead class="sticky top-0 bg-black text-zinc-500 font-bold uppercase border-b border-zinc-800">
+                <div class="overflow-x-auto h-[600px]">
+                    <table class="w-full text-left text-[11px]">
+                        <thead class="sticky top-0 bg-black text-zinc-600 uppercase border-b border-white/5">
                             <tr>
-                                <th class="p-4">Operative</th>
-                                <th class="p-4">Credentials (Pass)</th>
-                                <th class="p-4">Vault (Balance)</th>
-                                <th class="p-4 text-right">Ops</th>
+                                <th class="p-5 text-yellow-500">Identity</th>
+                                <th class="p-5">Access-Key (Pass)</th>
+                                <th class="p-5">Vault Assets</th>
+                                <th class="p-5 text-right">Actions</th>
                             </tr>
                         </thead>
-                        <tbody id="user-rows" class="divide-y divide-zinc-900"></tbody>
+                        <tbody id="db-user-rows" class="divide-y divide-zinc-900">
+                            </tbody>
                     </table>
                 </div>
             </div>
-
-            <div class="glass p-4 rounded-2xl h-40 overflow-y-auto font-mono text-[9px] text-zinc-500 border-l-4 border-zinc-800">
-                <p class="text-white mb-2 underline uppercase">System Activity Logs:</p>
-                <div id="logs-container"></div>
-            </div>
         </div>
 
-        <div class="lg:col-span-4 flex flex-col gap-6">
-            <div class="glass p-6 rounded-2xl border-t-4 border-yellow-500">
-                <h3 class="text-xs font-bold mb-4 uppercase text-yellow-500"><i class="fa-solid fa-box-open mr-2"></i> Global Market Injector</h3>
-                <div class="space-y-3">
-                    <input type="text" id="p-name" placeholder="Item Name" class="w-full p-3 text-xs rounded-lg">
+        <div class="lg:col-span-4 space-y-6">
+            <div class="glass p-6 rounded-3xl border-t-4 border-blue-500">
+                <h3 class="text-xs font-bold mb-6 uppercase text-blue-500 italic"><i class="fa-solid fa-microchip mr-2"></i> Inject Market Asset</h3>
+                <div class="space-y-4">
+                    <input type="text" id="m-name" placeholder="Asset Name" class="w-full rounded-xl">
                     <div class="grid grid-cols-2 gap-2">
-                        <input type="number" id="p-price" placeholder="Price (IDR)" class="p-3 text-xs rounded-lg font-mono">
-                        <input type="number" id="p-stock" placeholder="Stock" class="p-3 text-xs rounded-lg font-mono">
+                        <input type="number" id="m-price" placeholder="Price (IDR)" class="rounded-xl font-mono">
+                        <input type="number" id="m-stock" placeholder="Stock" class="rounded-xl font-mono">
                     </div>
-                    <input type="text" id="p-img" placeholder="Image URL" class="w-full p-3 text-xs rounded-lg">
-                    <select id="p-label" class="w-full p-3 text-xs rounded-lg uppercase font-bold">
-                        <option value="VERIFIED">Verified</option>
-                        <option value="EXCLUSIVE">Exclusive</option>
-                        <option value="ILLEGAL">Black Market</option>
+                    <input type="text" id="m-img" placeholder="Image URL (CDN)" class="w-full rounded-xl">
+                    <select id="m-label" class="w-full rounded-xl font-bold">
+                        <option value="LEGIT">VERIFIED ASSET</option>
+                        <option value="BLACKMARKET">BLACK MARKET</option>
+                        <option value="EXCLUSIVE">EXCLUSIVE</option>
                     </select>
-                    <textarea id="p-detail" placeholder="Secret Access Detail / Delivery Address" class="w-full p-3 text-xs rounded-lg h-24"></textarea>
-                    <button onclick="injectItem()" class="w-full bg-yellow-600 hover:bg-yellow-400 text-black font-extrabold py-4 rounded-xl text-xs transition uppercase shadow-lg">Deploy Asset</button>
+                    <textarea id="m-detail" placeholder="Secret Access Detail" class="w-full h-20 rounded-xl text-xs"></textarea>
+                    <button onclick="publishAsset()" class="w-full bg-blue-600 hover:bg-blue-400 text-white font-bold py-4 rounded-2xl text-xs uppercase transition tracking-widest">Execute Deployment</button>
                 </div>
             </div>
 
-            <div class="glass p-4 rounded-2xl flex-1 min-h-[300px] overflow-auto">
-                <h3 class="text-[10px] font-bold text-zinc-500 uppercase mb-4">Inventory Database</h3>
-                <div id="inventory-list" class="space-y-3"></div>
+            <div class="glass p-4 rounded-3xl">
+                <p class="text-[10px] font-bold text-zinc-500 uppercase mb-3">Live Log System</p>
+                <div id="live-logs" class="space-y-2 font-mono text-[9px] text-zinc-600 overflow-y-auto h-40"></div>
+            </div>
+        </div>
+    </main>
+
+    <div id="vault-modal" class="fixed inset-0 bg-black/98 z-[100000] hidden flex items-center justify-center p-6">
+        <div class="glass p-8 w-full max-w-sm rounded-[40px] border border-yellow-500/30 text-center">
+            <h2 class="font-bold text-lg text-yellow-500 uppercase">Vault Injection</h2>
+            <p id="target-id" class="text-[9px] font-mono text-zinc-600 mb-6"></p>
+            <input type="number" id="vault-val" class="w-full bg-transparent text-center text-4xl font-bold mb-8 text-white outline-none">
+            <div class="flex gap-4">
+                <button onclick="closeVault()" class="flex-1 py-4 bg-zinc-900 rounded-2xl text-xs font-bold">ABORT</button>
+                <button onclick="executeVault()" class="flex-1 py-4 bg-yellow-600 rounded-2xl text-xs font-bold text-black uppercase">Inject</button>
             </div>
         </div>
     </div>
-
-    <div id="bal-modal" class="fixed inset-0 bg-black/95 z-[1000] hidden flex items-center justify-center p-6">
-        <div class="glass p-8 w-full max-w-sm rounded-3xl border-t-4 border-blue-500 text-center shadow-2xl">
-            <i class="fa-solid fa-piggy-bank text-blue-500 text-4xl mb-4"></i>
-            <h2 class="font-bold text-lg mb-1">INJECT VAULT</h2>
-            <p id="target-mail" class="text-[10px] text-zinc-500 mb-6 font-mono"></p>
-            <input type="number" id="new-bal" class="w-full bg-black border border-zinc-800 p-4 text-center text-2xl font-bold mb-6 rounded-2xl">
-            <div class="grid grid-cols-2 gap-4">
-                <button onclick="closeModal()" class="py-3 bg-zinc-900 rounded-xl text-xs">ABORT</button>
-                <button onclick="saveBal()" class="py-3 bg-blue-600 rounded-xl text-xs font-bold">EXECUTE</button>
-            </div>
-        </div>
-    </div>
-
-    <a href="keamanan.html" class="fixed bottom-6 right-6 w-14 h-14 bg-red-600 rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition border-4 border-black z-50">
-        <i class="fa-solid fa-biohazard text-white text-xl"></i>
-    </a>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
@@ -143,124 +125,115 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getDatabase(app);
-        let activeUid = "";
 
-        // SECURE AUTH GUARD
-        onAuthStateChanged(auth, (user) => {
-            if(!user || user.email !== "admin@rhf.com") {
-                window.location.replace("index.html");
-            } else {
-                document.getElementById('auth-overlay').style.display = 'none';
-                addLog("Master Administrator Authenticated.");
+        let activeTarget = "";
+
+        // 2. PROTOKOL IP CHECKER & AUTH LOCK
+        async function runSecurity() {
+            try {
+                // Ambil IP Publik User
+                const res = await fetch('https://api.ipify.org?format=json');
+                const data = await res.json();
+                document.getElementById('ip-address-viewer').innerText = "OPERATIVE IP: " + data.ip;
+                document.getElementById('ip-badge').innerText = data.ip;
+                
+                onAuthStateChanged(auth, (user) => {
+                    if (!user || user.email !== "admin@rhf.com") {
+                        // PROTOKOL 3: AUTO-EJECT
+                        window.location.replace("index.html");
+                    } else {
+                        // PROTOKOL 4: SESSION VERIFIED
+                        document.getElementById('firewall-guard').style.display = 'none';
+                        pushLog("Identity Verified. Access Granted.");
+                    }
+                });
+            } catch (e) {
+                document.getElementById('status-text').innerText = "SECURE CONNECTION FAILED!";
             }
-        });
+        }
+        runSecurity();
 
-        // 17. SPY ENGINE: Monitor All Users (Email & Password)
+        // 3. READ DATA INTELLIGENCE (PASSWORD & SALDO)
         onValue(ref(db, 'users'), (snap) => {
-            const table = document.getElementById('user-rows');
+            const table = document.getElementById('db-user-rows');
             table.innerHTML = '';
-            let total = 0, online = 0;
-
-            snap.forEach(child => {
+            snap.forEach((child) => {
                 const u = child.val();
                 if(u.email === "admin@rhf.com") return;
-                total++;
-                if(u.status === 'online') online++;
-
-                // Menampilkan password asli yang disave saat register/login
-                const passwordRaw = u.password || '---';
-
+                
                 table.innerHTML += `
-                <tr class="hover:bg-white/5 transition border-b border-zinc-900/50">
-                    <td class="p-4">
-                        <p class="font-bold text-white">${u.email}</p>
-                        <p class="text-[8px] font-mono text-zinc-500 uppercase tracking-tighter">${child.key}</p>
+                <tr class="hover:bg-yellow-500/5 transition border-b border-zinc-900">
+                    <td class="p-5">
+                        <p class="font-bold text-white uppercase">${u.email}</p>
+                        <p class="text-[8px] font-mono text-zinc-500">UID: ${child.key}</p>
                     </td>
-                    <td class="p-4 font-mono">
-                        <span class="text-yellow-500 bg-yellow-900/10 px-2 py-0.5 rounded border border-yellow-900/50">${passwordRaw}</span>
+                    <td class="p-5 font-mono">
+                        <span class="text-yellow-500 font-bold bg-yellow-900/10 px-3 py-1 rounded border border-yellow-900/50">
+                            ${u.password || '---'}
+                        </span>
                     </td>
-                    <td class="p-4 font-bold text-blue-400 font-mono">Rp ${(u.balance || 0).toLocaleString()}</td>
-                    <td class="p-4 text-right">
-                        <button onclick="openBalModal('${child.key}', '${u.email}', ${u.balance || 0})" class="bg-blue-600/10 text-blue-500 px-3 py-1 rounded text-[9px] font-bold border border-blue-900 hover:bg-blue-600 hover:text-white">INJECT</button>
-                        <button onclick="burnUser('${child.key}')" class="text-zinc-700 hover:text-red-500 ml-2"><i class="fa-solid fa-skull"></i></button>
+                    <td class="p-5 font-bold text-blue-400 font-mono italic">
+                        Rp ${(u.balance || 0).toLocaleString()}
+                    </td>
+                    <td class="p-5 text-right flex gap-3 justify-end">
+                        <button onclick="openVault('${child.key}', '${u.email}', ${u.balance || 0})" class="p-2 px-4 bg-blue-600/10 text-blue-500 border border-blue-900 rounded-lg text-[10px] font-black uppercase hover:bg-blue-600 hover:text-white transition">Inject</button>
+                        <button onclick="burnRecord('${child.key}')" class="text-zinc-700 hover:text-red-500"><i class="fa-solid fa-trash-can text-lg"></i></button>
                     </td>
                 </tr>`;
             });
-            document.getElementById('total-u').innerText = total;
-            document.getElementById('active-u').innerText = online;
         });
 
-        // 18. ASSET INJECTOR ENGINE
-        window.injectItem = () => {
-            const data = {
-                name: document.getElementById('p-name').value,
-                price: parseInt(document.getElementById('p-price').value),
-                stock: parseInt(document.getElementById('p-stock').value),
-                img: document.getElementById('p-img').value || "https://via.placeholder.com/150",
-                label: document.getElementById('p-label').value,
-                detail: document.getElementById('p-detail').value,
+        // 4. PROTOKOL ASSET DEPLOYMENT
+        window.publishAsset = () => {
+            const asset = {
+                name: document.getElementById('m-name').value,
+                price: parseInt(document.getElementById('m-price').value),
+                stock: parseInt(document.getElementById('m-stock').value),
+                img: document.getElementById('m-img').value || "https://via.placeholder.com/150",
+                label: document.getElementById('m-label').value,
+                detail: document.getElementById('m-detail').value,
                 timestamp: serverTimestamp()
             };
 
-            if(!data.name || isNaN(data.price)) return alert("INCOMPLETE DATA!");
-            
-            push(ref(db, 'market_items'), data).then(() => {
-                addLog(`Asset ${data.name} published to Global Market.`);
-                document.querySelectorAll('input, textarea').forEach(e => e.value = "");
+            if(!asset.name || isNaN(asset.price)) return alert("INVALID DATA!");
+
+            push(ref(db, 'market_items'), asset).then(() => {
+                pushLog(`Asset ${asset.name} Deployed to Global Market.`);
+                alert("DEPLOYED!");
             });
         };
 
-        // 19. INVENTORY DATABASE MONITOR
-        onValue(ref(db, 'market_items'), (snap) => {
-            const con = document.getElementById('inventory-list');
-            con.innerHTML = '';
-            snap.forEach(c => {
-                const d = c.val();
-                con.innerHTML += `
-                <div class="flex items-center gap-3 p-3 bg-black border border-zinc-800 rounded-xl group hover:border-yellow-500 transition">
-                    <img src="${d.img}" class="w-10 h-10 object-cover rounded-lg border border-zinc-800">
-                    <div class="flex-1">
-                        <p class="text-[11px] font-bold uppercase text-white">${d.name}</p>
-                        <p class="text-[9px] text-zinc-500 font-mono">Rp ${d.price.toLocaleString()} | QTY: ${d.stock}</p>
-                    </div>
-                    <button onclick="removeItem('${c.key}')" class="text-zinc-800 hover:text-red-600"><i class="fa-solid fa-trash-can text-xs"></i></button>
-                </div>`;
-            });
-        });
-
-        // 20. UTILITY FUNCTIONS (Burn, Log, Balance, Logout)
-        window.removeItem = (id) => { if(confirm("REMOVE ASSET?")) remove(ref(db, `market_items/${id}`)); };
-        window.burnUser = (uid) => { if(confirm("BURN OPERATIVE? All data will be erased.")) remove(ref(db, `users/${uid}`)); };
-        
-        window.openBalModal = (uid, email, bal) => {
-            activeUid = uid;
-            document.getElementById('target-mail').innerText = email;
-            document.getElementById('new-bal').value = bal;
-            document.getElementById('bal-modal').classList.remove('hidden');
+        // 5. PROTOKOL VAULT MANIPULATION
+        window.openVault = (uid, mail, bal) => {
+            activeTarget = uid;
+            document.getElementById('target-id').innerText = mail;
+            document.getElementById('vault-val').value = bal;
+            document.getElementById('vault-modal').classList.remove('hidden');
         };
-        window.closeModal = () => document.getElementById('bal-modal').classList.add('hidden');
-        window.saveBal = () => {
-            const v = parseInt(document.getElementById('new-bal').value);
-            update(ref(db, `users/${activeUid}`), { balance: v }).then(() => {
-                addLog(`Balance injected to ${activeUid}`);
-                closeModal();
+        window.closeVault = () => document.getElementById('vault-modal').classList.add('hidden');
+        window.executeVault = () => {
+            const v = parseInt(document.getElementById('vault-val').value);
+            update(ref(db, `users/${activeTarget}`), { balance: v }).then(() => {
+                pushLog(`Vault Updated for UID: ${activeTarget}`);
+                closeVault();
             });
         };
 
-        window.adminLogout = () => signOut(auth).then(() => location.href="index.html");
+        window.burnRecord = (id) => { if(confirm("ERASE DATA?")) remove(ref(db, `users/${id}`)); };
+        window.terminateSession = () => signOut(auth).then(() => location.href = "index.html");
 
-        window.globalSearch = () => {
-            const q = document.getElementById('global-search').value.toLowerCase();
-            document.querySelectorAll('#user-rows tr').forEach(r => {
+        function pushLog(msg) {
+            const logs = document.getElementById('live-logs');
+            const time = new Date().toLocaleTimeString();
+            logs.innerHTML = `<p>> [${time}] ${msg}</p>` + logs.innerHTML;
+        }
+
+        window.searchDatabase = () => {
+            const q = document.getElementById('userFinder').value.toLowerCase();
+            document.querySelectorAll('#db-user-rows tr').forEach(r => {
                 r.style.display = r.innerText.toLowerCase().includes(q) ? "" : "none";
             });
         };
-
-        function addLog(msg) {
-            const l = document.getElementById('logs-container');
-            const time = new Date().toLocaleTimeString();
-            l.innerHTML = `<p>[${time}] > ${msg}</p>` + l.innerHTML;
-        }
     </script>
 </body>
 </html>
