@@ -3,70 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RHF | EXCLUSIVE MARKET</title>
+    <title>RHF | BLACK MARKET</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
     <style>
-        :root { --gold: #D4AF37; --dark: #050505; }
-        body { background: var(--dark); color: #ccc; font-family: sans-serif; }
-        .glass-panel { background: rgba(15, 15, 15, 0.95); border: 1px solid rgba(212, 175, 55, 0.1); }
-        .btn-logout { color: #666; font-size: 12px; transition: 0.3s; }
-        .btn-logout:hover { color: #ff4d4d; }
-        .hidden { display: none !important; }
-        /* Modal Style */
-        .modal-overlay { background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); }
-        .input-address { background: #fff; color: #333; border-bottom: 1px solid #ddd; padding: 12px; width: 100%; outline: none; }
+        body { font-family: 'Rajdhani', sans-serif; background: #050505; color: #eee; }
+        .glass { background: rgba(15, 15, 15, 0.95); border: 1px solid rgba(255, 215, 0, 0.1); backdrop-filter: blur(10px); }
+        .card-gold { border: 1px solid #222; transition: 0.3s; background: #0a0a0a; }
+        .card-gold:hover { border-color: #FFD700; transform: translateY(-5px); }
+        .btn-buy { background: linear-gradient(90deg, #b38728, #fcf6ba, #bf953f); color: #000; font-weight: 800; }
     </style>
 </head>
-<body class="pb-10">
+<body class="pb-20">
 
-    <nav class="fixed top-0 w-full z-50 glass-panel border-b border-white/5 px-6 py-4 flex justify-between items-center">
-        <div class="flex items-center gap-2">
-            <span class="text-gold font-bold tracking-widest text-sm uppercase">RHF MARKET</span>
+    <nav class="sticky top-0 z-50 glass px-4 py-4 flex justify-between items-center border-b border-yellow-500/20">
+        <div>
+            <h1 class="text-xl font-bold text-yellow-500 tracking-tighter">RHF MARKET</h1>
+            <p class="text-[8px] font-mono text-zinc-500">USER ID: <span id="user-display-id">---</span></p>
         </div>
-        
-        <div class="flex items-center gap-5">
-            <div class="text-right border-r border-zinc-800 pr-5">
-                <span class="text-[9px] text-zinc-500 block uppercase">Vault Balance</span>
-                <span id="user-bal" class="text-gold font-bold font-mono">Rp 0</span>
-            </div>
-            
-            <button onclick="handleLogout()" class="btn-logout flex flex-col items-center gap-1">
-                <i class="fa-solid fa-power-off text-lg"></i>
-                <span class="text-[8px] uppercase font-bold">Exit</span>
-            </button>
+        <div class="text-right">
+            <p class="text-[10px] text-zinc-500 uppercase">Your Balance</p>
+            <p id="user-balance" class="text-lg font-bold text-blue-400 font-mono">Rp 0</p>
         </div>
     </nav>
 
-    <main class="pt-24 px-6 max-w-6xl mx-auto">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6" id="market-items">
-            </div>
+    <header class="p-4 mt-4">
+        <div class="bg-gradient-to-r from-yellow-900/20 to-black p-6 rounded-3xl border border-yellow-500/10">
+            <h2 class="text-2xl font-bold">Selamat Datang, Operative.</h2>
+            <p class="text-xs text-zinc-400 mt-2">Semua transaksi dienkripsi dan anonim.</p>
+        </div>
+    </header>
+
+    <main class="p-4">
+        <h3 class="text-xs font-bold text-zinc-500 uppercase tracking-widest mb-4">Available Assets</h3>
+        
+        <div id="market-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <p class="text-zinc-600 animate-pulse text-xs">Menghubungkan ke server...</p>
+        </div>
     </main>
 
-    <div id="address-modal" class="hidden fixed inset-0 z-[100] modal-overlay flex items-center justify-center p-4">
-        <div class="bg-white w-full max-w-md rounded-2xl overflow-hidden shadow-2xl">
-            <div class="p-4 border-b flex items-center gap-4">
-                <button onclick="closeAddressModal()" class="text-red-500"><i class="fa-solid fa-xmark"></i></button>
-                <h2 class="font-bold text-gray-800">Detail Pengiriman</h2>
-            </div>
-            <div class="p-4 space-y-2">
-                <input type="text" id="ship-name" placeholder="Nama Penerima" class="input-address">
-                <input type="text" id="ship-phone" placeholder="Nomor HP" class="input-address">
-                <input type="text" id="ship-street" placeholder="Alamat Lengkap (Jalan, No Rumah, Blok)" class="input-address">
-                <input type="text" id="ship-detail" placeholder="Patokan / Catatan (Opsional)" class="input-address">
-            </div>
-            <div class="p-4 bg-gray-50">
-                <button id="confirm-buy-btn" class="w-full bg-red-600 text-white py-3 rounded-xl font-bold active:scale-95 transition">
-                    SIMPAN & PROSES BELI
-                </button>
-            </div>
-        </div>
+    <div class="fixed bottom-0 w-full glass border-t border-white/5 p-4 flex justify-around items-center">
+        <button class="text-yellow-500"><i class="fa-solid fa-house text-xl"></i></button>
+        <button onclick="location.href='chat.html'" class="text-zinc-500"><i class="fa-solid fa-comment-dots text-xl"></i></button>
+        <button onclick="handleLogout()" class="text-red-500"><i class="fa-solid fa-power-off text-xl"></i></button>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getDatabase, ref, onValue, get, update, push, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
         const firebaseConfig = { 
             apiKey: "AIzaSyCs7Vnysf25BwhN2-fPTODd48xwzbPkbzI",
@@ -81,90 +67,62 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getDatabase(app);
-        let selectedItem = null;
 
-        // --- PROTEKSI LOGIN & LOGOUT ---
+        // 1. CEK AUTH & AMBIL DATA USER (SALDO)
         onAuthStateChanged(auth, (user) => {
             if (!user) {
-                // Jika user logout/tidak login, langsung tendang ke index.html
                 window.location.replace("index.html");
             } else {
-                // Ambil Saldo User
-                onValue(ref(db, `users/${user.uid}`), (s) => {
-                    const d = s.val();
-                    if(d && d.status === 'burned') { 
-                        signOut(auth); 
-                        window.location.replace("https://www.google.com");
+                document.getElementById('user-display-id').innerText = user.email;
+                // Ambil Saldo Realtime
+                onValue(ref(db, 'users/' + user.uid), (snap) => {
+                    const data = snap.val();
+                    if(data) {
+                        document.getElementById('user-balance').innerText = "Rp " + (data.balance || 0).toLocaleString();
                     }
-                    document.getElementById('user-bal').innerText = "Rp " + (d?.balance || 0).toLocaleString();
                 });
             }
         });
 
-        // FUNGSI LOGOUT (Dipanggil oleh tombol Exit)
-        window.handleLogout = () => {
-            if(confirm("Apakah anda yakin ingin keluar dari sesi aman?")) {
-                signOut(auth).then(() => {
-                    window.location.replace("index.html");
-                });
-            }
-        };
-
-        // --- LOGIKA MARKET ---
+        // 2. LOAD BARANG DARI DATABASE ADMIN
         onValue(ref(db, 'market_items'), (snap) => {
-            const con = document.getElementById('market-items');
-            con.innerHTML = '';
-            snap.forEach(c => {
-                const d = c.val();
-                con.innerHTML += `
-                <div class="glass-panel p-5 rounded-xl">
-                    <img src="${d.img}" class="w-full h-40 object-cover rounded-lg mb-4">
-                    <h3 class="font-bold text-white uppercase">${d.name}</h3>
-                    <div class="flex justify-between items-center mt-4">
-                        <span class="text-gold font-mono font-bold">Rp ${d.price.toLocaleString()}</span>
-                        <button onclick="openBuyModal('${c.key}', '${d.name}', ${d.price})" class="bg-gold text-black px-4 py-2 rounded text-[10px] font-bold">BELI</button>
+            const container = document.getElementById('market-container');
+            container.innerHTML = '';
+            
+            if(!snap.exists()) {
+                container.innerHTML = '<p class="text-zinc-600 text-xs text-center col-span-full">Belum ada barang jualan.</p>';
+                return;
+            }
+
+            snap.forEach((child) => {
+                const item = child.val();
+                container.innerHTML += `
+                <div class="card-gold p-4 rounded-2xl flex flex-col gap-3">
+                    <img src="${item.img}" class="w-full h-40 object-cover rounded-xl bg-zinc-900 border border-white/5">
+                    <div>
+                        <span class="text-[8px] bg-yellow-600/20 text-yellow-500 px-2 py-0.5 rounded font-bold uppercase">${item.label}</span>
+                        <h4 class="font-bold text-lg mt-1">${item.name}</h4>
+                        <p class="text-xs text-zinc-500 h-8 overflow-hidden">${item.detail}</p>
                     </div>
-                </div>`;
+                    <div class="flex justify-between items-center mt-2">
+                        <div>
+                            <p class="text-[10px] text-zinc-500 uppercase">Price</p>
+                            <p class="text-sm font-bold text-yellow-500">Rp ${item.price.toLocaleString()}</p>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-[10px] text-zinc-500 uppercase">Stock</p>
+                            <p class="text-xs font-bold ${item.stock > 0 ? 'text-green-500' : 'text-red-500'}">${item.stock}</p>
+                        </div>
+                    </div>
+                    <button onclick="alert('Hubungi Admin untuk beli!')" class="btn-buy w-full py-2.5 rounded-xl text-xs uppercase mt-2 active:scale-95 transition">
+                        Buy Asset
+                    </button>
+                </div>
+                `;
             });
         });
 
-        window.openBuyModal = (id, name, price) => {
-            selectedItem = { id, name, price };
-            document.getElementById('address-modal').classList.remove('hidden');
-        };
-
-        window.closeAddressModal = () => {
-            document.getElementById('address-modal').classList.add('hidden');
-        };
-
-        document.getElementById('confirm-buy-btn').onclick = async () => {
-            const name = document.getElementById('ship-name').value;
-            const phone = document.getElementById('ship-phone').value;
-            const street = document.getElementById('ship-street').value;
-
-            if(!name || !phone || !street) return alert("Lengkapi alamat!");
-
-            const userRef = ref(db, `users/${auth.currentUser.uid}`);
-            const userSnap = await get(userRef);
-            
-            if(userSnap.val().balance < selectedItem.price) {
-                return alert("Saldo tidak cukup!");
-            }
-
-            // Potong Saldo & Kirim Alamat ke Chat Admin
-            const newBal = userSnap.val().balance - selectedItem.price;
-            await update(userRef, { balance: newBal });
-
-            const orderDetail = `[ORDER BARU]\nBarang: ${selectedItem.name}\nPenerima: ${name}\nHP: ${phone}\nAlamat: ${street}`;
-            await push(ref(db, `chats/${auth.currentUser.uid}/messages`), {
-                sender: 'user',
-                text: orderDetail,
-                timestamp: serverTimestamp()
-            });
-
-            alert("Pesanan Berhasil!");
-            closeAddressModal();
-        };
+        window.handleLogout = () => signOut(auth).then(() => location.href="index.html");
     </script>
 </body>
 </html>
