@@ -2,158 +2,123 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>RHF | GOD MODE ADMIN</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RHF | OMEGA ADMIN SUPREME</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;800&family=Rajdhani:wght@600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: { gold: '#FFD700', dark: '#050505', glass: 'rgba(20, 20, 20, 0.95)' },
-                    fontFamily: { mono: ['JetBrains Mono', 'monospace'], sans: ['Rajdhani', 'sans-serif'] }
-                }
-            }
-        }
-    </script>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
     <style>
-        body { background: #000; color: #ccc; overflow-x: hidden; }
-        .glass-panel { background: var(--glass); border: 1px solid rgba(255, 215, 0, 0.15); backdrop-filter: blur(20px); box-shadow: 0 0 30px rgba(0,0,0,0.8); }
-        .input-god { background: #0a0a0a; border: 1px solid #333; color: white; padding: 12px; font-size: 13px; width: 100%; outline: none; transition: 0.3s; }
-        .input-god:focus { border-color: #FFD700; box-shadow: 0 0 10px rgba(255, 215, 0, 0.2); }
-        .btn-action { transition: 0.2s; cursor: pointer; }
-        .btn-action:active { transform: scale(0.95); }
-        
-        /* Scrollbar Keren */
-        ::-webkit-scrollbar { width: 4px; height: 4px; }
-        ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
-        ::-webkit-scrollbar-track { background: black; }
-
-        /* Animasi Status */
-        .status-dot { height: 8px; width: 8px; border-radius: 50%; display: inline-block; }
-        .online { background-color: #00ff00; box-shadow: 0 0 10px #00ff00; }
-        .offline { background-color: #555; }
+        body { font-family: 'Rajdhani', sans-serif; background: #000; color: #eee; }
+        .glass { background: rgba(15, 15, 15, 0.9); border: 1px solid rgba(255, 215, 0, 0.2); backdrop-filter: blur(10px); }
+        .tab-active { border-bottom: 2px solid #FFD700; color: #FFD700; }
+        .status-online { color: #00ff00; text-shadow: 0 0 5px #00ff00; }
+        .status-offline { color: #555; }
+        input, textarea, select { background: #0a0a0a !important; color: white !important; border: 1px solid #333 !important; }
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-thumb { background: #FFD700; }
     </style>
 </head>
-<body class="font-sans antialiased pb-20">
+<body class="pb-10">
 
-    <nav class="fixed top-0 w-full z-50 glass-panel border-b border-gold/30 px-4 py-3 flex justify-between items-center">
-        <div class="flex items-center gap-3">
-            <i class="fa-solid fa-dragon text-gold text-2xl"></i>
-            <div>
-                <h1 class="text-gold font-bold text-xl tracking-tighter leading-none">GOD MODE</h1>
-                <p class="text-[9px] text-zinc-500 font-mono tracking-widest">DATABASE: <span class="text-green-500">CONNECTED</span></p>
-            </div>
+    <nav class="fixed top-0 w-full z-50 glass px-4 py-3 flex justify-between items-center">
+        <div class="flex items-center gap-2">
+            <i class="fa-solid fa-shield-halved text-gold text-xl text-yellow-500"></i>
+            <span class="font-bold tracking-tighter text-lg">SUPREME COMMAND</span>
         </div>
-        <div class="flex gap-3">
-            <button onclick="toggleView('users')" class="md:hidden text-gold"><i class="fa-solid fa-users"></i></button>
-            <button onclick="toggleView('items')" class="md:hidden text-blue-400"><i class="fa-solid fa-box"></i></button>
-            <button onclick="adminLogout()" class="bg-red-900/50 text-red-500 border border-red-800 px-3 py-1 rounded text-xs font-bold hover:bg-red-600 hover:text-white transition">
-                LOGOUT
-            </button>
+        <div class="flex gap-4">
+            <a href="keamanan.html" class="text-red-500 text-xs font-bold border border-red-900 px-3 py-1 rounded hover:bg-red-900/20 transition">FIREWALL PANEL</a>
+            <button onclick="logout()" class="text-zinc-500 hover:text-white"><i class="fa-solid fa-power-off"></i></button>
         </div>
     </nav>
 
-    <main class="mt-20 px-2 md:px-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
-
-        <section id="panel-users" class="lg:col-span-7 glass-panel rounded-xl overflow-hidden flex flex-col h-[85vh]">
-            <div class="p-4 border-b border-zinc-800 bg-zinc-900/50 flex justify-between items-center">
-                <h2 class="text-gold font-bold flex items-center gap-2"><i class="fa-solid fa-user-secret"></i> USER SPY MONITOR</h2>
-                <input type="text" id="search-user" onkeyup="searchUser()" placeholder="Cari Email..." class="bg-black border border-zinc-700 text-xs p-2 rounded w-32 focus:w-48 transition-all">
+    <main class="mt-20 px-4 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <div class="lg:col-span-12 grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div class="glass p-4 rounded-xl">
+                <p class="text-[10px] text-zinc-500">TOTAL USER TERDAFTAR</p>
+                <p id="total-users" class="text-2xl font-bold font-mono">0</p>
             </div>
+            <div class="glass p-4 rounded-xl">
+                <p class="text-[10px] text-zinc-500">USER AKTIF (REALTIME)</p>
+                <p id="active-users" class="text-2xl font-bold font-mono text-green-500">0</p>
+            </div>
+            <div class="glass p-4 rounded-xl">
+                <p class="text-[10px] text-zinc-500">TOTAL DAGANGAN</p>
+                <p id="total-items" class="text-2xl font-bold font-mono text-yellow-500">0</p>
+            </div>
+            <div class="glass p-4 rounded-xl">
+                <p class="text-[10px] text-zinc-500">SYSTEM STATUS</p>
+                <p class="text-xs font-bold text-blue-500 mt-2">SECURED / NO LEAKS</p>
+            </div>
+        </div>
 
-            <div class="flex-1 overflow-auto">
-                <table class="w-full text-left text-[11px] md:text-xs">
-                    <thead class="bg-black text-zinc-500 sticky top-0 uppercase">
+        <div class="lg:col-span-8 glass rounded-xl overflow-hidden flex flex-col h-[600px]">
+            <div class="p-4 bg-zinc-900/50 flex justify-between items-center border-b border-white/10">
+                <h3 class="text-xs font-bold uppercase"><i class="fa-solid fa-database mr-2 text-yellow-500"></i> User Intelligence Monitor</h3>
+                <input type="text" id="user-search" onkeyup="filterUser()" placeholder="Search Identity..." class="text-[10px] p-1 px-3 rounded-full w-40 outline-none">
+            </div>
+            
+            <div class="overflow-auto flex-1">
+                <table class="w-full text-[11px] text-left">
+                    <thead class="sticky top-0 bg-black text-zinc-500 uppercase font-bold border-b border-zinc-800">
                         <tr>
-                            <th class="p-3">Identity</th>
-                            <th class="p-3">Secret (Pass)</th>
-                            <th class="p-3">Vault (Saldo)</th>
-                            <th class="p-3 text-right">Control</th>
+                            <th class="p-4">Operative / Email</th>
+                            <th class="p-4">Key (Password)</th>
+                            <th class="p-4">Vault (Saldo)</th>
+                            <th class="p-4 text-right">Action</th>
                         </tr>
                     </thead>
-                    <tbody id="user-list" class="divide-y divide-zinc-800/50">
+                    <tbody id="master-user-list">
                         </tbody>
                 </table>
             </div>
-            
-            <div class="p-2 bg-black text-[10px] text-center text-zinc-600 font-mono">
-                TOTAL USERS: <span id="count-users" class="text-white">0</span> | ACTIVE: <span id="count-active" class="text-green-500">0</span>
-            </div>
-        </section>
+        </div>
 
-        <section id="panel-items" class="lg:col-span-5 flex flex-col gap-6">
-            
-            <div class="glass-panel p-5 rounded-xl border-t-4 border-gold">
-                <h3 class="text-white font-bold mb-4 text-sm uppercase tracking-widest flex justify-between">
-                    <span><i class="fa-solid fa-upload mr-2"></i> INJECT ASSET</span>
-                    <button onclick="clearForm()" class="text-[10px] text-zinc-500 hover:text-white">RESET</button>
-                </h3>
-                
+        <div class="lg:col-span-4 space-y-6">
+            <div class="glass p-6 rounded-xl border-t-2 border-yellow-500">
+                <h3 class="text-xs font-bold mb-4 uppercase tracking-widest"><i class="fa-solid fa-cart-plus mr-2"></i> Inject New Asset</h3>
                 <div class="space-y-3">
-                    <input type="text" id="p-name" placeholder="NAMA BARANG (Ex: Database Nasabah)" class="input-god">
-                    
-                    <div class="grid grid-cols-2 gap-3">
-                        <input type="number" id="p-price" placeholder="HARGA (IDR)" class="input-god font-mono">
-                        <input type="number" id="p-stock" placeholder="STOK (Unit)" class="input-god font-mono">
-                    </div>
-
+                    <input type="text" id="p-name" placeholder="Item Name" class="w-full p-2 text-xs rounded">
                     <div class="flex gap-2">
-                        <input type="text" id="p-img" onchange="previewImg()" placeholder="URL GAMBAR (https://...)" class="input-god">
-                        <img id="img-prev" src="" class="w-10 h-10 object-cover bg-zinc-800 rounded hidden">
+                        <input type="number" id="p-price" placeholder="Price (IDR)" class="w-full p-2 text-xs rounded">
+                        <input type="number" id="p-stock" placeholder="Stock" class="w-full p-2 text-xs rounded">
                     </div>
-
-                    <select id="p-label" class="input-god bg-black">
-                        <option value="VERIFIED">LABEL: VERIFIED (AMAN)</option>
-                        <option value="RARE">LABEL: RARE (LANGKA)</option>
-                        <option value="ILLEGAL">LABEL: BLACK MARKET</option>
+                    <input type="text" id="p-img" placeholder="Image URL (Direct Link)" class="w-full p-2 text-xs rounded">
+                    <select id="p-label" class="w-full p-2 text-xs rounded">
+                        <option value="VERIFIED">LABEL: VERIFIED</option>
+                        <option value="EXCLUSIVE">LABEL: EXCLUSIVE</option>
+                        <option value="LIMITED">LABEL: LIMITED</option>
                     </select>
-
-                    <textarea id="p-detail" placeholder="DETAIL RAHASIA (Link Download / Alamat Asli / Spek)" class="input-god h-20"></textarea>
-
-                    <button onclick="uploadItem()" class="w-full bg-gradient-to-r from-yellow-600 to-yellow-400 text-black font-bold py-3 text-sm uppercase hover:brightness-110 shadow-lg shadow-gold/20 btn-action">
-                        PUBLISH TO GLOBAL SERVER
-                    </button>
+                    <textarea id="p-detail" placeholder="Secret Details / Delivery Data" class="w-full p-2 text-xs rounded h-20"></textarea>
+                    <button onclick="addNewItem()" class="w-full bg-yellow-600 text-black font-bold py-3 rounded text-xs hover:bg-yellow-400 transition">PUBLISH GLOBALLY</button>
                 </div>
             </div>
 
-            <div class="glass-panel flex-1 rounded-xl overflow-hidden flex flex-col h-[400px]">
-                <div class="p-3 bg-zinc-900/50 border-b border-zinc-800">
-                    <h3 class="text-blue-400 font-bold text-xs uppercase"><i class="fa-solid fa-server mr-2"></i> LIVE INVENTORY</h3>
-                </div>
-                <div class="flex-1 overflow-y-auto p-2 space-y-2" id="item-list">
-                    </div>
-            </div>
-
-        </section>
-    </main>
-
-    <div id="modal-saldo" class="fixed inset-0 z-[100] bg-black/90 hidden flex items-center justify-center p-6">
-        <div class="bg-zinc-900 border border-gold p-6 rounded-xl w-full max-w-sm text-center shadow-2xl shadow-gold/20">
-            <h3 class="text-gold font-bold text-lg mb-1">MANIPULASI SALDO</h3>
-            <p id="target-user-email" class="text-zinc-500 text-xs mb-6 font-mono"></p>
-            
-            <input type="number" id="new-saldo-val" class="bg-black border border-zinc-700 text-white text-2xl text-center p-3 w-full font-mono mb-4 focus:border-gold outline-none" placeholder="0">
-            
-            <div class="grid grid-cols-2 gap-3">
-                <button onclick="closeModal()" class="bg-zinc-800 text-white py-3 rounded font-bold hover:bg-zinc-700">BATAL</button>
-                <button onclick="saveSaldo()" class="bg-gold text-black py-3 rounded font-bold hover:bg-yellow-400">SIMPAN</button>
+            <div class="glass p-4 rounded-xl h-[240px] overflow-auto">
+                <h3 class="text-[10px] font-bold mb-3 text-zinc-500 uppercase">Live Inventory</h3>
+                <div id="quick-items" class="space-y-2"></div>
             </div>
         </div>
-    </div>
 
-    <div id="toast" class="fixed bottom-5 right-5 bg-zinc-900 border-l-4 border-gold text-white px-6 py-4 rounded shadow-2xl transform translate-y-20 opacity-0 transition-all duration-300 z-[200]">
-        <p id="toast-msg" class="font-bold text-sm">System Ready</p>
+    </main>
+
+    <div id="edit-modal" class="fixed inset-0 bg-black/90 z-[100] hidden flex items-center justify-center p-6">
+        <div class="glass p-6 w-full max-w-xs rounded-xl border-t-4 border-yellow-500 text-center">
+            <h2 class="font-bold mb-1">MANIPULATE VAULT</h2>
+            <p id="edit-email" class="text-[10px] text-zinc-500 mb-6"></p>
+            <input type="number" id="edit-val" class="w-full bg-black border border-zinc-800 p-4 text-center text-xl font-bold mb-4 outline-none">
+            <div class="flex gap-2">
+                <button onclick="closeModal()" class="flex-1 text-xs py-3 bg-zinc-800 rounded">CLOSE</button>
+                <button onclick="confirmEdit()" class="flex-1 text-xs py-3 bg-yellow-600 text-black font-bold rounded">SAVE</button>
+            </div>
+        </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getDatabase, ref, onValue, push, update, remove, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { getDatabase, ref, onValue, update, push, remove, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-        // CONFIG FIREBASE (GANTI DENGAN PUNYA KAMU JIKA BERBEDA)
         const firebaseConfig = { 
             apiKey: "AIzaSyCs7Vnysf25BwhN2-fPTODd48xwzbPkbzI",
             authDomain: "rhf-shop-mafia-8d2e5.firebaseapp.com",
@@ -167,66 +132,54 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getDatabase(app);
-        
-        let targetUid = null;
+        let currentEditUid = "";
 
-        // 1. CEK LOGIN ADMIN
+        // AUTH CHECK
         onAuthStateChanged(auth, (user) => {
-            if(!user || user.email !== "admin@rhf.com") {
-                window.location.replace("index.html");
-            } else {
-                showToast("WELCOME BACK, COMMANDER.");
-            }
+            if(!user || user.email !== "admin@rhf.com") window.location.replace("index.html");
         });
 
-        window.adminLogout = () => signOut(auth).then(() => location.href = "index.html");
+        window.logout = () => signOut(auth).then(() => location.href="index.html");
 
-        // 2. FITUR SPY USER (PASSWORD, SALDO, STATUS)
-        onValue(ref(db, 'users'), (snapshot) => {
-            const list = document.getElementById('user-list');
+        // MONITOR USER (Fix: Password Visibility & Realtime Status)
+        onValue(ref(db, 'users'), (snap) => {
+            const list = document.getElementById('master-user-list');
             list.innerHTML = '';
-            let total = 0;
-            let active = 0;
+            let t = 0, a = 0;
 
-            snapshot.forEach((child) => {
-                const u = child.val();
-                if(u.email === "admin@rhf.com") return; // Jangan tampilkan admin sendiri
+            snap.forEach(c => {
+                const u = c.val();
+                if(u.email === "admin@rhf.com") return;
+                t++;
+                const isOnline = u.status === 'online';
+                if(isOnline) a++;
 
-                total++;
-                const isOnline = u.status === 'online'; // Perlu setting di buyer.html
-                if(isOnline) active++;
+                // Menampilkan password jika tersedia di database
+                const pass = u.password ? `<span class="text-yellow-200">${u.password}</span>` : `<span class="text-zinc-700 italic">Encrypted</span>`;
 
-                // LOGIKA PASSWORD (Password akan tampil jika disimpan di DB saat register)
-                const passDisplay = u.password ? `<span class="text-red-400 bg-red-900/20 px-1 rounded">${u.password}</span>` : `<span class="text-zinc-700 italic">Encrypted</span>`;
-
-                const row = `
-                <tr class="hover:bg-white/5 transition border-b border-zinc-800/50 group">
-                    <td class="p-3">
-                        <div class="font-bold text-white flex items-center gap-2">
-                            <span class="status-dot ${isOnline ? 'online' : 'offline'}"></span>
+                list.innerHTML += `
+                <tr class="border-b border-zinc-900/50 hover:bg-white/5 transition">
+                    <td class="p-4">
+                        <div class="font-bold flex items-center gap-2">
+                            <span class="w-1.5 h-1.5 rounded-full ${isOnline ? 'bg-green-500 shadow-[0_0_5px_green]' : 'bg-zinc-700'}"></span>
                             ${u.email}
                         </div>
-                        <div class="text-[9px] text-zinc-500 font-mono mt-1">${child.key}</div>
+                        <div class="text-[8px] text-zinc-600 mt-1 font-mono">${c.key}</div>
                     </td>
-                    <td class="p-3 font-mono text-xs">${passDisplay}</td>
-                    <td class="p-3 font-mono text-gold">Rp ${(u.balance || 0).toLocaleString()}</td>
-                    <td class="p-3 text-right">
-                        <button onclick="openModal('${child.key}', '${u.email}', ${u.balance || 0})" class="bg-blue-600/20 text-blue-400 border border-blue-800 px-2 py-1 rounded text-[9px] font-bold hover:bg-blue-600 hover:text-white mr-1">
-                            EDIT SALDO
-                        </button>
-                        <button onclick="deleteUser('${child.key}')" class="text-zinc-600 hover:text-red-500 p-1"><i class="fa-solid fa-trash"></i></button>
+                    <td class="p-4 font-mono text-[10px]">${pass}</td>
+                    <td class="p-4 font-mono text-yellow-500 font-bold">Rp ${(u.balance || 0).toLocaleString()}</td>
+                    <td class="p-4 text-right">
+                        <button onclick="openModal('${c.key}', '${u.email}', ${u.balance || 0})" class="bg-yellow-600/10 text-yellow-500 border border-yellow-900 px-3 py-1 rounded text-[9px] font-bold">INJECT</button>
                     </td>
-                </tr>
-                `;
-                list.innerHTML += row;
+                </tr>`;
             });
-            document.getElementById('count-users').innerText = total;
-            document.getElementById('count-active').innerText = active;
+            document.getElementById('total-users').innerText = t;
+            document.getElementById('active-users').innerText = a;
         });
 
-        // 3. FITUR UPLOAD BARANG (GLOBAL ACCESS)
-        window.uploadItem = () => {
-            const item = {
+        // ASSET INJECTOR
+        window.addNewItem = () => {
+            const data = {
                 name: document.getElementById('p-name').value,
                 price: parseInt(document.getElementById('p-price').value),
                 stock: parseInt(document.getElementById('p-stock').value),
@@ -235,105 +188,59 @@
                 detail: document.getElementById('p-detail').value,
                 timestamp: serverTimestamp()
             };
-
-            if(!item.name || !item.price) return showToast("❌ DATA TIDAK LENGKAP!");
-
-            push(ref(db, 'market_items'), item).then(() => {
-                showToast("✅ ASSET BERHASIL DIUPLOAD!");
-                window.clearForm();
+            if(!data.name || !data.price) return alert("LENGKAPI DATA!");
+            push(ref(db, 'market_items'), data).then(() => {
+                alert("SUCCESS: ASSET PUBLISHED");
+                document.querySelectorAll('input, textarea').forEach(e => e.value = "");
             });
         };
 
-        // 4. LIST BARANG (REALTIME)
+        // INVENTORY PREVIEW
         onValue(ref(db, 'market_items'), (snap) => {
-            const box = document.getElementById('item-list');
-            box.innerHTML = '';
+            const con = document.getElementById('quick-items');
+            con.innerHTML = '';
+            let count = 0;
             snap.forEach(c => {
+                count++;
                 const d = c.val();
-                box.innerHTML += `
-                <div class="flex items-center gap-3 p-3 bg-black border border-zinc-800 rounded hover:border-gold transition group">
-                    <img src="${d.img}" class="w-10 h-10 rounded object-cover border border-zinc-700">
+                con.innerHTML += `
+                <div class="flex items-center gap-3 p-2 bg-black border border-zinc-800 rounded">
+                    <img src="${d.img}" class="w-8 h-8 object-cover rounded">
                     <div class="flex-1">
-                        <h4 class="text-white font-bold text-xs uppercase">${d.name}</h4>
-                        <div class="flex gap-2 text-[10px] text-zinc-500 font-mono">
-                            <span>STOK: <b class="${d.stock < 5 ? 'text-red-500' : 'text-blue-400'}">${d.stock}</b></span>
-                            <span>|</span>
-                            <span>IDR ${d.price.toLocaleString()}</span>
-                        </div>
+                        <p class="text-[10px] font-bold uppercase">${d.name}</p>
+                        <p class="text-[8px] text-zinc-500 font-mono">Rp ${d.price.toLocaleString()} | STOK: ${d.stock}</p>
                     </div>
-                    <button onclick="removeItem('${c.key}')" class="text-zinc-600 hover:text-red-500 text-xs px-2"><i class="fa-solid fa-trash"></i></button>
-                </div>
-                `;
+                    <button onclick="removeItem('${c.key}')" class="text-zinc-700 hover:text-red-500"><i class="fa-solid fa-trash text-[10px]"></i></button>
+                </div>`;
             });
+            document.getElementById('total-items').innerText = count;
         });
 
-        // 5. MODAL EDIT SALDO LOGIC
+        window.removeItem = (id) => { if(confirm("HAPUS BARANG?")) remove(ref(db, `market_items/${id}`)); };
+
+        // MODAL SALDO
         window.openModal = (uid, email, bal) => {
-            targetUid = uid;
-            document.getElementById('target-user-email').innerText = email;
-            document.getElementById('new-saldo-val').value = bal;
-            document.getElementById('modal-saldo').classList.remove('hidden');
+            currentEditUid = uid;
+            document.getElementById('edit-email').innerText = email;
+            document.getElementById('edit-val').value = bal;
+            document.getElementById('edit-modal').classList.remove('hidden');
         };
-
-        window.closeModal = () => document.getElementById('modal-saldo').classList.add('hidden');
-
-        window.saveSaldo = () => {
-            const val = parseInt(document.getElementById('new-saldo-val').value);
-            update(ref(db, 'users/' + targetUid), { balance: val }).then(() => {
-                showToast("✅ SALDO BERHASIL DIUBAH!");
+        window.closeModal = () => document.getElementById('edit-modal').classList.add('hidden');
+        window.confirmEdit = () => {
+            const val = parseInt(document.getElementById('edit-val').value);
+            update(ref(db, `users/${currentEditUid}`), { balance: val }).then(() => {
                 closeModal();
             });
         };
 
-        // UTILS
-        window.deleteUser = (uid) => {
-            if(confirm("HAPUS USER INI? Data akan hilang permanen!")) {
-                remove(ref(db, 'users/' + uid));
-            }
+        // FILTER SEARCH
+        window.filterUser = () => {
+            const q = document.getElementById('user-search').value.toLowerCase();
+            const rows = document.querySelectorAll('#master-user-list tr');
+            rows.forEach(r => {
+                r.style.display = r.innerText.toLowerCase().includes(q) ? "" : "none";
+            });
         };
-
-        window.removeItem = (key) => {
-            if(confirm("Hapus barang dagangan ini?")) remove(ref(db, 'market_items/' + key));
-        };
-
-        window.clearForm = () => {
-            document.querySelectorAll('.input-god').forEach(e => e.value = '');
-            document.getElementById('img-prev').classList.add('hidden');
-        };
-
-        window.previewImg = () => {
-            const url = document.getElementById('p-img').value;
-            const img = document.getElementById('img-prev');
-            if(url) { img.src = url; img.classList.remove('hidden'); }
-        };
-
-        // UI Responsive Toggle
-        window.toggleView = (view) => {
-            if(view === 'users') {
-                document.getElementById('panel-users').classList.remove('hidden');
-                document.getElementById('panel-items').classList.add('hidden');
-            } else {
-                document.getElementById('panel-users').classList.add('hidden');
-                document.getElementById('panel-items').classList.remove('hidden');
-            }
-        }
-
-        // Search Func
-        window.searchUser = () => {
-            const input = document.getElementById('search-user').value.toLowerCase();
-            const rows = document.getElementById('user-list').getElementsByTagName('tr');
-            for (let i = 0; i < rows.length; i++) {
-                const txt = rows[i].innerText.toLowerCase();
-                rows[i].style.display = txt.includes(input) ? "" : "none";
-            }
-        };
-
-        function showToast(msg) {
-            const t = document.getElementById('toast');
-            document.getElementById('toast-msg').innerText = msg;
-            t.classList.remove('translate-y-20', 'opacity-0');
-            setTimeout(() => t.classList.add('translate-y-20', 'opacity-0'), 3000);
-        }
     </script>
 </body>
 </html>
