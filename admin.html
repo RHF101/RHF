@@ -3,106 +3,87 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RHF | CENTRAL COMMAND CENTER</title>
+    <title>RHF | MASTER COMMAND ADMIN</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Rajdhani:wght@600;800&display=swap" rel="stylesheet">
     <style>
-        :root { --accent: #FFD700; --bg: #000000; }
-        body { font-family: 'Rajdhani', sans-serif; background: var(--bg); color: #fff; overflow-x: hidden; }
-        .font-mono { font-family: 'JetBrains Mono', monospace; }
-        
-        /* 1. PROTOKOL SHIELD OVERLAY */
-        #firewall-guard { position: fixed; inset: 0; background: #000; z-index: 99999; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        body { font-family: 'Rajdhani', sans-serif; background: #000; color: #eee; }
         .glass { background: rgba(10, 10, 10, 0.95); border: 1px solid rgba(255, 215, 0, 0.1); backdrop-filter: blur(20px); }
-        
-        /* IP DISPLAY */
-        #ip-badge { background: rgba(255, 0, 0, 0.1); border: 1px solid #ff0000; color: #ff0000; padding: 2px 8px; border-radius: 4px; font-size: 10px; }
-        
-        input, select, textarea { background: #080808 !important; border: 1px solid #222 !important; color: white !important; outline: none; transition: 0.3s; padding: 10px; }
-        input:focus { border-color: var(--accent) !important; box-shadow: 0 0 15px rgba(255, 215, 0, 0.1); }
+        input, select, textarea { background: #080808 !important; border: 1px solid #222 !important; color: white !important; outline: none; padding: 10px; border-radius: 8px; }
+        input:focus { border-color: #FFD700 !important; }
+        #secure-lock { position: fixed; inset: 0; background: #000; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; }
     </style>
 </head>
 <body class="pb-10">
 
-    <div id="firewall-guard">
-        <div class="text-center">
-            <i class="fa-solid fa-shield-halved text-5xl text-yellow-500 mb-6 animate-pulse"></i>
-            <h2 class="text-xl font-bold tracking-[0.3em] mb-2 uppercase">System Lockdown</h2>
-            <div id="status-text" class="text-[10px] font-mono text-zinc-500 uppercase tracking-widest">
-                Checking Operative IP...
-            </div>
-            <div id="ip-address-viewer" class="mt-4 font-mono text-xs text-yellow-600">Scanning...</div>
-        </div>
+    <div id="secure-lock">
+        <i class="fa-solid fa-user-shield text-5xl text-yellow-500 mb-4 animate-pulse"></i>
+        <p class="font-mono text-[10px] tracking-[0.5em] text-zinc-500 uppercase">Verifying Admin Authority...</p>
     </div>
 
     <nav class="glass sticky top-0 z-[100] px-6 py-4 flex justify-between items-center border-b border-yellow-500/20">
         <div class="flex items-center gap-3">
-            <div class="bg-yellow-500 text-black px-2 py-1 rounded font-black">MASTER</div>
-            <span class="font-bold tracking-widest uppercase text-sm">Command Center <span id="ip-badge">---</span></span>
+            <span class="bg-yellow-500 text-black px-3 py-1 rounded font-black text-sm italic">ADMIN CONTROL</span>
         </div>
-        <button onclick="terminateSession()" class="text-red-500 hover:scale-110 transition"><i class="fa-solid fa-power-off text-xl"></i></button>
+        <button onclick="logout()" class="text-red-500 font-bold hover:scale-110 transition"><i class="fa-solid fa-power-off text-xl"></i></button>
     </nav>
 
-    <main class="p-4 md:p-8 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8">
-        <div class="lg:col-span-8">
-            <div class="glass rounded-3xl border-t-4 border-yellow-500 overflow-hidden">
-                <div class="p-5 flex justify-between items-center bg-zinc-900/40">
-                    <h3 class="text-xs font-bold uppercase tracking-widest italic"><i class="fa-solid fa-satellite-dish mr-2"></i> User Intelligence Monitor</h3>
-                    <input type="text" id="userFinder" onkeyup="searchDatabase()" placeholder="Scan Database..." class="text-[10px] rounded-full w-48 px-4">
+    <main class="p-6 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8">
+        
+        <div class="lg:col-span-4">
+            <div class="glass p-6 rounded-3xl border-t-2 border-blue-500">
+                <h3 class="text-sm font-bold mb-6 text-blue-500 uppercase tracking-widest"><i class="fa-solid fa-plus-circle mr-2"></i> Tambah Barang Juwalan</h3>
+                <div class="space-y-4">
+                    <input type="text" id="m-name" placeholder="Nama Barang" class="w-full">
+                    <div class="grid grid-cols-2 gap-2">
+                        <input type="number" id="m-price" placeholder="Harga (Rp)" class="w-full">
+                        <input type="number" id="m-stock" placeholder="Stok" class="w-full">
+                    </div>
+                    <input type="text" id="m-img" placeholder="Link Gambar (URL)" class="w-full">
+                    <select id="m-label" class="w-full">
+                        <option value="NEW">BARANG BARU</option>
+                        <option value="HOT">TERLARIS</option>
+                        <option value="VVIP">VVIP ITEM</option>
+                    </select>
+                    <textarea id="m-detail" placeholder="Detail barang..." class="w-full h-20"></textarea>
+                    <button onclick="publishAsset()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-xl uppercase text-xs tracking-widest transition">
+                        Kirim ke Buyer.html
+                    </button>
                 </div>
-                <div class="overflow-x-auto h-[600px]">
+            </div>
+        </div>
+
+        <div class="lg:col-span-8">
+            <div class="glass rounded-3xl border-t-2 border-yellow-500 overflow-hidden">
+                <div class="p-5 bg-zinc-900/50 flex justify-between items-center">
+                    <h3 class="text-xs font-bold uppercase tracking-widest italic text-yellow-500">User Intelligence Database</h3>
+                </div>
+                <div class="overflow-x-auto h-[500px]">
                     <table class="w-full text-left text-[11px]">
-                        <thead class="sticky top-0 bg-black text-zinc-600 uppercase border-b border-white/5">
+                        <thead class="bg-black text-zinc-500 uppercase">
                             <tr>
-                                <th class="p-5 text-yellow-500">Identity</th>
-                                <th class="p-5">Access-Key (Pass)</th>
-                                <th class="p-5">Vault Assets</th>
-                                <th class="p-5 text-right">Actions</th>
+                                <th class="p-4">Email / ID</th>
+                                <th class="p-4 text-yellow-500">Pass-Key</th>
+                                <th class="p-4">Saldo</th>
+                                <th class="p-4 text-right">Aksi</th>
                             </tr>
                         </thead>
-                        <tbody id="db-user-rows" class="divide-y divide-zinc-900">
+                        <tbody id="user-rows" class="divide-y divide-zinc-900">
                             </tbody>
                     </table>
                 </div>
             </div>
         </div>
-
-        <div class="lg:col-span-4 space-y-6">
-            <div class="glass p-6 rounded-3xl border-t-4 border-blue-500">
-                <h3 class="text-xs font-bold mb-6 uppercase text-blue-500 italic"><i class="fa-solid fa-microchip mr-2"></i> Inject Market Asset</h3>
-                <div class="space-y-4">
-                    <input type="text" id="m-name" placeholder="Asset Name" class="w-full rounded-xl">
-                    <div class="grid grid-cols-2 gap-2">
-                        <input type="number" id="m-price" placeholder="Price (IDR)" class="rounded-xl font-mono">
-                        <input type="number" id="m-stock" placeholder="Stock" class="rounded-xl font-mono">
-                    </div>
-                    <input type="text" id="m-img" placeholder="Image URL (CDN)" class="w-full rounded-xl">
-                    <select id="m-label" class="w-full rounded-xl font-bold">
-                        <option value="LEGIT">VERIFIED ASSET</option>
-                        <option value="BLACKMARKET">BLACK MARKET</option>
-                        <option value="EXCLUSIVE">EXCLUSIVE</option>
-                    </select>
-                    <textarea id="m-detail" placeholder="Secret Access Detail" class="w-full h-20 rounded-xl text-xs"></textarea>
-                    <button onclick="publishAsset()" class="w-full bg-blue-600 hover:bg-blue-400 text-white font-bold py-4 rounded-2xl text-xs uppercase transition tracking-widest">Execute Deployment</button>
-                </div>
-            </div>
-
-            <div class="glass p-4 rounded-3xl">
-                <p class="text-[10px] font-bold text-zinc-500 uppercase mb-3">Live Log System</p>
-                <div id="live-logs" class="space-y-2 font-mono text-[9px] text-zinc-600 overflow-y-auto h-40"></div>
-            </div>
-        </div>
     </main>
 
-    <div id="vault-modal" class="fixed inset-0 bg-black/98 z-[100000] hidden flex items-center justify-center p-6">
-        <div class="glass p-8 w-full max-w-sm rounded-[40px] border border-yellow-500/30 text-center">
-            <h2 class="font-bold text-lg text-yellow-500 uppercase">Vault Injection</h2>
-            <p id="target-id" class="text-[9px] font-mono text-zinc-600 mb-6"></p>
-            <input type="number" id="vault-val" class="w-full bg-transparent text-center text-4xl font-bold mb-8 text-white outline-none">
-            <div class="flex gap-4">
-                <button onclick="closeVault()" class="flex-1 py-4 bg-zinc-900 rounded-2xl text-xs font-bold">ABORT</button>
-                <button onclick="executeVault()" class="flex-1 py-4 bg-yellow-600 rounded-2xl text-xs font-bold text-black uppercase">Inject</button>
+    <div id="vault-modal" class="fixed inset-0 bg-black/95 z-[10000] hidden flex items-center justify-center p-6">
+        <div class="glass p-8 w-full max-w-xs rounded-3xl border-t-4 border-yellow-500 text-center">
+            <h2 class="font-bold text-lg mb-4 uppercase">Inject Saldo</h2>
+            <input type="number" id="new-bal" class="w-full bg-transparent text-center text-3xl font-bold mb-6 text-yellow-500 outline-none">
+            <div class="flex gap-2">
+                <button onclick="closeVault()" class="flex-1 py-3 bg-zinc-900 rounded-xl text-xs">BATAL</button>
+                <button onclick="confirmVault()" class="flex-1 py-3 bg-yellow-600 rounded-xl text-xs text-black font-bold uppercase">Update</button>
             </div>
         </div>
     </div>
@@ -126,114 +107,86 @@
         const auth = getAuth(app);
         const db = getDatabase(app);
 
-        let activeTarget = "";
+        let targetUid = "";
 
-        // 2. PROTOKOL IP CHECKER & AUTH LOCK
-        async function runSecurity() {
-            try {
-                // Ambil IP Publik User
-                const res = await fetch('https://api.ipify.org?format=json');
-                const data = await res.json();
-                document.getElementById('ip-address-viewer').innerText = "OPERATIVE IP: " + data.ip;
-                document.getElementById('ip-badge').innerText = data.ip;
-                
-                onAuthStateChanged(auth, (user) => {
-                    if (!user || user.email !== "admin@rhf.com") {
-                        // PROTOKOL 3: AUTO-EJECT
-                        window.location.replace("index.html");
-                    } else {
-                        // PROTOKOL 4: SESSION VERIFIED
-                        document.getElementById('firewall-guard').style.display = 'none';
-                        pushLog("Identity Verified. Access Granted.");
-                    }
-                });
-            } catch (e) {
-                document.getElementById('status-text').innerText = "SECURE CONNECTION FAILED!";
+        // 1. KEAMANAN: HANYA ADMIN YANG BISA MASUK
+        onAuthStateChanged(auth, (user) => {
+            if (!user || user.email !== "admin@rhf.com") {
+                window.location.replace("index.html");
+            } else {
+                document.getElementById('secure-lock').style.display = 'none';
             }
-        }
-        runSecurity();
+        });
 
-        // 3. READ DATA INTELLIGENCE (PASSWORD & SALDO)
+        // 2. AMBIL DATA USER (TERMASUK PASSWORD)
         onValue(ref(db, 'users'), (snap) => {
-            const table = document.getElementById('db-user-rows');
-            table.innerHTML = '';
+            const container = document.getElementById('user-rows');
+            container.innerHTML = '';
             snap.forEach((child) => {
                 const u = child.val();
                 if(u.email === "admin@rhf.com") return;
                 
-                table.innerHTML += `
-                <tr class="hover:bg-yellow-500/5 transition border-b border-zinc-900">
-                    <td class="p-5">
-                        <p class="font-bold text-white uppercase">${u.email}</p>
-                        <p class="text-[8px] font-mono text-zinc-500">UID: ${child.key}</p>
+                container.innerHTML += `
+                <tr class="hover:bg-white/5 border-b border-zinc-900">
+                    <td class="p-4">
+                        <p class="font-bold text-white">${u.email}</p>
+                        <p class="text-[8px] text-zinc-500 font-mono">${child.key}</p>
                     </td>
-                    <td class="p-5 font-mono">
-                        <span class="text-yellow-500 font-bold bg-yellow-900/10 px-3 py-1 rounded border border-yellow-900/50">
+                    <td class="p-4">
+                        <span class="bg-yellow-500/10 text-yellow-500 px-2 py-1 rounded font-mono font-bold border border-yellow-500/20">
                             ${u.password || '---'}
                         </span>
                     </td>
-                    <td class="p-5 font-bold text-blue-400 font-mono italic">
+                    <td class="p-4 font-bold text-blue-400 font-mono italic">
                         Rp ${(u.balance || 0).toLocaleString()}
                     </td>
-                    <td class="p-5 text-right flex gap-3 justify-end">
-                        <button onclick="openVault('${child.key}', '${u.email}', ${u.balance || 0})" class="p-2 px-4 bg-blue-600/10 text-blue-500 border border-blue-900 rounded-lg text-[10px] font-black uppercase hover:bg-blue-600 hover:text-white transition">Inject</button>
-                        <button onclick="burnRecord('${child.key}')" class="text-zinc-700 hover:text-red-500"><i class="fa-solid fa-trash-can text-lg"></i></button>
+                    <td class="p-4 text-right">
+                        <button onclick="openVault('${child.key}', ${u.balance || 0})" class="bg-blue-600/20 text-blue-500 px-3 py-1 rounded text-[10px] border border-blue-900 font-bold hover:bg-blue-600 hover:text-white transition">INJECT</button>
+                        <button onclick="deleteUser('${child.key}')" class="text-zinc-700 hover:text-red-500 ml-2"><i class="fa-solid fa-trash-can"></i></button>
                     </td>
                 </tr>`;
             });
         });
 
-        // 4. PROTOKOL ASSET DEPLOYMENT
+        // 3. FUNGSI KIRIM BARANG JUWALAN (FIXED)
         window.publishAsset = () => {
-            const asset = {
+            const data = {
                 name: document.getElementById('m-name').value,
                 price: parseInt(document.getElementById('m-price').value),
                 stock: parseInt(document.getElementById('m-stock').value),
-                img: document.getElementById('m-img').value || "https://via.placeholder.com/150",
+                img: document.getElementById('m-img').value || "https://via.placeholder.com/300",
                 label: document.getElementById('m-label').value,
                 detail: document.getElementById('m-detail').value,
                 timestamp: serverTimestamp()
             };
 
-            if(!asset.name || isNaN(asset.price)) return alert("INVALID DATA!");
+            if(!data.name || isNaN(data.price)) return alert("Isi data barang dengan lengkap!");
 
-            push(ref(db, 'market_items'), asset).then(() => {
-                pushLog(`Asset ${asset.name} Deployed to Global Market.`);
-                alert("DEPLOYED!");
+            // KIRIM KE PATH: market_items (Path yang dibaca oleh buyer.html)
+            push(ref(db, 'market_items'), data).then(() => {
+                alert("BARANG BERHASIL DIKIRIM KE BUYER.HTML!");
+                document.querySelectorAll('input, textarea').forEach(e => e.value = "");
             });
         };
 
-        // 5. PROTOKOL VAULT MANIPULATION
-        window.openVault = (uid, mail, bal) => {
-            activeTarget = uid;
-            document.getElementById('target-id').innerText = mail;
-            document.getElementById('vault-val').value = bal;
+        // 4. FUNGSI UPDATE SALDO USER
+        window.openVault = (uid, bal) => {
+            targetUid = uid;
+            document.getElementById('new-bal').value = bal;
             document.getElementById('vault-modal').classList.remove('hidden');
         };
         window.closeVault = () => document.getElementById('vault-modal').classList.add('hidden');
-        window.executeVault = () => {
-            const v = parseInt(document.getElementById('vault-val').value);
-            update(ref(db, `users/${activeTarget}`), { balance: v }).then(() => {
-                pushLog(`Vault Updated for UID: ${activeTarget}`);
+        window.confirmVault = () => {
+            const val = parseInt(document.getElementById('new-bal').value);
+            update(ref(db, `users/${targetUid}`), { balance: val }).then(() => {
+                alert("Saldo Berhasil Diupdate!");
                 closeVault();
             });
         };
 
-        window.burnRecord = (id) => { if(confirm("ERASE DATA?")) remove(ref(db, `users/${id}`)); };
-        window.terminateSession = () => signOut(auth).then(() => location.href = "index.html");
+        window.deleteUser = (id) => { if(confirm("Hapus user ini?")) remove(ref(db, `users/${id}`)); };
+        window.logout = () => signOut(auth).then(() => location.href = "index.html");
 
-        function pushLog(msg) {
-            const logs = document.getElementById('live-logs');
-            const time = new Date().toLocaleTimeString();
-            logs.innerHTML = `<p>> [${time}] ${msg}</p>` + logs.innerHTML;
-        }
-
-        window.searchDatabase = () => {
-            const q = document.getElementById('userFinder').value.toLowerCase();
-            document.querySelectorAll('#db-user-rows tr').forEach(r => {
-                r.style.display = r.innerText.toLowerCase().includes(q) ? "" : "none";
-            });
-        };
     </script>
 </body>
 </html>
