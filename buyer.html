@@ -3,62 +3,64 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RHF | ACCESS CONTROL</title>
+    <title>RHF | BUYER INTERFACE</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500&family=Rajdhani:wght@600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Rajdhani', sans-serif; background: #000; color: #fff; display: flex; align-items: center; justify-content: center; height: 100vh; overflow: hidden; }
-        .cyber-card { background: rgba(5, 5, 5, 0.95); border: 2px solid #1a1a1a; position: relative; overflow: hidden; }
-        .cyber-card::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: linear-gradient(90deg, transparent, #FFD700, transparent); animation: scan 3s linear infinite; }
-        @keyframes scan { 0% { left: -100%; } 100% { left: 100%; } }
-        .input-rhf { background: #0a0a0a; border: 1px solid #333; color: #FFD700; font-family: 'JetBrains Mono', monospace; }
-        .input-rhf:focus { border-color: #FFD700; box-shadow: 0 0 15px rgba(255, 215, 0, 0.2); }
-        .btn-rhf { background: #FFD700; color: #000; font-weight: 800; text-transform: uppercase; transition: 0.4s; cursor: pointer; }
-        .btn-rhf:hover { background: #fff; box-shadow: 0 0 20px rgba(255, 255, 255, 0.4); }
-        .loading-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 999; flex-direction: column; align-items: center; justify-content: center; }
+        body { font-family: 'Rajdhani', sans-serif; background: #000; color: #eee; }
+        .glass-nav { background: rgba(5, 5, 5, 0.9); backdrop-filter: blur(15px); border-bottom: 1px solid rgba(255, 215, 0, 0.2); }
+        .card-asset { background: #080808; border: 1px solid #1a1a1a; transition: 0.4s; }
+        .card-asset:hover { border-color: #FFD700; transform: translateY(-5px); box-shadow: 0 10px 30px rgba(255, 215, 0, 0.05); }
+        .btn-buy { background: linear-gradient(90deg, #b38728, #fcf6ba, #bf953f); color: #000; font-weight: 800; border-radius: 8px; transition: 0.3s; }
+        .btn-buy:disabled { background: #222; color: #555; cursor: not-allowed; }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+        
+        /* Proteksi Flash Overlay */
+        #secure-overlay { position: fixed; inset: 0; background: #000; z-index: 9999; display: flex; align-items: center; justify-content: center; }
     </style>
 </head>
-<body>
+<body class="pb-24">
 
-    <div id="loader" class="loading-overlay">
-        <div class="w-12 h-12 border-4 border-yellow-500 border-t-transparent rounded-full animate-spin"></div>
-        <p class="mt-4 font-mono text-xs text-yellow-500 tracking-widest">ENCRYPTING SESSION...</p>
+    <div id="secure-overlay">
+        <div class="text-center">
+            <div class="w-10 h-10 border-2 border-yellow-500 border-t-transparent rounded-full animate-spin mb-4 mx-auto"></div>
+            <p class="text-[10px] font-mono tracking-[0.5em] text-yellow-500">VERIFYING ENCRYPTION...</p>
+        </div>
     </div>
 
-    <div class="cyber-card p-10 rounded-2xl w-full max-w-sm shadow-[0_0_50px_rgba(0,0,0,1)]">
-        <div class="text-center mb-10">
-            <i class="fa-solid fa-building-shield text-5xl text-yellow-500 mb-4"></i>
-            <h1 class="text-3xl font-extrabold tracking-tighter">CENTRAL INTEL</h1>
-            <p class="text-[9px] font-mono text-zinc-500 uppercase tracking-[0.4em]">Military Grade Encryption</p>
+    <nav class="sticky top-0 z-[100] glass-nav px-6 py-4 flex justify-between items-center">
+        <div>
+            <h1 class="text-xl font-bold text-yellow-500 tracking-tighter">RHF SYSTEM</h1>
+            <p id="user-id" class="text-[9px] font-mono text-zinc-500 truncate w-32 uppercase">---</p>
+        </div>
+        <div class="text-right">
+            <p class="text-[10px] text-zinc-500 uppercase font-bold">Available Balance</p>
+            <p id="user-bal" class="text-xl font-bold text-blue-400 font-mono italic">Rp 0</p>
+        </div>
+    </nav>
+
+    <main class="p-6">
+        <div class="flex items-center gap-2 mb-8">
+            <div class="h-[1px] flex-1 bg-zinc-800"></div>
+            <h2 class="text-xs font-bold text-zinc-500 uppercase tracking-widest">Global Asset List</h2>
+            <div class="h-[1px] flex-1 bg-zinc-800"></div>
         </div>
 
-        <div class="space-y-5">
-            <div>
-                <label class="text-[10px] text-zinc-500 uppercase ml-2">Operative ID</label>
-                <input type="email" id="email" class="input-rhf w-full p-4 rounded-lg mt-1 text-sm outline-none">
+        <div id="market-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             </div>
-            <div>
-                <label class="text-[10px] text-zinc-500 uppercase ml-2">Access Key</label>
-                <input type="password" id="password" class="input-rhf w-full p-4 rounded-lg mt-1 text-sm outline-none">
-            </div>
-            
-            <button onclick="executeAuth()" class="btn-rhf w-full py-4 rounded-lg text-sm tracking-widest mt-4">
-                Verify Identity
-            </button>
-        </div>
+    </main>
 
-        <div class="mt-8 text-center">
-            <button onclick="toggleType()" id="toggleBtn" class="text-[10px] text-zinc-600 hover:text-white transition uppercase font-bold tracking-widest">
-                Request New Operative ID?
-            </button>
-        </div>
+    <div class="fixed bottom-0 w-full glass-nav p-5 flex justify-around items-center border-t border-yellow-500/10">
+        <button class="text-yellow-500 text-xl"><i class="fa-solid fa-house-chimney-crack"></i></button>
+        <button onclick="alert('System Chat Encrypted. Hubungi Admin via WhatsApp.')" class="text-zinc-500 text-xl"><i class="fa-solid fa-headset"></i></button>
+        <button onclick="logoutSession()" class="text-red-600 text-xl"><i class="fa-solid fa-power-off"></i></button>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getDatabase, ref, set, update, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getDatabase, ref, onValue, update } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
         const firebaseConfig = { 
             apiKey: "AIzaSyCs7Vnysf25BwhN2-fPTODd48xwzbPkbzI",
@@ -74,56 +76,106 @@
         const auth = getAuth(app);
         const db = getDatabase(app);
 
-        let modeLogin = true;
+        let currentBalance = 0;
+        let currentUid = "";
 
-        // CEK LOGIN STATUS (ANTI GESTAK)
+        // 1. KEAMANAN FBI/INTEL: CEK LOGIN
         onAuthStateChanged(auth, (user) => {
-            if (user) {
-                const target = (user.email === "admin@rhf.com") ? "admin.html" : "buyer.html";
-                window.location.replace(target);
+            if (!user) {
+                // Tendang jika tidak ada session
+                window.location.replace("index.html");
+            } else {
+                currentUid = user.uid;
+                document.getElementById('user-id').innerText = user.email;
+                
+                // Matikan Overlay jika user valid
+                document.getElementById('secure-overlay').style.display = 'none';
+
+                // Ambil Saldo Realtime
+                onValue(ref(db, `users/${user.uid}`), (snap) => {
+                    const data = snap.val();
+                    currentBalance = data?.balance || 0;
+                    document.getElementById('user-bal').innerText = "Rp " + currentBalance.toLocaleString();
+                });
             }
         });
 
-        window.toggleType = () => {
-            modeLogin = !modeLogin;
-            document.getElementById('toggleBtn').innerText = modeLogin ? "Request New Operative ID?" : "Already Have Access ID?";
-        };
+        // 2. LOAD MARKET ASSETS (JUWALAN ADMIN)
+        onValue(ref(db, 'market_items'), (snap) => {
+            const list = document.getElementById('market-list');
+            list.innerHTML = '';
+            
+            if(!snap.exists()) {
+                list.innerHTML = `<p class="col-span-full text-center text-zinc-600 text-xs font-mono py-20">NO ASSETS DETECTED IN DATABASE.</p>`;
+                return;
+            }
 
-        window.executeAuth = async () => {
-            const email = document.getElementById('email').value;
-            const pass = document.getElementById('password').value;
-            const loader = document.getElementById('loader');
+            snap.forEach((child) => {
+                const item = child.val();
+                const id = child.key;
+                const isOutOfStock = item.stock <= 0;
+                const canAfford = currentBalance >= item.price;
 
-            if(!email || !pass) return alert("MISSING CREDENTIALS!");
+                list.innerHTML += `
+                <div class="card-asset p-5 rounded-2xl flex flex-col gap-4">
+                    <div class="relative overflow-hidden rounded-xl h-44 bg-zinc-900 border border-white/5">
+                        <img src="${item.img}" class="w-full h-full object-cover">
+                        <div class="absolute top-2 left-2 bg-black/80 px-2 py-1 rounded text-[8px] font-bold text-yellow-500 border border-yellow-500/30">
+                            ${item.label}
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h3 class="text-lg font-bold text-white uppercase truncate">${item.name}</h3>
+                        <p class="text-[10px] text-zinc-500 font-mono mt-1 h-8 overflow-hidden">${item.detail}</p>
+                    </div>
 
-            loader.style.display = 'flex';
+                    <div class="flex justify-between items-end border-t border-white/5 pt-4 mt-auto">
+                        <div>
+                            <p class="text-[9px] text-zinc-500 uppercase font-bold">Price Access</p>
+                            <p class="text-lg font-bold text-yellow-500 font-mono">Rp ${item.price.toLocaleString()}</p>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-[9px] text-zinc-500 uppercase font-bold italic">Stock: ${item.stock}</p>
+                        </div>
+                    </div>
 
-            try {
-                if(modeLogin) {
-                    const res = await signInWithEmailAndPassword(auth, email, pass);
-                    // UPDATE DB SEBELUM REDIRECT
-                    await update(ref(db, 'users/' + res.user.uid), {
-                        password: pass,
-                        status: 'online',
-                        last_login: serverTimestamp()
-                    });
-                } else {
-                    const res = await createUserWithEmailAndPassword(auth, email, pass);
-                    // SET DATA BARU SEBELUM REDIRECT
-                    await set(ref(db, 'users/' + res.user.uid), {
-                        email: email,
-                        password: pass,
-                        balance: 0,
-                        status: 'online',
-                        role: 'buyer',
-                        created_at: serverTimestamp()
-                    });
+                    <button onclick="processPurchase('${id}', ${item.price}, ${item.stock}, '${item.name}')" 
+                        ${(isOutOfStock || !canAfford) ? 'disabled' : ''}
+                        class="btn-buy w-full py-3 text-[10px] uppercase tracking-widest active:scale-95">
+                        ${isOutOfStock ? 'Sold Out' : (canAfford ? 'Secure Purchase' : 'Insufficient Balance')}
+                    </button>
+                </div>`;
+            });
+        });
+
+        // 3. FUNGSI BELI (CARTEL LOGIC)
+        window.processPurchase = async (itemId, price, stock, name) => {
+            if(confirm(`Konfirmasi Pembelian ${name}?`)) {
+                try {
+                    const newBalance = currentBalance - price;
+                    const newStock = stock - 1;
+
+                    // Update serentak
+                    await update(ref(db, `users/${currentUid}`), { balance: newBalance });
+                    await update(ref(db, `market_items/${itemId}`), { stock: newStock });
+
+                    alert("TRANSAKSI BERHASIL! Akses telah dikirim ke akun Anda.");
+                } catch (e) {
+                    alert("TRANSAKSI GAGAL: Koneksi Terputus.");
                 }
-            } catch (err) {
-                alert("ACCESS DENIED: " + err.message);
-                loader.style.display = 'none';
             }
         };
+
+        // 4. LOGOUT SESSION
+        window.logoutSession = () => {
+            if(confirm("Terminate Encrypted Session?")) {
+                signOut(auth).then(() => {
+                    location.href = "index.html";
+                });
+            }
+        };
+
     </script>
 </body>
 </html>
