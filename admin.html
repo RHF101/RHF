@@ -2,117 +2,128 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RHF | OMEGA ADMIN SUPREME</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>RHF | OMEGA SUPREME COMMAND</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Rajdhani', sans-serif; background: #000; color: #eee; }
-        .glass { background: rgba(15, 15, 15, 0.9); border: 1px solid rgba(255, 215, 0, 0.2); backdrop-filter: blur(10px); }
-        .tab-active { border-bottom: 2px solid #FFD700; color: #FFD700; }
-        .status-online { color: #00ff00; text-shadow: 0 0 5px #00ff00; }
-        .status-offline { color: #555; }
-        input, textarea, select { background: #0a0a0a !important; color: white !important; border: 1px solid #333 !important; }
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-thumb { background: #FFD700; }
+        :root { --gold: #FFD700; --red: #ff0000; --bg: #030303; }
+        body { font-family: 'Rajdhani', sans-serif; background: var(--bg); color: #eee; overflow-x: hidden; }
+        .glass { background: rgba(10, 10, 10, 0.98); border: 1px solid rgba(255, 215, 0, 0.1); backdrop-filter: blur(15px); }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+        
+        /* 1. Responsive Grid System */
+        .main-layout { display: grid; grid-template-columns: repeat(12, 1fr); gap: 1.5rem; }
+        @media (max-width: 1024px) { .main-layout { display: flex; flex-direction: column; } }
+
+        /* 2. Security Shield Pulse */
+        .shield-active { box-shadow: 0 0 15px rgba(255, 215, 0, 0.2); border: 1px solid var(--gold); }
+        
+        /* 3. Custom Inputs */
+        input, textarea, select { background: #000 !important; color: white !important; border: 1px solid #222 !important; outline: none; transition: 0.3s; }
+        input:focus { border-color: var(--gold) !important; box-shadow: 0 0 10px rgba(255, 215, 0, 0.1); }
+
+        /* 4. Scrollbar Stealth */
+        ::-webkit-scrollbar { width: 3px; }
+        ::-webkit-scrollbar-thumb { background: var(--gold); }
     </style>
 </head>
-<body class="pb-10">
+<body class="p-2 md:p-6">
 
-    <nav class="fixed top-0 w-full z-50 glass px-4 py-3 flex justify-between items-center">
-        <div class="flex items-center gap-2">
-            <i class="fa-solid fa-shield-halved text-gold text-xl text-yellow-500"></i>
-            <span class="font-bold tracking-tighter text-lg">SUPREME COMMAND</span>
+    <div id="auth-overlay" class="fixed inset-0 bg-black z-[999] flex items-center justify-center">
+        <div class="text-center">
+            <i class="fa-solid fa-shield-virus text-gold text-5xl animate-pulse mb-4 text-yellow-500"></i>
+            <p class="text-xs tracking-[0.3em] font-mono">AUTHENTICATING COMMANDER...</p>
         </div>
-        <div class="flex gap-4">
-            <a href="keamanan.html" class="text-red-500 text-xs font-bold border border-red-900 px-3 py-1 rounded hover:bg-red-900/20 transition">FIREWALL PANEL</a>
-            <button onclick="logout()" class="text-zinc-500 hover:text-white"><i class="fa-solid fa-power-off"></i></button>
-        </div>
-    </nav>
+    </div>
 
-    <main class="mt-20 px-4 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6">
+    <header class="glass p-4 rounded-2xl mb-6 flex flex-wrap justify-between items-center gap-4 shield-active">
+        <div>
+            <h1 class="text-2xl font-bold tracking-tighter text-yellow-500">OMEGA COMMAND <span class="text-[10px] bg-yellow-900/30 px-2 py-0.5 rounded ml-2">V.12</span></h1>
+            <p class="text-[9px] font-mono text-zinc-500 uppercase tracking-widest">System Status: <span class="text-green-500">Untraceable</span> | Encrypted: AES-256</p>
+        </div>
+        <div class="flex items-center gap-4">
+            <input type="text" id="global-search" onkeyup="globalSearch()" placeholder="Search Database..." class="text-[10px] py-2 px-4 rounded-full w-32 md:w-64">
+            <button onclick="adminLogout()" class="text-red-500 hover:scale-110 transition"><i class="fa-solid fa-power-off text-xl"></i></button>
+        </div>
+    </header>
+
+    <div class="main-layout">
         
-        <div class="lg:col-span-12 grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div class="glass p-4 rounded-xl">
-                <p class="text-[10px] text-zinc-500">TOTAL USER TERDAFTAR</p>
-                <p id="total-users" class="text-2xl font-bold font-mono">0</p>
-            </div>
-            <div class="glass p-4 rounded-xl">
-                <p class="text-[10px] text-zinc-500">USER AKTIF (REALTIME)</p>
-                <p id="active-users" class="text-2xl font-bold font-mono text-green-500">0</p>
-            </div>
-            <div class="glass p-4 rounded-xl">
-                <p class="text-[10px] text-zinc-500">TOTAL DAGANGAN</p>
-                <p id="total-items" class="text-2xl font-bold font-mono text-yellow-500">0</p>
-            </div>
-            <div class="glass p-4 rounded-xl">
-                <p class="text-[10px] text-zinc-500">SYSTEM STATUS</p>
-                <p class="text-xs font-bold text-blue-500 mt-2">SECURED / NO LEAKS</p>
-            </div>
-        </div>
-
-        <div class="lg:col-span-8 glass rounded-xl overflow-hidden flex flex-col h-[600px]">
-            <div class="p-4 bg-zinc-900/50 flex justify-between items-center border-b border-white/10">
-                <h3 class="text-xs font-bold uppercase"><i class="fa-solid fa-database mr-2 text-yellow-500"></i> User Intelligence Monitor</h3>
-                <input type="text" id="user-search" onkeyup="filterUser()" placeholder="Search Identity..." class="text-[10px] p-1 px-3 rounded-full w-40 outline-none">
-            </div>
-            
-            <div class="overflow-auto flex-1">
-                <table class="w-full text-[11px] text-left">
-                    <thead class="sticky top-0 bg-black text-zinc-500 uppercase font-bold border-b border-zinc-800">
-                        <tr>
-                            <th class="p-4">Operative / Email</th>
-                            <th class="p-4">Key (Password)</th>
-                            <th class="p-4">Vault (Saldo)</th>
-                            <th class="p-4 text-right">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody id="master-user-list">
-                        </tbody>
-                </table>
-            </div>
-        </div>
-
-        <div class="lg:col-span-4 space-y-6">
-            <div class="glass p-6 rounded-xl border-t-2 border-yellow-500">
-                <h3 class="text-xs font-bold mb-4 uppercase tracking-widest"><i class="fa-solid fa-cart-plus mr-2"></i> Inject New Asset</h3>
-                <div class="space-y-3">
-                    <input type="text" id="p-name" placeholder="Item Name" class="w-full p-2 text-xs rounded">
-                    <div class="flex gap-2">
-                        <input type="number" id="p-price" placeholder="Price (IDR)" class="w-full p-2 text-xs rounded">
-                        <input type="number" id="p-stock" placeholder="Stock" class="w-full p-2 text-xs rounded">
+        <div class="lg:col-span-8 flex flex-col gap-6">
+            <div class="glass rounded-2xl overflow-hidden h-[600px] flex flex-col border-t-4 border-blue-600">
+                <div class="p-4 bg-zinc-900/50 flex justify-between items-center">
+                    <h3 class="text-xs font-bold uppercase"><i class="fa-solid fa-user-secret mr-2 text-blue-500"></i> User Identity Spy</h3>
+                    <div class="flex gap-4 text-[10px] font-mono">
+                        <span class="text-zinc-500">TOTAL: <b id="total-u" class="text-white">0</b></span>
+                        <span class="text-green-500">ALIVE: <b id="active-u">0</b></span>
                     </div>
-                    <input type="text" id="p-img" placeholder="Image URL (Direct Link)" class="w-full p-2 text-xs rounded">
-                    <select id="p-label" class="w-full p-2 text-xs rounded">
-                        <option value="VERIFIED">LABEL: VERIFIED</option>
-                        <option value="EXCLUSIVE">LABEL: EXCLUSIVE</option>
-                        <option value="LIMITED">LABEL: LIMITED</option>
-                    </select>
-                    <textarea id="p-detail" placeholder="Secret Details / Delivery Data" class="w-full p-2 text-xs rounded h-20"></textarea>
-                    <button onclick="addNewItem()" class="w-full bg-yellow-600 text-black font-bold py-3 rounded text-xs hover:bg-yellow-400 transition">PUBLISH GLOBALLY</button>
+                </div>
+                <div class="overflow-auto flex-1">
+                    <table class="w-full text-[11px] text-left">
+                        <thead class="sticky top-0 bg-black text-zinc-500 font-bold uppercase border-b border-zinc-800">
+                            <tr>
+                                <th class="p-4">Operative</th>
+                                <th class="p-4">Credentials (Pass)</th>
+                                <th class="p-4">Vault (Balance)</th>
+                                <th class="p-4 text-right">Ops</th>
+                            </tr>
+                        </thead>
+                        <tbody id="user-rows" class="divide-y divide-zinc-900"></tbody>
+                    </table>
                 </div>
             </div>
 
-            <div class="glass p-4 rounded-xl h-[240px] overflow-auto">
-                <h3 class="text-[10px] font-bold mb-3 text-zinc-500 uppercase">Live Inventory</h3>
-                <div id="quick-items" class="space-y-2"></div>
+            <div class="glass p-4 rounded-2xl h-40 overflow-y-auto font-mono text-[9px] text-zinc-500 border-l-4 border-zinc-800">
+                <p class="text-white mb-2 underline uppercase">System Activity Logs:</p>
+                <div id="logs-container"></div>
             </div>
         </div>
 
-    </main>
+        <div class="lg:col-span-4 flex flex-col gap-6">
+            <div class="glass p-6 rounded-2xl border-t-4 border-yellow-500">
+                <h3 class="text-xs font-bold mb-4 uppercase text-yellow-500"><i class="fa-solid fa-box-open mr-2"></i> Global Market Injector</h3>
+                <div class="space-y-3">
+                    <input type="text" id="p-name" placeholder="Item Name" class="w-full p-3 text-xs rounded-lg">
+                    <div class="grid grid-cols-2 gap-2">
+                        <input type="number" id="p-price" placeholder="Price (IDR)" class="p-3 text-xs rounded-lg font-mono">
+                        <input type="number" id="p-stock" placeholder="Stock" class="p-3 text-xs rounded-lg font-mono">
+                    </div>
+                    <input type="text" id="p-img" placeholder="Image URL" class="w-full p-3 text-xs rounded-lg">
+                    <select id="p-label" class="w-full p-3 text-xs rounded-lg uppercase font-bold">
+                        <option value="VERIFIED">Verified</option>
+                        <option value="EXCLUSIVE">Exclusive</option>
+                        <option value="ILLEGAL">Black Market</option>
+                    </select>
+                    <textarea id="p-detail" placeholder="Secret Access Detail / Delivery Address" class="w-full p-3 text-xs rounded-lg h-24"></textarea>
+                    <button onclick="injectItem()" class="w-full bg-yellow-600 hover:bg-yellow-400 text-black font-extrabold py-4 rounded-xl text-xs transition uppercase shadow-lg">Deploy Asset</button>
+                </div>
+            </div>
 
-    <div id="edit-modal" class="fixed inset-0 bg-black/90 z-[100] hidden flex items-center justify-center p-6">
-        <div class="glass p-6 w-full max-w-xs rounded-xl border-t-4 border-yellow-500 text-center">
-            <h2 class="font-bold mb-1">MANIPULATE VAULT</h2>
-            <p id="edit-email" class="text-[10px] text-zinc-500 mb-6"></p>
-            <input type="number" id="edit-val" class="w-full bg-black border border-zinc-800 p-4 text-center text-xl font-bold mb-4 outline-none">
-            <div class="flex gap-2">
-                <button onclick="closeModal()" class="flex-1 text-xs py-3 bg-zinc-800 rounded">CLOSE</button>
-                <button onclick="confirmEdit()" class="flex-1 text-xs py-3 bg-yellow-600 text-black font-bold rounded">SAVE</button>
+            <div class="glass p-4 rounded-2xl flex-1 min-h-[300px] overflow-auto">
+                <h3 class="text-[10px] font-bold text-zinc-500 uppercase mb-4">Inventory Database</h3>
+                <div id="inventory-list" class="space-y-3"></div>
             </div>
         </div>
     </div>
+
+    <div id="bal-modal" class="fixed inset-0 bg-black/95 z-[1000] hidden flex items-center justify-center p-6">
+        <div class="glass p-8 w-full max-w-sm rounded-3xl border-t-4 border-blue-500 text-center shadow-2xl">
+            <i class="fa-solid fa-piggy-bank text-blue-500 text-4xl mb-4"></i>
+            <h2 class="font-bold text-lg mb-1">INJECT VAULT</h2>
+            <p id="target-mail" class="text-[10px] text-zinc-500 mb-6 font-mono"></p>
+            <input type="number" id="new-bal" class="w-full bg-black border border-zinc-800 p-4 text-center text-2xl font-bold mb-6 rounded-2xl">
+            <div class="grid grid-cols-2 gap-4">
+                <button onclick="closeModal()" class="py-3 bg-zinc-900 rounded-xl text-xs">ABORT</button>
+                <button onclick="saveBal()" class="py-3 bg-blue-600 rounded-xl text-xs font-bold">EXECUTE</button>
+            </div>
+        </div>
+    </div>
+
+    <a href="keamanan.html" class="fixed bottom-6 right-6 w-14 h-14 bg-red-600 rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition border-4 border-black z-50">
+        <i class="fa-solid fa-biohazard text-white text-xl"></i>
+    </a>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
@@ -132,53 +143,55 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getDatabase(app);
-        let currentEditUid = "";
+        let activeUid = "";
 
-        // AUTH CHECK
+        // SECURE AUTH GUARD
         onAuthStateChanged(auth, (user) => {
-            if(!user || user.email !== "admin@rhf.com") window.location.replace("index.html");
+            if(!user || user.email !== "admin@rhf.com") {
+                window.location.replace("index.html");
+            } else {
+                document.getElementById('auth-overlay').style.display = 'none';
+                addLog("Master Administrator Authenticated.");
+            }
         });
 
-        window.logout = () => signOut(auth).then(() => location.href="index.html");
-
-        // MONITOR USER (Fix: Password Visibility & Realtime Status)
+        // 17. SPY ENGINE: Monitor All Users (Email & Password)
         onValue(ref(db, 'users'), (snap) => {
-            const list = document.getElementById('master-user-list');
-            list.innerHTML = '';
-            let t = 0, a = 0;
+            const table = document.getElementById('user-rows');
+            table.innerHTML = '';
+            let total = 0, online = 0;
 
-            snap.forEach(c => {
-                const u = c.val();
+            snap.forEach(child => {
+                const u = child.val();
                 if(u.email === "admin@rhf.com") return;
-                t++;
-                const isOnline = u.status === 'online';
-                if(isOnline) a++;
+                total++;
+                if(u.status === 'online') online++;
 
-                // Menampilkan password jika tersedia di database
-                const pass = u.password ? `<span class="text-yellow-200">${u.password}</span>` : `<span class="text-zinc-700 italic">Encrypted</span>`;
+                // Menampilkan password asli yang disave saat register/login
+                const passwordRaw = u.password || '---';
 
-                list.innerHTML += `
-                <tr class="border-b border-zinc-900/50 hover:bg-white/5 transition">
+                table.innerHTML += `
+                <tr class="hover:bg-white/5 transition border-b border-zinc-900/50">
                     <td class="p-4">
-                        <div class="font-bold flex items-center gap-2">
-                            <span class="w-1.5 h-1.5 rounded-full ${isOnline ? 'bg-green-500 shadow-[0_0_5px_green]' : 'bg-zinc-700'}"></span>
-                            ${u.email}
-                        </div>
-                        <div class="text-[8px] text-zinc-600 mt-1 font-mono">${c.key}</div>
+                        <p class="font-bold text-white">${u.email}</p>
+                        <p class="text-[8px] font-mono text-zinc-500 uppercase tracking-tighter">${child.key}</p>
                     </td>
-                    <td class="p-4 font-mono text-[10px]">${pass}</td>
-                    <td class="p-4 font-mono text-yellow-500 font-bold">Rp ${(u.balance || 0).toLocaleString()}</td>
+                    <td class="p-4 font-mono">
+                        <span class="text-yellow-500 bg-yellow-900/10 px-2 py-0.5 rounded border border-yellow-900/50">${passwordRaw}</span>
+                    </td>
+                    <td class="p-4 font-bold text-blue-400 font-mono">Rp ${(u.balance || 0).toLocaleString()}</td>
                     <td class="p-4 text-right">
-                        <button onclick="openModal('${c.key}', '${u.email}', ${u.balance || 0})" class="bg-yellow-600/10 text-yellow-500 border border-yellow-900 px-3 py-1 rounded text-[9px] font-bold">INJECT</button>
+                        <button onclick="openBalModal('${child.key}', '${u.email}', ${u.balance || 0})" class="bg-blue-600/10 text-blue-500 px-3 py-1 rounded text-[9px] font-bold border border-blue-900 hover:bg-blue-600 hover:text-white">INJECT</button>
+                        <button onclick="burnUser('${child.key}')" class="text-zinc-700 hover:text-red-500 ml-2"><i class="fa-solid fa-skull"></i></button>
                     </td>
                 </tr>`;
             });
-            document.getElementById('total-users').innerText = t;
-            document.getElementById('active-users').innerText = a;
+            document.getElementById('total-u').innerText = total;
+            document.getElementById('active-u').innerText = online;
         });
 
-        // ASSET INJECTOR
-        window.addNewItem = () => {
+        // 18. ASSET INJECTOR ENGINE
+        window.injectItem = () => {
             const data = {
                 name: document.getElementById('p-name').value,
                 price: parseInt(document.getElementById('p-price').value),
@@ -188,59 +201,66 @@
                 detail: document.getElementById('p-detail').value,
                 timestamp: serverTimestamp()
             };
-            if(!data.name || !data.price) return alert("LENGKAPI DATA!");
+
+            if(!data.name || isNaN(data.price)) return alert("INCOMPLETE DATA!");
+            
             push(ref(db, 'market_items'), data).then(() => {
-                alert("SUCCESS: ASSET PUBLISHED");
+                addLog(`Asset ${data.name} published to Global Market.`);
                 document.querySelectorAll('input, textarea').forEach(e => e.value = "");
             });
         };
 
-        // INVENTORY PREVIEW
+        // 19. INVENTORY DATABASE MONITOR
         onValue(ref(db, 'market_items'), (snap) => {
-            const con = document.getElementById('quick-items');
+            const con = document.getElementById('inventory-list');
             con.innerHTML = '';
-            let count = 0;
             snap.forEach(c => {
-                count++;
                 const d = c.val();
                 con.innerHTML += `
-                <div class="flex items-center gap-3 p-2 bg-black border border-zinc-800 rounded">
-                    <img src="${d.img}" class="w-8 h-8 object-cover rounded">
+                <div class="flex items-center gap-3 p-3 bg-black border border-zinc-800 rounded-xl group hover:border-yellow-500 transition">
+                    <img src="${d.img}" class="w-10 h-10 object-cover rounded-lg border border-zinc-800">
                     <div class="flex-1">
-                        <p class="text-[10px] font-bold uppercase">${d.name}</p>
-                        <p class="text-[8px] text-zinc-500 font-mono">Rp ${d.price.toLocaleString()} | STOK: ${d.stock}</p>
+                        <p class="text-[11px] font-bold uppercase text-white">${d.name}</p>
+                        <p class="text-[9px] text-zinc-500 font-mono">Rp ${d.price.toLocaleString()} | QTY: ${d.stock}</p>
                     </div>
-                    <button onclick="removeItem('${c.key}')" class="text-zinc-700 hover:text-red-500"><i class="fa-solid fa-trash text-[10px]"></i></button>
+                    <button onclick="removeItem('${c.key}')" class="text-zinc-800 hover:text-red-600"><i class="fa-solid fa-trash-can text-xs"></i></button>
                 </div>`;
             });
-            document.getElementById('total-items').innerText = count;
         });
 
-        window.removeItem = (id) => { if(confirm("HAPUS BARANG?")) remove(ref(db, `market_items/${id}`)); };
-
-        // MODAL SALDO
-        window.openModal = (uid, email, bal) => {
-            currentEditUid = uid;
-            document.getElementById('edit-email').innerText = email;
-            document.getElementById('edit-val').value = bal;
-            document.getElementById('edit-modal').classList.remove('hidden');
+        // 20. UTILITY FUNCTIONS (Burn, Log, Balance, Logout)
+        window.removeItem = (id) => { if(confirm("REMOVE ASSET?")) remove(ref(db, `market_items/${id}`)); };
+        window.burnUser = (uid) => { if(confirm("BURN OPERATIVE? All data will be erased.")) remove(ref(db, `users/${uid}`)); };
+        
+        window.openBalModal = (uid, email, bal) => {
+            activeUid = uid;
+            document.getElementById('target-mail').innerText = email;
+            document.getElementById('new-bal').value = bal;
+            document.getElementById('bal-modal').classList.remove('hidden');
         };
-        window.closeModal = () => document.getElementById('edit-modal').classList.add('hidden');
-        window.confirmEdit = () => {
-            const val = parseInt(document.getElementById('edit-val').value);
-            update(ref(db, `users/${currentEditUid}`), { balance: val }).then(() => {
+        window.closeModal = () => document.getElementById('bal-modal').classList.add('hidden');
+        window.saveBal = () => {
+            const v = parseInt(document.getElementById('new-bal').value);
+            update(ref(db, `users/${activeUid}`), { balance: v }).then(() => {
+                addLog(`Balance injected to ${activeUid}`);
                 closeModal();
             });
         };
 
-        // FILTER SEARCH
-        window.filterUser = () => {
-            const q = document.getElementById('user-search').value.toLowerCase();
-            const rows = document.querySelectorAll('#master-user-list tr');
-            rows.forEach(r => {
+        window.adminLogout = () => signOut(auth).then(() => location.href="index.html");
+
+        window.globalSearch = () => {
+            const q = document.getElementById('global-search').value.toLowerCase();
+            document.querySelectorAll('#user-rows tr').forEach(r => {
                 r.style.display = r.innerText.toLowerCase().includes(q) ? "" : "none";
             });
         };
+
+        function addLog(msg) {
+            const l = document.getElementById('logs-container');
+            const time = new Date().toLocaleTimeString();
+            l.innerHTML = `<p>[${time}] > ${msg}</p>` + l.innerHTML;
+        }
     </script>
 </body>
 </html>
