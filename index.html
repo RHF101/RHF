@@ -9,124 +9,189 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        :root { --gold: #D4AF37; --dark: #050505; --red: #ff1a1a; }
+        :root { --gold: #D4AF37; --dark: #050505; --red: #ff1a1a; --military: #1a1c1a; }
         body { font-family: 'Rajdhani', sans-serif; background: var(--dark); color: #ccc; overflow-x: hidden; -webkit-user-select: none; user-select: none; }
         .font-luxury { font-family: 'Cinzel', serif; }
-        .glass-panel { background: rgba(10, 10, 10, 0.98); border: 1px solid rgba(212, 175, 55, 0.1); backdrop-filter: blur(25px); }
-        .btn-gold { background: linear-gradient(90deg, #b38728, #fcf6ba, #bf953f); color: #000; font-weight: 800; transition: 0.3s; clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px); }
-        .btn-gold:hover { filter: brightness(1.2); transform: translateY(-2px); box-shadow: 0 0 20px rgba(212, 175, 55, 0.4); }
-        .input-field { background: #000; border: 1px solid #222; color: white; padding: 12px; border-radius: 4px; outline: none; transition: 0.3s; width: 100%; }
+        
+        /* Glassmorphism Ultra */
+        .glass-panel { background: rgba(5, 5, 5, 0.95); border: 1px solid rgba(212, 175, 55, 0.15); backdrop-filter: blur(20px); box-shadow: 0 0 30px rgba(0,0,0,0.5); }
+        
+        /* Gold Military Button */
+        .btn-gold { 
+            background: linear-gradient(90deg, #b38728, #fcf6ba, #bf953f); 
+            color: #000; font-weight: 800; transition: 0.3s; 
+            clip-path: polygon(10% 0, 100% 0, 100% 70%, 90% 100%, 0 100%, 0 30%);
+        }
+        .btn-gold:hover { filter: brightness(1.2); transform: scale(1.02); box-shadow: 0 0 20px rgba(212, 175, 55, 0.4); }
+        
+        .input-field { background: #000; border: 1px solid #222; color: white; padding: 12px; border-radius: 4px; outline: none; transition: 0.3s; width: 100%; font-size: 12px; }
         .input-field:focus { border-color: var(--gold); box-shadow: 0 0 10px rgba(212, 175, 55, 0.1); }
-        .chat-bubble { max-width: 80%; padding: 10px; border-radius: 12px; font-size: 12px; margin-bottom: 8px; }
-        .chat-me { background: var(--gold); color: black; align-self: flex-end; }
-        .chat-other { background: #1a1a1a; color: white; align-self: flex-start; border: 1px solid #333; }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: #050505; }
+        ::-webkit-scrollbar-thumb { background: var(--gold); }
+
+        .scan-line { width: 100%; height: 2px; background: var(--gold); opacity: 0.1; position: absolute; animation: scan 4s linear infinite; }
+        @keyframes scan { 0% { top: 0; } 100% { top: 100%; } }
         .hidden { display: none !important; }
-        @media print { body { display: none !important; } }
     </style>
 </head>
 <body>
 
     <div id="ip-loader" class="fixed inset-0 bg-black z-[9999] flex items-center justify-center">
         <div class="text-center">
-            <div class="w-16 h-16 border-2 border-zinc-800 border-t-gold rounded-full animate-spin mx-auto mb-4"></div>
-            <p class="font-mono text-gold text-[10px] tracking-[0.5em] animate-pulse">ENCRYPTING CONNECTION...</p>
+            <div class="w-20 h-20 border-2 border-zinc-900 border-t-gold rounded-full animate-spin mx-auto mb-6"></div>
+            <p class="font-mono text-gold text-[10px] tracking-[0.7em] animate-pulse">ESTABLISHING ENCRYPTED TUNNEL</p>
         </div>
     </div>
 
     <section id="decoy-page" class="hidden min-h-screen flex items-center justify-center bg-white text-center p-6">
         <div class="max-w-md">
-            <h1 class="text-6xl font-bold text-gray-900 mb-4">404</h1>
-            <p class="text-xl text-gray-600 mb-8">This site has been permanently removed due to a copyright claim or law enforcement request.</p>
-            <div class="p-4 border border-gray-200 rounded text-xs text-gray-400 font-mono">REF ID: 882-RHF-SEC</div>
+            <h1 class="text-9xl font-bold text-gray-100 mb-0">404</h1>
+            <p class="text-xl text-gray-800 font-bold mb-4">SECURITY ALERT</p>
+            <p class="text-sm text-gray-500 mb-8">This domain is seized. Your IP has been logged for unauthorized access attempt.</p>
+            <div class="p-4 border border-gray-100 rounded text-[10px] text-gray-400 font-mono">ENCRYPTION_FAIL_SIG_882</div>
             <button onclick="emergencyBypass()" class="mt-20 opacity-0 cursor-default">.</button>
         </div>
     </section>
 
     <div id="syndicate-app" class="hidden">
         
-        <section id="auth-page" class="min-h-screen flex items-center justify-center p-4">
-            <div class="glass-panel w-full max-w-sm p-10 rounded-3xl text-center">
-                <h1 class="font-luxury text-gold text-5xl mb-1">RHF</h1>
-                <p class="text-[8px] tracking-[1em] text-zinc-500 uppercase mb-10">Ghost Protocol v.4</p>
-                <div class="space-y-4">
-                    <input type="email" id="email" placeholder="EMAIL IDENTITY" class="input-field">
-                    <input type="password" id="pass" placeholder="ACCESS KEY" class="input-field">
-                    <button onclick="handleLogin()" class="btn-gold w-full py-4 text-[10px] tracking-widest uppercase">Sync Identity</button>
-                    <button onclick="handleReg()" class="text-[10px] text-zinc-600 underline uppercase mt-4 block mx-auto">New Ghost Account</button>
+        <section id="auth-page" class="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
+            <div class="scan-line"></div>
+            <div class="glass-panel w-full max-w-md p-12 rounded-none relative z-10 border-t-4 border-t-gold">
+                <div class="mb-12 text-center">
+                    <h1 class="font-luxury text-gold text-6xl mb-2 tracking-tighter">RHF</h1>
+                    <p class="text-[9px] tracking-[1.2em] text-zinc-500 uppercase">Black Market Syndicate</p>
                 </div>
-                <p id="auth-error" class="text-red-500 text-[10px] mt-4 font-bold uppercase"></p>
-                <div id="my-ip-tag" class="mt-8 text-[9px] text-zinc-800 font-mono"></div>
+                
+                <div class="space-y-5">
+                    <div class="relative">
+                        <i class="fa-solid fa-fingerprint absolute left-4 top-4 text-zinc-700"></i>
+                        <input type="email" id="email" placeholder="GHOST IDENTITY (EMAIL)" class="input-field pl-12">
+                    </div>
+                    <div class="relative">
+                        <i class="fa-solid fa-key absolute left-4 top-4 text-zinc-700"></i>
+                        <input type="password" id="pass" placeholder="ACCESS KEY" class="input-field pl-12">
+                    </div>
+                    <button onclick="handleLogin()" class="btn-gold w-full py-5 text-[11px] tracking-[0.3em] uppercase mt-4">Initiate Sync</button>
+                    <button onclick="handleReg()" class="text-[9px] text-zinc-600 hover:text-gold transition uppercase block mx-auto tracking-widest">Register New Ghost</button>
+                </div>
+                
+                <p id="auth-error" class="text-red-600 text-[10px] mt-6 font-bold uppercase text-center tracking-widest"></p>
+                <div id="my-ip-tag" class="mt-12 text-[8px] text-zinc-800 font-mono text-center border-t border-zinc-900 pt-4"></div>
             </div>
         </section>
 
         <div id="main-interface" class="hidden">
-            <nav class="fixed top-0 w-full z-50 glass-panel border-b border-white/5 px-8 py-4 flex justify-between items-center">
-                <div class="flex items-center gap-3">
-                    <div class="w-2 h-2 bg-gold rounded-full animate-pulse"></div>
-                    <span class="font-luxury text-gold tracking-widest">RHF SYNDICATE</span>
+            <nav class="fixed top-0 w-full z-50 glass-panel border-b border-white/5 px-10 py-5 flex justify-between items-center">
+                <div class="flex items-center gap-4">
+                    <div class="w-2 h-2 bg-red-600 rounded-full animate-ping"></div>
+                    <span class="font-luxury text-gold tracking-[0.4em] text-sm">RHF SYNDICATE</span>
                 </div>
-                <div class="flex items-center gap-6">
-                    <div id="user-bal-container" class="text-right border-r border-zinc-800 pr-6">
-                        <span class="text-[8px] text-zinc-500 uppercase block">Vault Balance</span>
-                        <span id="user-bal" class="text-gold font-bold font-mono">Rp 0</span>
+                <div class="flex items-center gap-8">
+                    <div id="user-bal-container" class="text-right border-r border-zinc-800 pr-8">
+                        <span class="text-[8px] text-zinc-500 uppercase block tracking-widest">Vault Balance</span>
+                        <span id="user-bal" class="text-gold font-bold font-mono text-lg">Rp 0</span>
                     </div>
-                    <button onclick="changePage('shop')" class="text-zinc-500 hover:text-white"><i class="fa-solid fa-store"></i></button>
-                    <button id="god-btn" onclick="changePage('admin')" class="hidden bg-red-600/10 border border-red-600/50 text-red-500 px-3 py-1 text-[9px] font-bold rounded-full">GOD MODE</button>
-                    <button onclick="logout()" class="text-zinc-500 hover:text-red-500"><i class="fa-solid fa-power-off"></i></button>
+                    <button onclick="changePage('shop')" class="text-zinc-500 hover:text-gold transition"><i class="fa-solid fa-cubes-stacked"></i></button>
+                    <button id="god-btn" onclick="changePage('admin')" class="hidden bg-red-600 text-white px-4 py-1 text-[9px] font-black rounded-sm skew-x-[-15deg]">GOD MODE</button>
+                    <button onclick="logout()" class="text-zinc-700 hover:text-red-600 transition"><i class="fa-solid fa-power-off"></i></button>
                 </div>
             </nav>
 
-            <section id="page-shop" class="pt-32 px-8 max-w-7xl mx-auto pb-20">
-                <h2 class="font-luxury text-2xl text-white mb-10 border-l-4 border-gold pl-4">BLACK MARKET ASSETS</h2>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6" id="market-items">
-                    <div class="glass-panel p-6 rounded-2xl hover:border-gold/40 transition">
-                        <div class="h-40 bg-zinc-900/50 rounded-xl mb-4 flex items-center justify-center"><i class="fa-solid fa-user-secret text-4xl text-zinc-800"></i></div>
-                        <h3 class="text-white font-bold text-sm">ENCRYPTED DATABASE V.1</h3>
-                        <p class="text-gold text-xs font-mono mb-4">Rp 5.000.000</p>
-                        <button onclick="buyItem('DB V.1', 5000000)" class="btn-gold w-full py-2 text-[9px]">PURCHASE</button>
+            <section id="page-shop" class="pt-36 px-10 max-w-7xl mx-auto pb-24">
+                <div class="flex justify-between items-end mb-12">
+                    <div>
+                        <h2 class="font-luxury text-3xl text-white mb-2 uppercase">Marketplace Assets</h2>
+                        <p class="text-[10px] text-zinc-500 tracking-[0.3em]">ENCRYPTED PHYSICAL & DIGITAL GOODS</p>
                     </div>
+                    <div class="text-[10px] text-zinc-600 font-mono">TERMINAL: v.5.0.1</div>
                 </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8" id="market-items">
+                    </div>
             </section>
 
-            <section id="page-admin" class="hidden pt-32 px-8 pb-20">
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    <div class="glass-panel p-6 rounded-3xl">
-                        <h3 class="font-luxury text-gold mb-6 uppercase text-sm"><i class="fa-solid fa-shield-halved"></i> IP Access Control</h3>
-                        <div class="flex gap-2 mb-6">
-                            <input type="text" id="new-ip-input" placeholder="Enter Target IP" class="input-field py-2 text-xs">
-                            <button onclick="adminAddIP()" class="bg-gold text-black px-4 font-bold text-[10px] rounded">GRANT</button>
+            <section id="page-admin" class="hidden pt-36 px-10 pb-24">
+                <div class="grid grid-cols-1 lg:grid-cols-4 gap-8 mb-10">
+                    
+                    <div class="lg:col-span-1 glass-panel p-8 rounded-none border-t-2 border-t-gold">
+                        <h3 class="font-luxury text-gold mb-8 uppercase text-xs tracking-widest"><i class="fa-solid fa-upload mr-2"></i> Inject New Asset</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="text-[8px] text-zinc-500 uppercase block mb-1">Asset Name</label>
+                                <input type="text" id="prod-name" placeholder="Contoh: Kantor Sudirman" class="input-field">
+                            </div>
+                            <div>
+                                <label class="text-[8px] text-zinc-500 uppercase block mb-1">Asset Value (IDR)</label>
+                                <input type="number" id="prod-price" placeholder="Harga Tanpa Titik" class="input-field">
+                            </div>
+                            <div>
+                                <label class="text-[8px] text-zinc-500 uppercase block mb-1">Security Category</label>
+                                <select id="prod-cat" class="input-field bg-black">
+                                    <option value="Residential">RESIDENTIAL (RUMAH)</option>
+                                    <option value="Corporate">CORPORATE (KANTOR)</option>
+                                    <option value="Digital">DIGITAL DATA</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="text-[8px] text-zinc-500 uppercase block mb-1">Technical Details (Full Address/Spec)</label>
+                                <textarea id="prod-detail" placeholder="Input data lengkap dari gambar di sini..." class="input-field h-32"></textarea>
+                            </div>
+                            <button onclick="adminUploadProduct()" class="btn-gold w-full py-4 text-[10px] mt-4">CONFIRM INJECTION</button>
                         </div>
-                        <div id="ip-list-container" class="space-y-2 max-h-60 overflow-y-auto pr-2"></div>
                     </div>
 
-                    <div class="lg:col-span-2 glass-panel p-6 rounded-3xl overflow-hidden">
-                        <h3 class="font-luxury text-gold mb-6 uppercase text-sm">User Database</h3>
+                    <div class="lg:col-span-1 glass-panel p-8 rounded-none border-t-2 border-t-blue-900">
+                        <h3 class="font-luxury text-blue-500 mb-8 uppercase text-xs tracking-widest"><i class="fa-solid fa-network-wired mr-2"></i> IP Access Control</h3>
+                        <div class="space-y-4">
+                            <div class="relative">
+                                <input type="text" id="new-ip-input" placeholder="0.0.0.0" class="input-field font-mono text-center">
+                            </div>
+                            <div class="grid grid-cols-2 gap-2">
+                                <button onclick="adminGrantAccess('buyer')" class="bg-blue-900/30 border border-blue-900 text-blue-400 py-2 text-[9px] font-bold hover:bg-blue-900 transition">GRANT BUYER</button>
+                                <button onclick="adminGrantAccess('admin')" class="bg-red-900/30 border border-red-900 text-red-400 py-2 text-[9px] font-bold hover:bg-red-900 transition">GRANT ADMIN</button>
+                            </div>
+                            <p class="text-[8px] text-zinc-600 italic leading-relaxed uppercase tracking-tighter">
+                                *Admin IP can bypass Ghost Protocol decoy. Buyer IP only sees Marketplace.
+                            </p>
+                            <hr class="border-zinc-900 my-4">
+                            <div id="ip-list-container" class="space-y-2 max-h-72 overflow-y-auto pr-2">
+                                </div>
+                        </div>
+                    </div>
+
+                    <div class="lg:col-span-2 glass-panel p-8 rounded-none border-t-2 border-t-zinc-800">
+                        <h3 class="font-luxury text-zinc-400 mb-8 uppercase text-xs tracking-widest"><i class="fa-solid fa-users-viewfinder mr-2"></i> Syndicate Intelligence</h3>
                         <div class="overflow-x-auto">
                             <table class="w-full text-left text-[11px]">
-                                <thead class="text-zinc-500 uppercase border-b border-zinc-800">
+                                <thead class="text-zinc-600 uppercase border-b border-zinc-900">
                                     <tr>
-                                        <th class="pb-3">Identity</th>
-                                        <th class="pb-3">Vault</th>
-                                        <th class="pb-3">Status</th>
-                                        <th class="pb-3">Actions</th>
+                                        <th class="pb-4">Ghost Identity</th>
+                                        <th class="pb-4">Vault Balance</th>
+                                        <th class="pb-4">Last IP/Status</th>
+                                        <th class="pb-4 text-right">Actions</th>
                                     </tr>
                                 </thead>
-                                <tbody id="admin-user-list" class="text-zinc-300"></tbody>
+                                <tbody id="admin-user-list" class="text-zinc-300">
+                                    </tbody>
                             </table>
                         </div>
                     </div>
                 </div>
 
-                <div class="mt-8 glass-panel p-6 rounded-3xl">
-                    <h3 class="font-luxury text-gold mb-6 uppercase text-sm">Comms Channel (Intercepted)</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 h-[400px]">
-                        <div id="admin-chat-list" class="overflow-y-auto border-r border-zinc-800 pr-4"></div>
+                <div class="glass-panel p-8 rounded-none border-t-2 border-t-green-900">
+                    <h3 class="font-luxury text-green-500 mb-8 uppercase text-xs tracking-widest"><i class="fa-solid fa-satellite-dish mr-2"></i> Comms Intercept</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-8 h-[500px]">
+                        <div id="admin-chat-list" class="overflow-y-auto border-r border-zinc-900 pr-6 space-y-2">
+                            </div>
                         <div id="admin-active-chat" class="md:col-span-3 flex flex-col hidden">
-                            <div id="chat-target-header" class="pb-4 border-b border-zinc-800 text-gold font-bold text-xs uppercase"></div>
-                            <div id="admin-chat-msgs" class="flex-1 overflow-y-auto p-4 flex flex-col gap-2"></div>
-                            <div class="flex gap-2 mt-4">
-                                <input type="text" id="admin-chat-in" class="input-field" placeholder="Reply...">
-                                <button onclick="sendAdminMsg()" class="btn-gold px-6">SEND</button>
+                            <div id="chat-target-header" class="pb-4 border-b border-zinc-900 text-gold font-bold text-[11px] uppercase tracking-[0.3em]"></div>
+                            <div id="admin-chat-msgs" class="flex-1 overflow-y-auto p-6 flex flex-col gap-4"></div>
+                            <div class="flex gap-4 mt-6 p-4 bg-black/50 border border-white/5">
+                                <input type="text" id="admin-chat-in" class="input-field border-none focus:ring-0" placeholder="Type response...">
+                                <button onclick="sendAdminMsg()" class="btn-gold px-10">TRANSMIT</button>
                             </div>
                         </div>
                     </div>
@@ -134,12 +199,26 @@
             </section>
         </div>
 
-        <div id="user-chat-window" class="hidden fixed bottom-24 right-8 w-80 h-[400px] glass-panel rounded-2xl flex flex-col z-[100] shadow-2xl border-gold/20">
-            <div class="p-4 bg-zinc-900 rounded-t-2xl font-bold text-[10px] text-gold uppercase tracking-widest border-b border-gold/10">Secure Comms</div>
-            <div id="user-chat-msgs" class="flex-1 overflow-y-auto p-4 flex flex-col gap-2"></div>
-            <div class="p-4 flex gap-2">
-                <input type="text" id="user-chat-in" class="input-field py-1" placeholder="Message Admin...">
-                <button onclick="sendUserMsg()" class="text-gold"><i class="fa-solid fa-paper-plane"></i></button>
+        <div id="user-chat-window" class="hidden fixed bottom-28 right-10 w-96 h-[500px] glass-panel rounded-none flex flex-col z-[100] border-t-4 border-t-gold">
+            <div class="p-6 bg-zinc-900/80 font-bold text-[11px] text-gold uppercase tracking-[0.4em] border-b border-white/5 flex justify-between items-center">
+                <span><i class="fa-solid fa-headset mr-2"></i> Support Line</span>
+                <button onclick="toggleUserChat()" class="text-zinc-500 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div id="user-chat-msgs" class="flex-1 overflow-y-auto p-6 flex flex-col gap-4"></div>
+            <div class="p-6 flex gap-3 border-t border-white/5">
+                <input type="text" id="user-chat-in" class="input-field" placeholder="Send message...">
+                <button onclick="sendUserMsg()" class="text-gold text-xl hover:scale-110 transition"><i class="fa-solid fa-paper-plane"></i></button>
+            </div>
+        </div>
+        
+        <button id="chat-float-btn" onclick="toggleUserChat()" class="fixed bottom-10 right-10 w-16 h-16 bg-gold rounded-none flex items-center justify-center text-black shadow-2xl z-[100] hover:rotate-90 transition-all duration-500">
+            <i class="fa-solid fa-comment-dots text-2xl"></i>
+        </button>
+
+    </div>
+
+    <script type="module">
+<button onclick="sendUserMsg()" class="text-gold"><i class="fa-solid fa-paper-plane"></i></button>
             </div>
         </div>
         <button id="chat-float-btn" onclick="toggleUserChat()" class="fixed bottom-6 right-6 w-14 h-14 bg-gold rounded-2xl flex items-center justify-center text-black shadow-xl z-[100] hover:scale-110 transition">
