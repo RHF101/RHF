@@ -2,142 +2,120 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RHF | SUPREME COMMAND CENTER</title>
+    <title>RHF | TITAN ADMIN COMMAND</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root { --gold: #D4AF37; --dark: #020202; --red: #ff1a1a; --neon: #00f2ff; }
-        body { font-family: 'Rajdhani', sans-serif; background: var(--dark); color: #ccc; overflow-x: hidden; }
+        :root { --gold: #D4AF37; --dark: #020202; }
+        body { font-family: 'Rajdhani', sans-serif; background: var(--dark); color: #ccc; }
         .font-luxury { font-family: 'Cinzel', serif; }
-        .glass-panel { background: rgba(10, 10, 10, 0.9); border: 1px solid rgba(212, 175, 55, 0.1); backdrop-filter: blur(15px); }
-        .input-gold { background: #000; border: 1px solid #222; color: #fff; padding: 12px; font-size: 13px; outline: none; width: 100%; transition: 0.3s; }
-        .input-gold:focus { border-color: var(--gold); box-shadow: 0 0 10px rgba(212, 175, 55, 0.2); }
-        .btn-execute { background: linear-gradient(90deg, #b38728, #fcf6ba, #bf953f); color: #000; font-weight: 800; text-transform: uppercase; cursor: pointer; transition: 0.3s; }
-        .btn-execute:hover { letter-spacing: 2px; filter: brightness(1.2); }
-        .status-chip { font-size: 9px; padding: 2px 6px; border-radius: 3px; font-weight: bold; }
+        .glass { background: rgba(10, 10, 10, 0.9); border: 1px solid rgba(212, 175, 55, 0.1); backdrop-filter: blur(10px); }
+        .input-gold { background: #000; border: 1px solid #222; color: #fff; padding: 10px; font-size: 12px; outline: none; width: 100%; }
+        .input-gold:focus { border-color: var(--gold); }
+        .btn-gold { background: linear-gradient(90deg, #b38728, #fcf6ba, #bf953f); color: #000; font-weight: 800; transition: 0.3s; cursor: pointer; }
+        .btn-gold:hover { filter: brightness(1.2); letter-spacing: 1px; }
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-thumb { background: var(--gold); }
     </style>
 </head>
-<body class="p-2 md:p-6">
+<body class="p-4 md:p-8">
 
-    <header class="glass-panel p-6 mb-6 border-b-2 border-b-gold flex flex-wrap justify-between items-center gap-4">
+    <header class="glass p-6 mb-8 border-b-2 border-b-gold flex flex-wrap justify-between items-center gap-4">
         <div>
-            <h1 class="font-luxury text-gold text-4xl tracking-tighter">CENTRAL VAULT ADMIN</h1>
-            <p class="text-[10px] tracking-[0.5em] text-zinc-500">SYSTEM V.7.0 / STATUS: <span class="text-green-500">ENCRYPTED</span></p>
+            <h1 class="font-luxury text-gold text-3xl">TITAN COMMAND CENTER</h1>
+            <p class="text-[9px] tracking-[0.5em] text-zinc-500 uppercase">Status: <span class="text-green-500 animate-pulse">Master Connected</span></p>
         </div>
-        <div class="flex gap-4">
-            <div class="text-right border-r border-zinc-800 pr-4">
-                <p class="text-[9px] text-zinc-500">LIVE USERS</p>
-                <p id="stat-users" class="text-xl font-bold text-white font-mono">0</p>
+        <div class="flex gap-6">
+            <div class="text-center border-r border-zinc-800 pr-6">
+                <p class="text-[8px] text-zinc-500">ASSETS</p>
+                <p id="stat-assets" class="text-xl font-bold text-white font-mono">0</p>
             </div>
-            <div class="text-right border-r border-zinc-800 pr-4">
-                <p class="text-[9px] text-zinc-500">ACTIVE ASSETS</p>
-                <p id="stat-assets" class="text-xl font-bold text-gold font-mono">0</p>
+            <div class="text-center">
+                <p class="text-[8px] text-zinc-500">ACTIVE USERS</p>
+                <p id="stat-users" class="text-xl font-bold text-blue-500 font-mono">0</p>
             </div>
-            <button onclick="logout()" class="text-zinc-600 hover:text-red-500 transition text-2xl"><i class="fa-solid fa-power-off"></i></button>
+            <button onclick="handleLogout()" class="text-zinc-600 hover:text-red-500 transition text-2xl ml-4"><i class="fa-solid fa-power-off"></i></button>
         </div>
     </header>
 
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
         
         <div class="lg:col-span-4 space-y-6">
-            <div class="glass-panel p-6 border-t-2 border-t-gold">
-                <h2 class="text-gold font-bold mb-6 flex items-center gap-2"><i class="fa-solid fa-cloud-arrow-up"></i> ASSET INJECTION ENGINE</h2>
-                
-                <div class="space-y-4">
-                    <div>
-                        <label class="text-[10px] text-zinc-500 block mb-1">NAMA DAGANGAN</label>
-                        <input type="text" id="p-name" placeholder="Ex: Database Jakarta Elite" class="input-gold">
+            <div class="glass p-6 border-t-2 border-t-blue-500">
+                <h3 class="text-blue-500 font-bold mb-6 text-xs uppercase"><i class="fa-solid fa-wallet mr-2"></i> User Balance Injector</h3>
+                <div id="user-inject-list" class="space-y-3 h-[450px] overflow-y-auto pr-2">
                     </div>
-
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label class="text-[10px] text-zinc-500 block mb-1">STOK ASSET</label>
-                            <input type="number" id="p-stock" placeholder="99" class="input-gold">
-                        </div>
-                        <div>
-                            <label class="text-[10px] text-zinc-500 block mb-1">HARGA (IDR)</label>
-                            <input type="number" id="p-price" placeholder="500000" class="input-gold font-mono">
-                        </div>
-                    </div>
-
-                    <div>
-                        <label class="text-[10px] text-zinc-500 block mb-1">URL GAMBAR / PREVIEW</label>
-                        <input type="text" id="p-img" placeholder="https://image-link.com/photo.jpg" class="input-gold text-blue-400">
-                    </div>
-
-                    <div>
-                        <label class="text-[10px] text-zinc-500 block mb-1">LABEL KEAMANAN / STATUS</label>
-                        <select id="p-label" class="input-gold">
-                            <option value="VERIFIED">VERIFIED (AMAN)</option>
-                            <option value="HIGH-SECURITY">HIGH SECURITY (RAHASIA)</option>
-                            <option value="LIMITED">LIMITED EDITION</option>
-                            <option value="EXCLUSIVE">EXCLUSIVE ACCESS</option>
-                        </select>
-                    </div>
-
-                    <div>
-                        <label class="text-[10px] text-zinc-500 block mb-1">DETAIL DATA (ALAMAT/SPEK)</label>
-                        <textarea id="p-detail" placeholder="Input semua informasi rahasia di sini..." class="input-gold h-24"></textarea>
-                    </div>
-
-                    <button onclick="injectAsset()" class="btn-execute w-full py-4 shadow-lg shadow-gold/10">Publish to Global Market</button>
-                </div>
             </div>
 
-            <div class="glass-panel p-6 border-t-2 border-t-blue-500">
-                <h3 class="text-blue-500 font-bold mb-4 text-xs uppercase"><i class="fa-solid fa-wallet"></i> Manual Balance Adjustment</h3>
-                <div id="user-control-list" class="space-y-2 mb-4 max-h-40 overflow-y-auto pr-2"></div>
-                <div class="flex gap-2">
-                    <input type="number" id="adj-amount" placeholder="Amount" class="input-gold py-1">
-                    <button onclick="adjustBalance()" class="bg-blue-600 text-white px-4 text-xs font-bold uppercase">Adjust</button>
-                </div>
+            <div class="glass p-6 border-t-2 border-t-red-600">
+                <a href="keamanan.html" class="block w-full bg-red-900/20 border border-red-600 text-red-500 text-center py-3 text-xs font-bold hover:bg-red-600 hover:text-white transition">
+                    OPEN SECURITY CONSOLE
+                </a>
             </div>
         </div>
 
-        <div class="lg:col-span-8">
-            <div class="glass-panel p-6 h-full flex flex-col">
-                <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-zinc-400 font-bold flex items-center gap-2"><i class="fa-solid fa-database"></i> LIVE INVENTORY DATABASE</h2>
-                    <input type="text" id="search-db" onkeyup="searchTable()" placeholder="Search asset..." class="bg-black border border-zinc-800 p-2 text-xs w-48 outline-none focus:border-gold">
+        <div class="lg:col-span-8 space-y-6">
+            <div class="glass p-6 border-t-2 border-t-gold">
+                <h3 class="text-gold font-bold mb-6 text-xs uppercase font-luxury"><i class="fa-solid fa-box-open mr-2"></i> Global Asset Injection</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="space-y-4">
+                        <input type="text" id="p-name" placeholder="Nama Dagangan" class="input-gold">
+                        <div class="grid grid-cols-2 gap-2">
+                            <input type="number" id="p-stock" placeholder="Stok (Unit)" class="input-gold">
+                            <input type="number" id="p-price" placeholder="Harga (IDR)" class="input-gold">
+                        </div>
+                        <input type="text" id="p-img" placeholder="URL Gambar (https://...)" class="input-gold">
+                    </div>
+                    <div class="space-y-4">
+                        <select id="p-label" class="input-gold">
+                            <option value="VERIFIED">VERIFIED</option>
+                            <option value="HIGH-SECURITY">HIGH SECURITY</option>
+                            <option value="EXCLUSIVE">EXCLUSIVE</option>
+                        </select>
+                        <textarea id="p-detail" placeholder="Alamat Lengkap / Spek Rahasia..." class="input-gold h-[105px]"></textarea>
+                    </div>
                 </div>
+                <button onclick="injectAsset()" class="btn-gold w-full py-4 mt-4 uppercase text-xs">Transmit to Market</button>
+            </div>
 
-                <div class="flex-1 overflow-x-auto">
-                    <table class="w-full text-left text-[12px]" id="db-table">
-                        <thead class="bg-zinc-900 text-zinc-500 uppercase font-bold border-b border-zinc-800">
+            <div class="glass p-6 h-[500px] flex flex-col">
+                <h3 class="text-zinc-500 font-bold mb-4 text-xs uppercase">Live Inventory Monitor</h3>
+                <div class="flex-1 overflow-y-auto">
+                    <table class="w-full text-[11px] text-left">
+                        <thead class="bg-zinc-900 text-zinc-500 border-b border-zinc-800">
                             <tr>
-                                <th class="p-3">Preview</th>
-                                <th class="p-3 text-gold">Asset Info</th>
-                                <th class="p-3">Stock</th>
+                                <th class="p-3">Asset</th>
                                 <th class="p-3">Price</th>
-                                <th class="p-3">Security</th>
-                                <th class="p-3 text-right">Control</th>
+                                <th class="p-3">Stock</th>
+                                <th class="p-3 text-right">Action</th>
                             </tr>
                         </thead>
-                        <tbody id="inventory-list" class="divide-y divide-zinc-900">
-                            </tbody>
+                        <tbody id="inventory-list" class="divide-y divide-zinc-900"></tbody>
                     </table>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="fixed bottom-4 right-4 flex flex-col gap-2">
-        <a href="keamanan.html" class="bg-red-900/40 border border-red-900 text-red-500 p-3 rounded-full hover:bg-red-900 transition flex items-center justify-center">
-            <i class="fa-solid fa-shield-halved"></i>
-        </a>
+    <div id="inject-modal" class="hidden fixed inset-0 z-[100] bg-black/90 flex items-center justify-center p-4">
+        <div class="glass p-8 w-full max-w-sm border-t-4 border-t-blue-500">
+            <h2 class="text-blue-500 font-bold mb-2">INJECT FUNDS</h2>
+            <p id="target-email" class="text-[10px] text-zinc-500 mb-6"></p>
+            <input type="number" id="inject-amount" placeholder="Input New Balance" class="input-gold mb-6 text-xl text-center">
+            <div class="flex gap-2">
+                <button onclick="closeInject()" class="flex-1 bg-zinc-800 py-3 text-xs">CANCEL</button>
+                <button onclick="processInject()" class="flex-1 btn-gold py-3 text-xs">CONFIRM INJECT</button>
+            </div>
+        </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getDatabase, ref, push, onValue, update, remove, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { getDatabase, ref, onValue, update, push, remove, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
         const firebaseConfig = { 
-            /* TETAP GUNAKAN CONFIG KAMU SEPERTI SEBELUMNYA */ 
             apiKey: "AIzaSyCs7Vnysf25BwhN2-fPTODd48xwzbPkbzI",
             authDomain: "rhf-shop-mafia-8d2e5.firebaseapp.com",
             databaseURL: "https://rhf-shop-mafia-8d2e5-default-rtdb.firebaseio.com",
@@ -150,15 +128,16 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getDatabase(app);
-        let selectedUID = null;
+        let currentTargetUID = null;
 
+        // PROTEKSI
         onAuthStateChanged(auth, (user) => {
-            if(!user || user.email !== "admin@rhf.com") window.location.href = "index.html";
+            if(!user || user.email !== "admin@rhf.com") window.location.replace("index.html");
         });
 
-        window.logout = () => signOut(auth).then(() => location.href = "index.html");
+        window.handleLogout = () => signOut(auth).then(() => window.location.replace("index.html"));
 
-        // FEATURE: INJECT ASSET
+        // FITUR: INJECT ASSET (TAMBAH BARANG)
         window.injectAsset = () => {
             const data = {
                 name: document.getElementById('p-name').value,
@@ -169,78 +148,70 @@
                 detail: document.getElementById('p-detail').value,
                 timestamp: serverTimestamp()
             };
-
-            if(!data.name || isNaN(data.price) || isNaN(data.stock)) return alert("GAGAL: Data tidak lengkap!");
-
+            if(!data.name || isNaN(data.price)) return alert("Isi data dengan benar!");
             push(ref(db, 'market_items'), data).then(() => {
-                alert("ASSET PUBLISHED!");
-                document.querySelectorAll('.input-gold').forEach(i => i.value = "");
+                alert("ASSET DEPLOYED!");
+                document.querySelectorAll('input, textarea').forEach(i => i.value = "");
             });
         };
 
-        // FEATURE: LIVE DATABASE LOAD
+        // FITUR: LIVE INVENTORY DATABASE
         onValue(ref(db, 'market_items'), (snap) => {
-            const list = document.getElementById('inventory-list');
-            list.innerHTML = '';
-            let count = 0;
+            const con = document.getElementById('inventory-list');
+            con.innerHTML = ''; let count = 0;
             snap.forEach(c => {
-                count++;
-                const d = c.val();
-                const row = `
-                    <tr class="hover:bg-white/5 transition border-b border-zinc-900/50">
-                        <td class="p-3">
-                            <img src="${d.img}" class="w-10 h-10 object-cover rounded border border-zinc-800">
-                        </td>
-                        <td class="p-3">
-                            <p class="font-bold text-white uppercase">${d.name}</p>
-                            <p class="text-[9px] text-zinc-600 truncate w-32">${d.detail}</p>
-                        </td>
-                        <td class="p-3 font-mono ${d.stock < 5 ? 'text-red-500 animate-pulse' : 'text-zinc-400'}">${d.stock} UNIT</td>
-                        <td class="p-3 font-bold text-white font-mono">Rp ${d.price.toLocaleString()}</td>
-                        <td class="p-3">
-                            <span class="status-chip bg-zinc-800 border border-gold/50 text-gold">${d.label}</span>
-                        </td>
-                        <td class="p-3 text-right">
-                            <button onclick="deleteAsset('${c.key}')" class="text-zinc-700 hover:text-red-500"><i class="fa-solid fa-trash"></i></button>
-                        </td>
-                    </tr>`;
-                list.innerHTML += row;
+                count++; const d = c.val();
+                con.innerHTML += `
+                <tr class="hover:bg-white/5 border-b border-zinc-900">
+                    <td class="p-3"><span class="text-white uppercase font-bold">${d.name}</span><br><span class="text-gold text-[8px]">${d.label}</span></td>
+                    <td class="p-3 font-mono text-zinc-400">Rp ${d.price.toLocaleString()}</td>
+                    <td class="p-3 font-mono text-zinc-400">${d.stock}</td>
+                    <td class="p-3 text-right">
+                        <button onclick="deleteAsset('${c.key}')" class="text-zinc-600 hover:text-red-500"><i class="fa-solid fa-trash"></i></button>
+                    </td>
+                </tr>`;
             });
             document.getElementById('stat-assets').innerText = count;
         });
 
-        // FEATURE: USER LIST FOR BALANCE INJECT
+        window.deleteAsset = (id) => { if(confirm("Hapus barang?")) remove(ref(db, 'market_items/'+id)); };
+
+        // FITUR: USER LIST & INJECT SALDO (PENTING!)
         onValue(ref(db, 'users'), (snap) => {
-            const list = document.getElementById('user-control-list');
-            list.innerHTML = '';
-            let count = 0;
+            const con = document.getElementById('user-inject-list');
+            con.innerHTML = ''; let uCount = 0;
             snap.forEach(c => {
-                count++;
-                const u = c.val();
+                const u = c.val(); uCount++;
                 if(u.email === "admin@rhf.com") return;
-                list.innerHTML += `
-                    <div onclick="selectedUID='${c.key}'; alert('Selected: ${u.email}')" class="p-2 bg-black border border-zinc-800 text-[10px] cursor-pointer hover:border-blue-500">
-                        ${u.email} <span class="text-blue-500 float-right">Rp ${u.balance || 0}</span>
-                    </div>`;
+                con.innerHTML += `
+                <div class="p-4 bg-black border border-zinc-800 rounded flex justify-between items-center">
+                    <div>
+                        <p class="text-white text-xs font-bold">${u.email}</p>
+                        <p class="text-blue-400 font-mono text-sm">Rp ${(u.balance || 0).toLocaleString()}</p>
+                    </div>
+                    <button onclick="openInject('${c.key}', '${u.email}', ${u.balance || 0})" class="bg-blue-600 text-white px-3 py-1 rounded text-[10px] font-bold hover:bg-blue-400">
+                        + INJECT
+                    </button>
+                </div>`;
             });
-            document.getElementById('stat-users').innerText = count - 1;
+            document.getElementById('stat-users').innerText = uCount - 1;
         });
 
-        window.adjustBalance = () => {
-            const amt = parseInt(document.getElementById('adj-amount').value);
-            if(!selectedUID || isNaN(amt)) return alert("Select user and input amount!");
-            update(ref(db, 'users/' + selectedUID), { balance: amt }).then(() => alert("Balance Updated!"));
+        window.openInject = (uid, email, bal) => {
+            currentTargetUID = uid;
+            document.getElementById('target-email').innerText = "TARGET: " + email;
+            document.getElementById('inject-amount').value = bal;
+            document.getElementById('inject-modal').classList.remove('hidden');
         };
 
-        window.deleteAsset = (key) => {
-            if(confirm("Destroy this asset data?")) remove(ref(db, 'market_items/' + key));
-        };
+        window.closeInject = () => document.getElementById('inject-modal').classList.add('hidden');
 
-        window.searchTable = () => {
-            const q = document.getElementById('search-db').value.toLowerCase();
-            const rows = document.querySelectorAll('#inventory-list tr');
-            rows.forEach(r => {
-                r.style.display = r.innerText.toLowerCase().includes(q) ? '' : 'none';
+        window.processInject = () => {
+            const amt = parseInt(document.getElementById('inject-amount').value);
+            if(isNaN(amt)) return alert("Masukkan angka!");
+            update(ref(db, 'users/' + currentTargetUID), { balance: amt }).then(() => {
+                alert("BALANCE UPDATED!");
+                closeInject();
             });
         };
     </script>
