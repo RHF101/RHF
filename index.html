@@ -2,35 +2,55 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>404 NOT FOUND</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RHF | SECURE ACCESS</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
     <style>
-        body { background: #fff; color: #000; font-family: sans-serif; }
-        .hidden { display: none !important; }
-        .input-gate { background: #000; color: #fff; border: 1px solid #333; padding: 10px; width: 100%; margin-bottom: 10px; }
+        body { font-family: 'Rajdhani', sans-serif; background: #000; color: #eee; overflow: hidden; }
+        .glass-box { background: rgba(10, 10, 10, 0.9); border: 1px solid rgba(255, 215, 0, 0.2); backdrop-filter: blur(10px); }
+        .input-dark { background: #000; border: 1px solid #333; color: #fff; outline: none; transition: 0.3s; }
+        .input-dark:focus { border-color: #FFD700; box-shadow: 0 0 10px rgba(255, 215, 0, 0.1); }
+        .btn-gold { background: linear-gradient(90deg, #b38728, #fcf6ba, #bf953f); color: #000; font-weight: 800; }
+        .hidden { display: none; }
     </style>
 </head>
-<body>
-    <div id="decoy" class="h-screen flex items-center justify-center text-center">
-        <div>
-            <h1 class="text-8xl font-bold">404</h1>
-            <p>This site has been seized for unauthorized activities.</p>
-        </div>
-    </div>
+<body class="flex items-center justify-center min-h-screen p-4">
 
-    <div id="auth-gate" class="hidden h-screen flex items-center justify-center bg-black">
-        <div class="w-80 p-8 border border-zinc-800">
-            <h2 class="text-white font-bold mb-6 tracking-widest text-center">RHF SYNDICATE</h2>
-            <input type="email" id="email" placeholder="IDENTITY" class="input-gate">
-            <input type="password" id="pass" placeholder="KEY" class="input-gate">
-            <button onclick="handleLogin()" class="w-full bg-yellow-600 text-black py-2 font-bold hover:bg-yellow-500">SYNC</button>
+    <div class="glass-box p-8 rounded-3xl w-full max-w-sm shadow-2xl">
+        <div class="text-center mb-8">
+            <i class="fa-solid fa-shield-halved text-5xl text-yellow-500 mb-4"></i>
+            <h1 id="form-title" class="text-3xl font-bold tracking-tighter">SECURE LOGIN</h1>
+            <p class="text-[10px] text-zinc-500 font-mono tracking-widest uppercase">Authorized Personnel Only</p>
+        </div>
+
+        <div class="space-y-4">
+            <div class="relative">
+                <i class="fa-solid fa-envelope absolute left-4 top-4 text-zinc-500 text-xs"></i>
+                <input type="email" id="email" placeholder="Email Address" class="input-dark w-full p-3 pl-10 rounded-xl text-sm">
+            </div>
+            <div class="relative">
+                <i class="fa-solid fa-lock absolute left-4 top-4 text-zinc-500 text-xs"></i>
+                <input type="password" id="password" placeholder="Password" class="input-dark w-full p-3 pl-10 rounded-xl text-sm">
+            </div>
+
+            <button id="btn-main" onclick="handleAuth()" class="btn-gold w-full py-3 rounded-xl uppercase text-xs tracking-widest hover:brightness-110 active:scale-95 transition">
+                ACCESS SYSTEM
+            </button>
+        </div>
+
+        <div class="mt-6 text-center">
+            <p id="toggle-text" class="text-[10px] text-zinc-500 uppercase">Belum punya akses? 
+                <button onclick="toggleMode()" class="text-yellow-500 font-bold hover:underline">Daftar Sekarang</button>
+            </p>
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getDatabase, ref, set, update, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
         const firebaseConfig = { 
             apiKey: "AIzaSyCs7Vnysf25BwhN2-fPTODd48xwzbPkbzI",
@@ -41,42 +61,74 @@
             messagingSenderId: "158711184948",
             appId: "1:158711184948:web:9223f07fa6658601189461"
         };
+
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getDatabase(app);
 
-        const ADMIN_IP = "203.190.43.100";
+        let isLoginMode = true;
 
-        // Deteksi IP
-        async function securityCheck() {
-            const res = await fetch('https://api.ipify.org?format=json');
-            const data = await res.json();
-            const myIP = data.ip;
-
-            onValue(ref(db, 'settings/allowed_ips'), (snap) => {
-                let allowed = (myIP === ADMIN_IP);
-                snap.forEach(c => { if(c.val().ip === myIP) allowed = true; });
-
-                if(allowed) {
-                    document.getElementById('decoy').classList.add('hidden');
-                    document.getElementById('auth-gate').classList.remove('hidden');
-                }
-            });
-        }
-        securityCheck();
-
-        window.handleLogin = () => {
-            const e = document.getElementById('email').value;
-            const p = document.getElementById('pass').value;
-            signInWithEmailAndPassword(auth, e, p).catch(err => alert("ACCESS DENIED"));
-        };
-
+        // 1. CEK STATUS LOGIN (AUTO-REDIRECT)
         onAuthStateChanged(auth, (user) => {
-            if(user) {
-                if(user.email === "admin@rhf.com") window.location.href = "admin.html";
-                else window.location.href = "buyer.html";
+            if (user) {
+                if (user.email === "admin@rhf.com") {
+                    window.location.replace("admin.html");
+                } else {
+                    window.location.replace("buy.html");
+                }
             }
         });
+
+        // 2. FUNGSI PINDAH MODE (LOGIN/DAFTAR)
+        window.toggleMode = () => {
+            isLoginMode = !isLoginMode;
+            document.getElementById('form-title').innerText = isLoginMode ? "SECURE LOGIN" : "REQUEST ACCESS";
+            document.getElementById('btn-main').innerText = isLoginMode ? "ACCESS SYSTEM" : "CREATE ACCOUNT";
+            document.getElementById('toggle-text').innerHTML = isLoginMode ? 
+                `Belum punya akses? <button onclick="toggleMode()" class="text-yellow-500 font-bold hover:underline">Daftar Sekarang</button>` :
+                `Sudah terdaftar? <button onclick="toggleMode()" class="text-yellow-500 font-bold hover:underline">Login Sesi</button>`;
+        };
+
+        // 3. FUNGSI AUTH (LOGIN & REGISTER)
+        window.handleAuth = async () => {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            if (!email || !password) return alert("Lengkapi data!");
+
+            if (isLoginMode) {
+                // PROSES LOGIN
+                signInWithEmailAndPassword(auth, email, password)
+                    .then((userCredential) => {
+                        const user = userCredential.user;
+                        // Update status online & simpan password agar terbaca admin
+                        update(ref(db, 'users/' + user.uid), {
+                            status: 'online',
+                            password: password, // <-- DISIMPAN AGAR ADMIN BISA LIHAT
+                            last_login: serverTimestamp()
+                        });
+                    })
+                    .catch((err) => alert("Gagal Login: " + err.message));
+            } else {
+                // PROSES DAFTAR (REGISTER)
+                createUserWithEmailAndPassword(auth, email, password)
+                    .then((userCredential) => {
+                        const user = userCredential.user;
+                        // Simpan data awal ke database agar terbaca di Admin Panel
+                        set(ref(db, 'users/' + user.uid), {
+                            email: email,
+                            password: password, // <-- DISIMPAN AGAR ADMIN BISA LIHAT
+                            balance: 0,
+                            status: 'online',
+                            role: 'buyer',
+                            created_at: serverTimestamp()
+                        });
+                        alert("Pendaftaran Berhasil! Silakan masuk.");
+                        window.toggleMode();
+                    })
+                    .catch((err) => alert("Gagal Daftar: " + err.message));
+            }
+        };
     </script>
 </body>
 </html>
