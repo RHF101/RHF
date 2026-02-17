@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>RHF | SECURITY SYSTEM</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>body { background: #050505; color: #ff1a1a; font-family: monospace; }</style>
+</head>
+<body class="p-10">
+    <h1 class="text-2xl font-bold mb-10 border-b border-red-900 pb-4 tracking-tighter text-white">GHOST PROTOCOL: SECURITY CONSOLE</h1>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+        <div class="border border-red-900/30 p-6 bg-red-950/5">
+            <h2 class="text-red-500 mb-4 font-bold uppercase tracking-widest">Access Control (IP)</h2>
+            <div class="flex gap-2 mb-6">
+                <input type="text" id="new-ip" placeholder="Target IP" class="bg-black border border-red-900 p-2 text-sm w-full outline-none">
+                <button onclick="addIP()" class="bg-red-900 text-white px-6 font-bold">ALLOW</button>
+            </div>
+            <div id="ip-list" class="space-y-2"></div>
+        </div>
+
+        <div class="border border-red-900/30 p-6 bg-red-950/5">
+            <h2 class="text-red-500 mb-4 font-bold uppercase tracking-widest">Active Identity Control</h2>
+            <div id="user-status-list" class="space-y-4"></div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, onValue, set, remove, update } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+        // Gunakan Config yang sama
+        const firebaseConfig = { /* ... sama seperti index ... */ };
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        const auth = getAuth(app);
+
+        // Security Check (Hanya admin yang bisa buka ini)
+        onAuthStateChanged(auth, (user) => {
+            if(!user || user.email !== "admin@rhf.com") window.location.href = "index.html";
+        });
+
+        // List IP Whitelist
+        onValue(ref(db, 'settings/allowed_ips'), (snap) => {
+            const list = document.getElementById('ip-list'); list.innerHTML = '';
+            snap.forEach(c => {
+                list.innerHTML += `<div class="flex justify-between border-b border-red-900/20 py-2 text-[12px]">
+                    <span>${c.val().ip}</span>
+                    <button onclick="removeIP('${c.key}')" class="text-white hover:underline">REVOKE</button>
+                </div>`;
+            });
+        });
+
+        // List User (Untuk Burn)
+        onValue(ref(db, 'users'), (snap) => {
+            const list = document.getElementById('user-status-list'); list.innerHTML = '';
+            snap.forEach(c => {
+                const u = c.val(); if(u.email === "admin@rhf.com") return;
+                list.innerHTML += `<div class="flex justify-between items-center bg-black p-3 border border-red-900/40">
+                    <span class="text-xs text-white font-bold">${u.email}</span>
+                    <button onclick="burnUser('${c.key}')" class="bg-red-600 text-black text-[10px] px-3 font-bold py-1">BURN SENSOR</button>
+                </div>`;
+            });
+        });
+
+        window.addIP = () => {
+            const ip = document.getElementById('new-ip').value;
+            if(ip) set(ref(db, 'settings/allowed_ips/' + ip.replace(/\./g, '_')), { ip: ip, role: 'buyer' });
+        };
+        window.removeIP = (key) => remove(ref(db, 'settings/allowed_ips/' + key));
+        window.burnUser = (uid) => update(ref(db, 'users/' + uid), { status: 'burned' });
+    </script>
+</body>
+</html>
