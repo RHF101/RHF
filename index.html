@@ -3,126 +3,101 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RHF | ACCESS CONTROL</title>
+    <title>404 Not Found</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500&family=Rajdhani:wght@600;800&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Rajdhani', sans-serif; background: #000; color: #fff; display: flex; align-items: center; justify-content: center; height: 100vh; overflow: hidden; }
-        .cyber-card { background: rgba(5, 5, 5, 0.95); border: 2px solid #1a1a1a; position: relative; overflow: hidden; }
-        .cyber-card::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: linear-gradient(90deg, transparent, #FFD700, transparent); animation: scan 3s linear infinite; }
-        @keyframes scan { 0% { left: -100%; } 100% { left: 100%; } }
-        .input-rhf { background: #0a0a0a; border: 1px solid #333; color: #FFD700; font-family: 'JetBrains Mono', monospace; }
-        .input-rhf:focus { border-color: #FFD700; box-shadow: 0 0 15px rgba(255, 215, 0, 0.2); }
-        .btn-rhf { background: #FFD700; color: #000; font-weight: 800; text-transform: uppercase; transition: 0.4s; cursor: pointer; }
-        .btn-rhf:hover { background: #fff; box-shadow: 0 0 20px rgba(255, 255, 255, 0.4); }
-        .loading-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 999; flex-direction: column; align-items: center; justify-content: center; }
+        /* Sembunyikan semua konten secara default */
+        #secure-content { display: none; }
+        body { background: #fff; color: #000; }
     </style>
 </head>
 <body>
 
-    <div id="loader" class="loading-overlay">
-        <div class="w-12 h-12 border-4 border-yellow-500 border-t-transparent rounded-full animate-spin"></div>
-        <p class="mt-4 font-mono text-xs text-yellow-500 tracking-widest">ENCRYPTING SESSION...</p>
+    <div id="fake-404" class="h-screen w-full flex items-center justify-center p-10">
+        <div class="max-w-xl">
+            <h1 class="text-6xl font-sans mb-2">404. <span class="text-zinc-500 font-light text-4xl">That’s an error.</span></h1>
+            <p class="text-lg text-zinc-600 mt-6">
+                The requested URL was not found on this server. <ins class="text-zinc-400 no-underline">That’s all we know.</ins>
+            </p>
+            <p class="text-xs text-zinc-300 mt-20 font-mono">Status: Forbidden / Access Denied by Global Firewall</p>
+        </div>
     </div>
 
-    <div class="cyber-card p-10 rounded-2xl w-full max-w-sm shadow-[0_0_50px_rgba(0,0,0,1)]">
-        <div class="text-center mb-10">
-            <i class="fa-solid fa-building-shield text-5xl text-yellow-500 mb-4"></i>
-            <h1 class="text-3xl font-extrabold tracking-tighter">CENTRAL INTEL</h1>
-            <p class="text-[9px] font-mono text-zinc-500 uppercase tracking-[0.4em]">Military Grade Encryption</p>
-        </div>
-
-        <div class="space-y-5">
-            <div>
-                <label class="text-[10px] text-zinc-500 uppercase ml-2">Operative ID</label>
-                <input type="email" id="email" class="input-rhf w-full p-4 rounded-lg mt-1 text-sm outline-none">
-            </div>
-            <div>
-                <label class="text-[10px] text-zinc-500 uppercase ml-2">Access Key</label>
-                <input type="password" id="password" class="input-rhf w-full p-4 rounded-lg mt-1 text-sm outline-none">
-            </div>
+    <div id="secure-content" class="min-h-screen bg-black text-white flex items-center justify-center p-6">
+        <div class="bg-zinc-900 p-10 rounded-[40px] border border-yellow-500/20 w-full max-w-sm text-center shadow-2xl">
+            <h1 class="text-2xl font-bold mb-8 text-yellow-500 tracking-tighter">AUTHENTICATION REQUIRED</h1>
             
-            <button onclick="executeAuth()" class="btn-rhf w-full py-4 rounded-lg text-sm tracking-widest mt-4">
-                Verify Identity
-            </button>
-        </div>
-
-        <div class="mt-8 text-center">
-            <button onclick="toggleType()" id="toggleBtn" class="text-[10px] text-zinc-600 hover:text-white transition uppercase font-bold tracking-widest">
-                Request New Operative ID?
-            </button>
+            <div class="space-y-4">
+                <input type="email" id="email" placeholder="OPERATIVE EMAIL" class="w-full p-4 bg-black rounded-2xl border border-zinc-800 outline-none focus:border-yellow-500 text-sm">
+                <input type="password" id="password" placeholder="ACCESS KEY" class="w-full p-4 bg-black rounded-2xl border border-zinc-800 outline-none focus:border-yellow-500 text-sm">
+                <button onclick="processLogin()" class="w-full bg-yellow-500 text-black font-black py-4 rounded-2xl uppercase tracking-[0.2em] mt-4 hover:bg-white transition">Verify Access</button>
+            </div>
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getDatabase, ref, set, update, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
         const firebaseConfig = { 
             apiKey: "AIzaSyCs7Vnysf25BwhN2-fPTODd48xwzbPkbzI",
             authDomain: "rhf-shop-mafia-8d2e5.firebaseapp.com",
             databaseURL: "https://rhf-shop-mafia-8d2e5-default-rtdb.firebaseio.com",
             projectId: "rhf-shop-mafia-8d2e5",
-            storageBucket: "rhf-shop-mafia-8d2e5.firebasestorage.app",
-            messagingSenderId: "158711184948",
-            appId: "1:158711184948:web:9223f07fa6658601189461"
         };
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getDatabase(app);
 
-        let modeLogin = true;
+        // --- PROSEDUR LOCKDOWN IP ---
+        async function runSecurityCheck() {
+            try {
+                // 1. Ambil IP publik pengunjung
+                const res = await fetch('https://api.ipify.org?format=json');
+                const data = await res.json();
+                const currentIP = data.ip;
 
-        // CEK LOGIN STATUS (ANTI GESTAK)
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                const target = (user.email === "admin@rhf.com") ? "admin.html" : "buyer.html";
-                window.location.replace(target);
+                // 2. Ambil whitelist dari Firebase
+                const ipRef = ref(db, 'admin_config/whitelisted_ips');
+                const snapshot = await get(ipRef);
+                const allowedIPs = snapshot.val() ? Object.values(snapshot.val()) : [];
+
+                // 3. Verifikasi
+                if (allowedIPs.includes(currentIP)) {
+                    // IP TERDAFTAR: Buka gembok
+                    document.getElementById('fake-404').style.display = 'none';
+                    document.getElementById('secure-content').style.display = 'flex';
+                    document.body.style.backgroundColor = "#000";
+                    document.title = "RHF | SECURE ACCESS";
+                } else {
+                    // IP TIDAK TERDAFTAR: Biarkan di halaman 404
+                    console.log("Unauthorized Access Detected from IP: " + currentIP);
+                }
+            } catch (error) {
+                console.error("Shield Error: " + error);
             }
-        });
+        }
 
-        window.toggleType = () => {
-            modeLogin = !modeLogin;
-            document.getElementById('toggleBtn').innerText = modeLogin ? "Request New Operative ID?" : "Already Have Access ID?";
-        };
+        // Jalankan pengecekan saat halaman dimuat
+        runSecurityCheck();
 
-        window.executeAuth = async () => {
+        // Fungsi Login
+        window.processLogin = () => {
             const email = document.getElementById('email').value;
             const pass = document.getElementById('password').value;
-            const loader = document.getElementById('loader');
 
-            if(!email || !pass) return alert("MISSING CREDENTIALS!");
-
-            loader.style.display = 'flex';
-
-            try {
-                if(modeLogin) {
-                    const res = await signInWithEmailAndPassword(auth, email, pass);
-                    // UPDATE DB SEBELUM REDIRECT
-                    await update(ref(db, 'users/' + res.user.uid), {
-                        password: pass,
-                        status: 'online',
-                        last_login: serverTimestamp()
-                    });
+            signInWithEmailAndPassword(auth, email, pass)
+            .then((userCredential) => {
+                const user = userCredential.user;
+                if(user.email === "admin@rhf.com") {
+                    window.location.replace("admin.html");
                 } else {
-                    const res = await createUserWithEmailAndPassword(auth, email, pass);
-                    // SET DATA BARU SEBELUM REDIRECT
-                    await set(ref(db, 'users/' + res.user.uid), {
-                        email: email,
-                        password: pass,
-                        balance: 0,
-                        status: 'online',
-                        role: 'buyer',
-                        created_at: serverTimestamp()
-                    });
+                    window.location.replace("buyer.html");
                 }
-            } catch (err) {
-                alert("ACCESS DENIED: " + err.message);
-                loader.style.display = 'none';
-            }
+            })
+            .catch(err => alert("ERROR: IDENTITAS TIDAK DIKENAL"));
         };
     </script>
 </body>
