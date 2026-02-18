@@ -51,35 +51,36 @@
         const auth = getAuth(app);
         const db = getDatabase(app);
 
-        // --- PROSEDUR LOCKDOWN IP ---
-        async function runSecurityCheck() {
-            try {
-                // 1. Ambil IP publik pengunjung
-                const res = await fetch('https://api.ipify.org?format=json');
-                const data = await res.json();
-                const currentIP = data.ip;
+// --- PROSEDUR LOCKDOWN IP (SESUAI FIREBASE KAMU) ---
+async function runSecurityCheck() {
+    try {
+        // 1. Ambil IP publik pengunjung
+        const res = await fetch('https://api.ipify.org?format=json');
+        const data = await res.json();
+        const currentIP = data.ip;
 
-                // 2. Ambil whitelist dari Firebase
-                const ipRef = ref(db, 'admin_config/whitelisted_ips');
-                const snapshot = await get(ipRef);
-                const allowedIPs = snapshot.val() ? Object.values(snapshot.val()) : [];
+        // 2. Ambil IP yang diizinkan dari Firebase
+        // Path disesuaikan menjadi 'admin_settings/allowed_ip' sesuai screenshot kamu
+        const ipRef = ref(db, 'admin_settings/allowed_ip');
+        const snapshot = await get(ipRef);
+        const allowedIP = snapshot.val();
 
-                // 3. Verifikasi
-                if (allowedIPs.includes(currentIP)) {
-                    // IP TERDAFTAR: Buka gembok
-                    document.getElementById('fake-404').style.display = 'none';
-                    document.getElementById('secure-content').style.display = 'flex';
-                    document.body.style.backgroundColor = "#000";
-                    document.title = "RHF | SECURE ACCESS";
-                } else {
-                    // IP TIDAK TERDAFTAR: Biarkan di halaman 404
-                    console.log("Unauthorized Access Detected from IP: " + currentIP);
-                }
-            } catch (error) {
-                console.error("Shield Error: " + error);
-            }
+        // 3. Verifikasi (Cek apakah IP pengunjung sama dengan yang di database)
+        if (allowedIP === currentIP) {
+            // IP COCOK: Buka Akses
+            document.getElementById('fake-404').style.display = 'none';
+            document.getElementById('secure-content').style.display = 'flex';
+            document.body.style.backgroundColor = "#000";
+            document.title = "RHF | SECURE ACCESS";
+        } else {
+            // IP SALAH: Tetap 404
+            console.log("Unauthorized Access Detected: " + currentIP);
         }
-
+    } catch (error) {
+        console.error("Shield Error: " + error);
+    }
+}
+        
         // Jalankan pengecekan saat halaman dimuat
         runSecurityCheck();
 
