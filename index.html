@@ -5,10 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>404 Not Found</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* Sembunyikan semua konten secara default */
-        #secure-content { display: none; }
-        body { background: #fff; color: #000; }
+        /* Sembunyikan konten asli secara total sebelum verifikasi */
+        #secure-gate { display: none; }
+        body { background: #fff; color: #000; margin: 0; transition: background 0.5s; }
     </style>
 </head>
 <body>
@@ -19,18 +20,25 @@
             <p class="text-lg text-zinc-600 mt-6">
                 The requested URL was not found on this server. <ins class="text-zinc-400 no-underline">That’s all we know.</ins>
             </p>
-            <p class="text-xs text-zinc-300 mt-20 font-mono">Status: Forbidden / Access Denied by Global Firewall</p>
+            <p class="text-xs text-zinc-300 mt-20 font-mono italic">Server: Global-Edge-V8</p>
         </div>
     </div>
 
-    <div id="secure-content" class="min-h-screen bg-black text-white flex items-center justify-center p-6">
-        <div class="bg-zinc-900 p-10 rounded-[40px] border border-yellow-500/20 w-full max-w-sm text-center shadow-2xl">
-            <h1 class="text-2xl font-bold mb-8 text-yellow-500 tracking-tighter">AUTHENTICATION REQUIRED</h1>
+    <div id="secure-gate" class="min-h-screen flex items-center justify-center p-6">
+        <div class="bg-zinc-900 p-8 rounded-[35px] border border-yellow-500/20 w-full max-w-sm text-center shadow-2xl">
+            <div class="w-16 h-16 bg-yellow-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                <i class="fa-solid fa-shield-halved text-2xl text-yellow-500"></i>
+            </div>
+            <h1 class="text-xl font-bold mb-2 text-white uppercase tracking-tighter">Authorized Access Only</h1>
+            <p class="text-[10px] text-zinc-500 mb-8 uppercase tracking-widest font-mono">Encrypted Connection Established</p>
             
             <div class="space-y-4">
-                <input type="email" id="email" placeholder="OPERATIVE EMAIL" class="w-full p-4 bg-black rounded-2xl border border-zinc-800 outline-none focus:border-yellow-500 text-sm">
-                <input type="password" id="password" placeholder="ACCESS KEY" class="w-full p-4 bg-black rounded-2xl border border-zinc-800 outline-none focus:border-yellow-500 text-sm">
-                <button onclick="processLogin()" class="w-full bg-yellow-500 text-black font-black py-4 rounded-2xl uppercase tracking-[0.2em] mt-4 hover:bg-white transition">Verify Access</button>
+                <input type="email" id="email" placeholder="IDENTITY EMAIL" class="w-full p-4 bg-black rounded-2xl border border-zinc-800 outline-none focus:border-yellow-500 text-sm text-white transition-all">
+                <input type="password" id="password" placeholder="ACCESS KEY" class="w-full p-4 bg-black rounded-2xl border border-zinc-800 outline-none focus:border-yellow-500 text-sm text-white transition-all">
+                
+                <button onclick="processLogin()" class="w-full bg-yellow-500 text-black font-black py-4 rounded-2xl uppercase tracking-[0.2em] mt-4 hover:bg-white hover:scale-[1.02] transition-all active:scale-95">
+                    Verify Identity
+                </button>
             </div>
         </div>
     </div>
@@ -40,6 +48,7 @@
         import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
+        // Konfigurasi Firebase (Tetap)
         const firebaseConfig = { 
             apiKey: "AIzaSyCs7Vnysf25BwhN2-fPTODd48xwzbPkbzI",
             authDomain: "rhf-shop-mafia-8d2e5.firebaseapp.com",
@@ -51,54 +60,56 @@
         const auth = getAuth(app);
         const db = getDatabase(app);
 
-// --- PROSEDUR LOCKDOWN IP (SESUAI FIREBASE KAMU) ---
-async function runSecurityCheck() {
-    try {
-        // 1. Ambil IP publik pengunjung
-        const res = await fetch('https://api.ipify.org?format=json');
-        const data = await res.json();
-        const currentIP = data.ip;
+        // --- PROTOKOL KEAMANAN IP ---
+        async function runShield() {
+            try {
+                // 1. Deteksi IP Pengunjung
+                const res = await fetch('https://api.ipify.org?format=json');
+                const data = await res.json();
+                const userIP = data.ip;
 
-        // 2. Ambil IP yang diizinkan dari Firebase
-        // Path disesuaikan menjadi 'admin_settings/allowed_ip' sesuai screenshot kamu
-        const ipRef = ref(db, 'admin_settings/allowed_ip');
-        const snapshot = await get(ipRef);
-        const allowedIP = snapshot.val();
+                // 2. Tarik IP Whitelist dari Firebase (Path: admin_settings/allowed_ip)
+                const ipRef = ref(db, 'admin_settings/allowed_ip');
+                const snapshot = await get(ipRef);
+                const whiteIP = snapshot.val();
 
-        // 3. Verifikasi (Cek apakah IP pengunjung sama dengan yang di database)
-        if (allowedIP === currentIP) {
-            // IP COCOK: Buka Akses
-            document.getElementById('fake-404').style.display = 'none';
-            document.getElementById('secure-content').style.display = 'flex';
-            document.body.style.backgroundColor = "#000";
-            document.title = "RHF | SECURE ACCESS";
-        } else {
-            // IP SALAH: Tetap 404
-            console.log("Unauthorized Access Detected: " + currentIP);
+                // 3. Eksekusi Perbandingan
+                if (whiteIP === userIP) {
+                    // JIKA IP COCOK: Tampilkan Portal Login
+                    document.getElementById('fake-404').style.display = 'none';
+                    document.getElementById('secure-gate').style.display = 'flex';
+                    document.body.style.backgroundColor = "#000";
+                    document.title = "RHF | SECURE LOGIN";
+                } else {
+                    // JIKA IP ASING: Biarkan Tampilan 404
+                    console.warn("ALERTA: Unauthorized connection attempt from " + userIP);
+                }
+            } catch (err) {
+                console.error("Shield Error: Check connection.");
+            }
         }
-    } catch (error) {
-        console.error("Shield Error: " + error);
-    }
-}
-        
-        // Jalankan pengecekan saat halaman dimuat
-        runSecurityCheck();
 
-        // Fungsi Login
+        // Jalankan Shield saat loading
+        runShield();
+
+        // --- LOGIKA LOGIN ---
         window.processLogin = () => {
             const email = document.getElementById('email').value;
             const pass = document.getElementById('password').value;
 
+            if(!email || !pass) return alert("Fill all credentials!");
+
             signInWithEmailAndPassword(auth, email, pass)
             .then((userCredential) => {
                 const user = userCredential.user;
+                // Redirect berdasarkan role
                 if(user.email === "admin@rhf.com") {
                     window.location.replace("admin.html");
                 } else {
                     window.location.replace("buyer.html");
                 }
             })
-            .catch(err => alert("ERROR: IDENTITAS TIDAK DIKENAL"));
+            .catch(err => alert("IDENTITY REJECTED: Access Denied."));
         };
     </script>
 </body>
