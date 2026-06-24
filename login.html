@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RHF ZERO — Masuk</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;500&display=swap');
+
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --bg:#07090f;
+    --panel:#0d1120;
+    --border:#1e2a45;
+    --gold:#c9a84c;
+    --gold2:#f0d070;
+    --blue:#3a7bd5;
+    --text:#cdd6f4;
+    --muted:#6b7a9f;
+    --red:#f38ba8;
+    --green:#a6e3a1;
+  }
+  body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;overflow:hidden}
+
+  /* Stars */
+  .stars{position:fixed;inset:0;pointer-events:none}
+  .star{position:absolute;background:#fff;border-radius:50%;animation:twinkle var(--d,3s) infinite var(--delay,0s)}
+  @keyframes twinkle{0%,100%{opacity:.2}50%{opacity:.9}}
+
+  .wrap{position:relative;z-index:10;width:100%;max-width:420px;padding:16px}
+
+  .logo{text-align:center;margin-bottom:32px}
+  .logo h1{font-family:'Orbitron',monospace;font-size:2rem;font-weight:900;background:linear-gradient(135deg,var(--gold),var(--gold2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:4px}
+  .logo p{color:var(--muted);font-size:.78rem;letter-spacing:2px;margin-top:4px}
+
+  .card{background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:32px;box-shadow:0 0 60px rgba(201,168,76,.08)}
+
+  .tabs{display:flex;gap:0;margin-bottom:28px;border-radius:8px;overflow:hidden;border:1px solid var(--border)}
+  .tab{flex:1;padding:10px;text-align:center;cursor:pointer;font-size:.85rem;font-weight:500;color:var(--muted);background:transparent;border:none;transition:all .2s;letter-spacing:1px}
+  .tab.active{background:linear-gradient(135deg,rgba(201,168,76,.15),rgba(240,208,112,.08));color:var(--gold);border-bottom:2px solid var(--gold)}
+
+  .form-group{margin-bottom:18px}
+  label{display:block;font-size:.78rem;color:var(--muted);margin-bottom:6px;letter-spacing:1px;text-transform:uppercase}
+  input{width:100%;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;padding:11px 14px;color:var(--text);font-size:.9rem;outline:none;transition:border .2s}
+  input:focus{border-color:var(--gold)}
+  input::placeholder{color:var(--muted)}
+
+  .avatar-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}
+  .av-opt{width:44px;height:44px;border-radius:8px;border:2px solid var(--border);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1.4rem;transition:all .2s;background:rgba(255,255,255,.03)}
+  .av-opt:hover,.av-opt.sel{border-color:var(--gold);background:rgba(201,168,76,.12)}
+
+  .btn{width:100%;padding:12px;border:none;border-radius:8px;font-family:'Orbitron',monospace;font-size:.82rem;font-weight:700;letter-spacing:2px;cursor:pointer;margin-top:8px;transition:all .2s}
+  .btn-gold{background:linear-gradient(135deg,var(--gold),var(--gold2));color:#000}
+  .btn-gold:hover{transform:translateY(-1px);box-shadow:0 4px 24px rgba(201,168,76,.35)}
+
+  .msg{margin-top:14px;padding:10px 14px;border-radius:8px;font-size:.83rem;text-align:center;display:none}
+  .msg.ok{background:rgba(166,227,161,.12);border:1px solid var(--green);color:var(--green);display:block}
+  .msg.err{background:rgba(243,139,168,.12);border:1px solid var(--red);color:var(--red);display:block}
+
+  #loginForm,#regForm{display:none}
+  #loginForm.show,#regForm.show{display:block}
+</style>
+</head>
+<body>
+<div class="stars" id="stars"></div>
+<div class="wrap">
+  <div class="logo">
+    <h1>RHF ZERO</h1>
+    <p>ORGANISASI · DUNIA VIRTUAL</p>
+  </div>
+  <div class="card">
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab('login')">MASUK</button>
+      <button class="tab" onclick="switchTab('reg')">DAFTAR</button>
+    </div>
+
+    <!-- LOGIN -->
+    <div id="loginForm" class="show">
+      <div class="form-group">
+        <label>Username</label>
+        <input type="text" id="lUser" placeholder="Username kamu...">
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="lPass" placeholder="••••••••">
+      </div>
+      <button class="btn btn-gold" onclick="doLogin()">MASUK ➜</button>
+      <div class="msg" id="lMsg"></div>
+    </div>
+
+    <!-- REGISTER -->
+    <div id="regForm">
+      <div class="form-group">
+        <label>Username</label>
+        <input type="text" id="rUser" placeholder="Buat username unik...">
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="rPass" placeholder="Min. 6 karakter">
+      </div>
+      <div class="form-group">
+        <label>Pilih Avatar</label>
+        <div class="avatar-row" id="avatarRow"></div>
+      </div>
+      <button class="btn btn-gold" onclick="doRegister()">DAFTAR ➜</button>
+      <div class="msg" id="rMsg"></div>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
+import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey:"AIzaSyBYf0Gi5j7Bda-Ed6heTbM48j9Ml4GVQhM",
+  authDomain:"drak-rhf-zero-ntris.firebaseapp.com",
+  databaseURL:"https://drak-rhf-zero-ntris-default-rtdb.firebaseio.com",
+  projectId:"drak-rhf-zero-ntris",
+  storageBucket:"drak-rhf-zero-ntris.firebasestorage.app",
+  messagingSenderId:"421998403439",
+  appId:"1:421998403439:web:1443d3fa8f2ee3cb49929a"
+};
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+// Stars
+const starsEl = document.getElementById('stars');
+for(let i=0;i<120;i++){
+  const s=document.createElement('div');
+  s.className='star';
+  const sz=Math.random()*2+.5;
+  s.style.cssText=`width:${sz}px;height:${sz}px;top:${Math.random()*100}%;left:${Math.random()*100}%;--d:${2+Math.random()*4}s;--delay:${Math.random()*4}s`;
+  starsEl.appendChild(s);
+}
+
+const AVATARS=['🧙','⚔️','🛡️','🗡️','🏹','🔮','👑','🦅','🐉','🌙','⚡','🔱'];
+const avatarRow=document.getElementById('avatarRow');
+let selAv=AVATARS[0];
+AVATARS.forEach(a=>{
+  const d=document.createElement('div');
+  d.className='av-opt'+(a===selAv?' sel':'');
+  d.textContent=a;
+  d.onclick=()=>{document.querySelectorAll('.av-opt').forEach(x=>x.classList.remove('sel'));d.classList.add('sel');selAv=a};
+  avatarRow.appendChild(d);
+});
+
+window.switchTab=function(t){
+  document.querySelectorAll('.tab').forEach((el,i)=>el.classList.toggle('active',i===(t==='login'?0:1)));
+  document.getElementById('loginForm').classList.toggle('show',t==='login');
+  document.getElementById('regForm').classList.toggle('show',t==='reg');
+};
+
+window.doRegister=async function(){
+  const u=document.getElementById('rUser').value.trim();
+  const p=document.getElementById('rPass').value;
+  const msg=document.getElementById('rMsg');
+  msg.className='msg';
+  if(!u||!p){msg.className='msg err';msg.textContent='Isi semua field!';return}
+  if(p.length<6){msg.className='msg err';msg.textContent='Password min 6 karakter';return}
+  const snap=await get(child(ref(db),`users/${u}`));
+  if(snap.exists()){msg.className='msg err';msg.textContent='Username sudah dipakai!';return}
+  await set(ref(db,`users/${u}`),{
+    username:u,password:btoa(p),avatar:selAv,role:'member',
+    joinedAt:Date.now(),x:300,y:300,online:true,
+    color:'#'+Math.floor(Math.random()*0xffffff).toString(16).padStart(6,'0')
+  });
+  msg.className='msg ok';msg.textContent='Berhasil daftar! Silakan masuk.';
+  setTimeout(()=>switchTab('login'),1500);
+};
+
+window.doLogin=async function(){
+  const u=document.getElementById('lUser').value.trim();
+  const p=document.getElementById('lPass').value;
+  const msg=document.getElementById('lMsg');
+  msg.className='msg';
+  if(!u||!p){msg.className='msg err';msg.textContent='Isi semua field!';return}
+  // Admin shortcut
+  if(u==='admin'&&p==='admin123'){
+    sessionStorage.setItem('rhf_user',JSON.stringify({username:'admin',role:'admin',avatar:'👑',color:'#c9a84c'}));
+    window.location.href='admin.html';return;
+  }
+  const snap=await get(child(ref(db),`users/${u}`));
+  if(!snap.exists()){msg.className='msg err';msg.textContent='User tidak ditemukan!';return}
+  const data=snap.val();
+  if(data.password!==btoa(p)){msg.className='msg err';msg.textContent='Password salah!';return}
+  await set(ref(db,`users/${u}/online`),true);
+  sessionStorage.setItem('rhf_user',JSON.stringify({...data,password:undefined}));
+  window.location.href='index.html';
+};
+</script>
+</body>
+</html>

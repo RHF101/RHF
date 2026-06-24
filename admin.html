@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RHF ZERO — Admin</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;500;600&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#07090f;--panel:#0d1120;--panel2:#111827;--border:#1e2a45;
+  --gold:#c9a84c;--gold2:#f0d070;--blue:#3a7bd5;
+  --text:#cdd6f4;--muted:#6b7a9f;--red:#f38ba8;--green:#a6e3a1;--purple:#cba6f7;
+  --orange:#fab387;
+}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;display:flex;flex-direction:column}
+
+/* TOP BAR */
+#topbar{height:54px;background:rgba(7,9,15,.95);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:16px;flex-shrink:0;backdrop-filter:blur(10px)}
+#topbar .logo{font-family:'Orbitron',monospace;font-size:1rem;font-weight:900;background:linear-gradient(135deg,var(--gold),var(--gold2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:3px}
+#topbar .badge{background:rgba(243,139,168,.15);border:1px solid var(--red);border-radius:4px;padding:3px 10px;font-size:.7rem;color:var(--red);font-family:'Orbitron',monospace;letter-spacing:2px}
+.tb-right{margin-left:auto;display:flex;align-items:center;gap:10px}
+.tb-btn{padding:6px 14px;border-radius:6px;border:1px solid var(--border);background:rgba(255,255,255,.04);color:var(--text);font-size:.78rem;cursor:pointer;transition:all .2s}
+.tb-btn:hover{border-color:var(--gold);color:var(--gold)}
+#liveIndicator{display:flex;align-items:center;gap:6px;font-size:.75rem;color:var(--green)}
+#liveIndicator span{width:8px;height:8px;border-radius:50%;background:var(--green);animation:pulse .8s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* LAYOUT */
+#main{display:flex;flex:1;overflow:hidden}
+
+/* SIDEBAR */
+#sidebar{width:220px;background:var(--panel);border-right:1px solid var(--border);flex-shrink:0;overflow-y:auto}
+.sb-section{padding:12px 16px 6px;font-size:.68rem;color:var(--muted);letter-spacing:2px;text-transform:uppercase}
+.sb-item{display:flex;align-items:center;gap:10px;padding:10px 16px;cursor:pointer;transition:all .15s;border-left:3px solid transparent;font-size:.84rem;color:var(--muted)}
+.sb-item:hover{background:rgba(255,255,255,.03);color:var(--text)}
+.sb-item.active{border-left-color:var(--gold);background:rgba(201,168,76,.07);color:var(--gold)}
+.sb-item .icon{font-size:1rem;width:22px;text-align:center}
+.sb-item .cnt{margin-left:auto;font-size:.7rem;background:rgba(201,168,76,.15);color:var(--gold);padding:1px 7px;border-radius:10px}
+
+/* CONTENT AREA */
+#content{flex:1;overflow-y:auto;padding:24px}
+.page{display:none}
+.page.active{display:block}
+
+/* PAGE HEADER */
+.page-header{margin-bottom:24px}
+.page-header h2{font-family:'Orbitron',monospace;font-size:1.1rem;font-weight:700;color:var(--gold);letter-spacing:2px}
+.page-header p{color:var(--muted);font-size:.8rem;margin-top:4px}
+
+/* STAT CARDS */
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px;margin-bottom:28px}
+.stat-card{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:18px 20px}
+.stat-card .label{font-size:.72rem;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px}
+.stat-card .value{font-family:'Orbitron',monospace;font-size:1.6rem;font-weight:700}
+.stat-card.gold .value{color:var(--gold)}
+.stat-card.blue .value{color:var(--blue)}
+.stat-card.green .value{color:var(--green)}
+.stat-card.red .value{color:var(--red)}
+.stat-card.purple .value{color:var(--purple)}
+
+/* TABLE */
+.tbl-wrap{background:var(--panel);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:20px}
+.tbl-header{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.tbl-header h3{font-size:.85rem;font-weight:600;flex:1}
+table{width:100%;border-collapse:collapse}
+th{padding:11px 16px;text-align:left;font-size:.73rem;color:var(--muted);letter-spacing:1px;background:rgba(0,0,0,.2);border-bottom:1px solid var(--border);font-weight:500}
+td{padding:11px 16px;font-size:.82rem;border-bottom:1px solid rgba(30,42,69,.5)}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(255,255,255,.02)}
+
+/* BADGES */
+.badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:.68rem;font-weight:600;letter-spacing:.5px}
+.badge-gold{background:rgba(201,168,76,.15);color:var(--gold);border:1px solid rgba(201,168,76,.3)}
+.badge-blue{background:rgba(58,123,213,.15);color:var(--blue);border:1px solid rgba(58,123,213,.3)}
+.badge-green{background:rgba(166,227,161,.15);color:var(--green);border:1px solid rgba(166,227,161,.3)}
+.badge-red{background:rgba(243,139,168,.15);color:var(--red);border:1px solid rgba(243,139,168,.3)}
+.badge-purple{background:rgba(203,166,247,.15);color:var(--purple);border:1px solid rgba(203,166,247,.3)}
+.badge-orange{background:rgba(250,179,135,.15);color:var(--orange);border:1px solid rgba(250,179,135,.3)}
+
+/* BUTTONS */
+.btn{padding:8px 16px;border:none;border-radius:7px;font-size:.78rem;font-weight:600;cursor:pointer;transition:all .2s}
+.btn-gold{background:linear-gradient(135deg,var(--gold),var(--gold2));color:#000}
+.btn-gold:hover{transform:translateY(-1px);box-shadow:0 4px 20px rgba(201,168,76,.3)}
+.btn-red{background:rgba(243,139,168,.15);color:var(--red);border:1px solid var(--red)}
+.btn-red:hover{background:rgba(243,139,168,.25)}
+.btn-blue{background:rgba(58,123,213,.2);color:var(--blue);border:1px solid var(--blue)}
+.btn-blue:hover{background:rgba(58,123,213,.35)}
+.btn-green{background:rgba(166,227,161,.15);color:var(--green);border:1px solid var(--green)}
+.btn-sm{padding:4px 10px;font-size:.72rem}
+
+/* CHAT VIEW */
+#gcFeed{max-height:420px;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:8px}
+.gc-entry{display:flex;gap:10px;align-items:flex-start;padding:8px 12px;border-radius:8px;background:rgba(255,255,255,.03);border:1px solid transparent}
+.gc-entry:hover{border-color:var(--border)}
+.gc-entry .av{font-size:1.2rem;flex-shrink:0;width:30px;text-align:center}
+.gc-entry .body{flex:1;min-width:0}
+.gc-entry .meta{display:flex;gap:8px;align-items:center;margin-bottom:3px}
+.gc-entry .uname{font-size:.78rem;font-weight:600;color:var(--gold)}
+.gc-entry .time{font-size:.68rem;color:var(--muted)}
+.gc-entry .msg{font-size:.82rem;word-break:break-word}
+.gc-entry .del-btn{flex-shrink:0;padding:3px 8px;border:none;background:rgba(243,139,168,.1);color:var(--red);border-radius:4px;font-size:.7rem;cursor:pointer;display:none}
+.gc-entry:hover .del-btn{display:block}
+
+/* PRIVATE CHAT VIEW */
+#privConvList{display:grid;gap:8px;margin-bottom:16px}
+.conv-item{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:12px 16px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:10px}
+.conv-item:hover{border-color:var(--purple)}
+.conv-item .conv-pair{font-size:.85rem;font-weight:500}
+.conv-item .conv-cnt{font-size:.72rem;color:var(--muted);margin-left:auto}
+
+#adminPrivView{background:var(--panel2);border:1px solid var(--border);border-radius:12px;padding:14px;max-height:400px;overflow-y:auto;display:none}
+.priv-admin-msg{display:flex;gap:10px;padding:7px 10px;border-radius:7px;margin-bottom:6px;background:rgba(0,0,0,.2)}
+.priv-admin-msg .pmf{font-size:.78rem;font-weight:600;color:var(--purple);min-width:80px}
+.priv-admin-msg .pmt{font-size:.8rem}
+.priv-admin-msg .pm-time{font-size:.65rem;color:var(--muted);margin-left:auto;flex-shrink:0}
+
+/* MAP CREATOR */
+.map-form{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:20px}
+.map-form h3{font-size:.85rem;font-weight:600;margin-bottom:18px;color:var(--gold)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.form-group{display:flex;flex-direction:column;gap:5px}
+.form-group label{font-size:.72rem;color:var(--muted);letter-spacing:1px;text-transform:uppercase}
+.form-group input,.form-group select,.form-group textarea{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:7px;padding:9px 12px;color:var(--text);font-size:.83rem;outline:none;transition:border .2s;font-family:'Inter',sans-serif}
+.form-group input:focus,.form-group select:focus{border-color:var(--gold)}
+.form-group select option{background:var(--panel)}
+
+/* BROADCAST */
+.broadcast-box{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:20px}
+.broadcast-box textarea{width:100%;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text);font-size:.85rem;resize:vertical;min-height:80px;outline:none;font-family:'Inter',sans-serif;margin-bottom:12px}
+.broadcast-box textarea:focus{border-color:var(--gold)}
+
+/* MAPS LIST */
+.map-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
+.map-card{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:16px;position:relative}
+.map-card.private-map{border-color:rgba(203,166,247,.3)}
+.map-card h4{font-size:.88rem;font-weight:600;margin-bottom:6px}
+.map-card p{font-size:.75rem;color:var(--muted);margin-bottom:12px;line-height:1.5}
+.map-preview{width:100%;height:60px;border-radius:7px;margin-bottom:10px}
+.map-del-btn{position:absolute;top:10px;right:10px}
+
+/* ANNOUNCEMENT FEED */
+#annFeed{display:flex;flex-direction:column;gap:10px}
+.ann-item{background:rgba(201,168,76,.07);border:1px solid rgba(201,168,76,.2);border-radius:10px;padding:14px 16px}
+.ann-item .ann-title{font-weight:600;font-size:.88rem;color:var(--gold2);margin-bottom:4px}
+.ann-item .ann-body{font-size:.8rem;color:var(--text);margin-bottom:8px;line-height:1.5}
+.ann-item .ann-meta{font-size:.7rem;color:var(--muted)}
+
+/* KICK modal */
+#modal{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:999;display:none;align-items:center;justify-content:center}
+#modal.show{display:flex}
+#modalBox{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:28px;width:360px}
+#modalBox h3{font-family:'Orbitron',monospace;font-size:.9rem;color:var(--red);margin-bottom:14px}
+#modalBox p{font-size:.83rem;color:var(--muted);margin-bottom:20px}
+#modalBox .modal-btns{display:flex;gap:10px}
+
+/* TOAST */
+#toast{position:fixed;bottom:24px;right:24px;background:var(--panel);border:1px solid var(--gold);border-radius:8px;padding:12px 20px;font-size:.82rem;color:var(--gold);z-index:9999;transition:transform .3s,opacity .3s;transform:translateY(20px);opacity:0;pointer-events:none}
+#toast.show{transform:translateY(0);opacity:1}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div id="topbar">
+  <div class="logo">RHF ZERO</div>
+  <div class="badge">ADMIN PANEL</div>
+  <div id="liveIndicator"><span></span>LIVE</div>
+  <div class="tb-right">
+    <span style="font-size:.82rem;color:var(--muted)">👑 admin</span>
+    <button class="tb-btn" onclick="location.href='index.html'">🌐 World</button>
+    <button class="tb-btn" onclick="doLogout()">Keluar</button>
+  </div>
+</div>
+
+<div id="main">
+  <!-- SIDEBAR -->
+  <div id="sidebar">
+    <div class="sb-section">Dashboard</div>
+    <div class="sb-item active" onclick="goPage('dashboard')"><span class="icon">📊</span>Overview</div>
+
+    <div class="sb-section">Pengguna</div>
+    <div class="sb-item" onclick="goPage('users')"><span class="icon">👥</span>Semua User <span class="cnt" id="cntUsers">0</span></div>
+    <div class="sb-item" onclick="goPage('online')"><span class="icon">🟢</span>Online Sekarang <span class="cnt" id="cntOnline">0</span></div>
+
+    <div class="sb-section">Chat</div>
+    <div class="sb-item" onclick="goPage('globalchat')"><span class="icon">💬</span>Chat Global <span class="cnt" id="cntGc">0</span></div>
+    <div class="sb-item" onclick="goPage('privatechat')"><span class="icon">🔐</span>Chat Private</div>
+
+    <div class="sb-section">Dunia</div>
+    <div class="sb-item" onclick="goPage('maps')"><span class="icon">🗺️</span>Kelola Peta</div>
+    <div class="sb-item" onclick="goPage('createmap')"><span class="icon">➕</span>Buat Peta Baru</div>
+
+    <div class="sb-section">Komunikasi</div>
+    <div class="sb-item" onclick="goPage('broadcast')"><span class="icon">📣</span>Broadcast</div>
+    <div class="sb-item" onclick="goPage('announcements')"><span class="icon">📌</span>Pengumuman</div>
+  </div>
+
+  <!-- CONTENT -->
+  <div id="content">
+
+    <!-- DASHBOARD -->
+    <div class="page active" id="p-dashboard">
+      <div class="page-header"><h2>OVERVIEW</h2><p>Statistik real-time organisasi RHF ZERO</p></div>
+      <div class="stat-grid">
+        <div class="stat-card gold"><div class="label">Total User</div><div class="value" id="s-total">0</div></div>
+        <div class="stat-card green"><div class="label">Online</div><div class="value" id="s-online">0</div></div>
+        <div class="stat-card blue"><div class="label">Pesan Global</div><div class="value" id="s-gc">0</div></div>
+        <div class="stat-card purple"><div class="label">Percakapan Private</div><div class="value" id="s-priv">0</div></div>
+        <div class="stat-card orange" style="--orange:#fab387"><div class="label">Peta Aktif</div><div class="value" id="s-maps">0</div></div>
+      </div>
+      <div class="tbl-wrap">
+        <div class="tbl-header"><h3>👥 User Terbaru</h3></div>
+        <table><thead><tr><th>Avatar</th><th>Username</th><th>Status</th><th>Role</th><th>Bergabung</th></tr></thead>
+        <tbody id="recentUsers"></tbody></table>
+      </div>
+    </div>
+
+    <!-- USERS -->
+    <div class="page" id="p-users">
+      <div class="page-header"><h2>SEMUA USER</h2><p>Kelola seluruh anggota organisasi</p></div>
+      <div class="tbl-wrap">
+        <div class="tbl-header">
+          <h3>Daftar Member</h3>
+          <input id="userSearch" style="background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:6px;padding:6px 12px;color:var(--text);font-size:.8rem;outline:none;width:200px" placeholder="Cari username..." oninput="filterUsers()">
+        </div>
+        <table><thead><tr><th>Avatar</th><th>Username</th><th>Status</th><th>Role</th><th>Peta</th><th>Aksi</th></tr></thead>
+        <tbody id="allUsersTable"></tbody></table>
+      </div>
+    </div>
+
+    <!-- ONLINE -->
+    <div class="page" id="p-online">
+      <div class="page-header"><h2>ONLINE SEKARANG</h2><p>User yang sedang aktif di dunia</p></div>
+      <div class="tbl-wrap">
+        <div class="tbl-header"><h3>🟢 Sedang Online</h3></div>
+        <table><thead><tr><th>Avatar</th><th>Username</th><th>Peta</th><th>Posisi X,Y</th><th>Aksi</th></tr></thead>
+        <tbody id="onlineTable"></tbody></table>
+      </div>
+    </div>
+
+    <!-- GLOBAL CHAT -->
+    <div class="page" id="p-globalchat">
+      <div class="page-header"><h2>CHAT GLOBAL</h2><p>Pantau & moderasi semua pesan global</p></div>
+      <div class="tbl-wrap">
+        <div class="tbl-header">
+          <h3>Feed Global</h3>
+          <button class="btn btn-red btn-sm" onclick="clearAllGlobal()">🗑️ Hapus Semua</button>
+        </div>
+        <div id="gcFeed"></div>
+      </div>
+    </div>
+
+    <!-- PRIVATE CHAT -->
+    <div class="page" id="p-privatechat">
+      <div class="page-header"><h2>CHAT PRIVATE</h2><p>Admin memiliki akses ke semua percakapan private</p></div>
+      <div style="background:rgba(203,166,247,.07);border:1px solid rgba(203,166,247,.2);border-radius:10px;padding:12px 16px;margin-bottom:18px;font-size:.8rem;color:var(--purple)">
+        ⚠️ Data percakapan private hanya untuk keperluan moderasi keamanan organisasi.
+      </div>
+      <div id="privConvList"></div>
+      <div id="adminPrivView"></div>
+    </div>
+
+    <!-- MAPS -->
+    <div class="page" id="p-maps">
+      <div class="page-header"><h2>KELOLA PETA</h2><p>Semua peta yang tersedia di dunia RHF ZERO</p></div>
+      <div class="map-grid" id="mapGrid"></div>
+    </div>
+
+    <!-- CREATE MAP -->
+    <div class="page" id="p-createmap">
+      <div class="page-header"><h2>BUAT PETA BARU</h2><p>Tambahkan peta private khusus anggota tertentu</p></div>
+      <div class="map-form">
+        <h3>➕ Detail Peta</h3>
+        <div class="form-row">
+          <div class="form-group">
+            <label>ID Peta (key)</label>
+            <input id="mapId" placeholder="contoh: vault_1">
+          </div>
+          <div class="form-group">
+            <label>Nama Peta</label>
+            <input id="mapName" placeholder="contoh: Ruang Rahasia">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Warna Background</label>
+            <input id="mapBg" type="color" value="#0d1520" style="height:40px;cursor:pointer">
+          </div>
+          <div class="form-group">
+            <label>Warna Grid</label>
+            <input id="mapGrid2" type="color" value="#1e2a45" style="height:40px;cursor:pointer">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Warna Aksen</label>
+            <input id="mapAccent" type="color" value="#1a2540" style="height:40px;cursor:pointer">
+          </div>
+          <div class="form-group">
+            <label>Tipe Peta</label>
+            <select id="mapType">
+              <option value="private">🔐 Private (hanya anggota terdaftar)</option>
+              <option value="public">🌐 Publik (semua bisa masuk)</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group" style="margin-bottom:14px">
+          <label>Deskripsi</label>
+          <textarea id="mapDesc" style="resize:vertical;min-height:70px" placeholder="Deskripsi peta ini..."></textarea>
+        </div>
+        <div class="form-group" style="margin-bottom:18px">
+          <label>Akses User (pisahkan koma, kosongkan = semua)</label>
+          <input id="mapAccess" placeholder="user1, user2, user3">
+        </div>
+        <button class="btn btn-gold" onclick="createMap()">✨ BUAT PETA</button>
+        <span id="mapMsg" style="margin-left:14px;font-size:.8rem"></span>
+      </div>
+    </div>
+
+    <!-- BROADCAST -->
+    <div class="page" id="p-broadcast">
+      <div class="page-header"><h2>BROADCAST</h2><p>Kirim pesan ke semua user via Global Chat</p></div>
+      <div class="broadcast-box">
+        <h3 style="font-size:.88rem;font-weight:600;margin-bottom:14px;color:var(--gold)">📣 Pesan Broadcast</h3>
+        <textarea id="broadcastMsg" placeholder="Tulis pesan yang akan dikirim sebagai broadcast..."></textarea>
+        <div style="display:flex;gap:10px">
+          <button class="btn btn-gold" onclick="sendBroadcast()">📡 KIRIM BROADCAST</button>
+          <button class="btn btn-blue" onclick="sendBroadcast('announcement')">📌 JADIKAN PENGUMUMAN</button>
+        </div>
+      </div>
+      <div class="tbl-wrap">
+        <div class="tbl-header"><h3>Riwayat Broadcast</h3></div>
+        <div id="broadcastHistory" style="padding:14px;display:flex;flex-direction:column;gap:8px;max-height:300px;overflow-y:auto"></div>
+      </div>
+    </div>
+
+    <!-- ANNOUNCEMENTS -->
+    <div class="page" id="p-announcements">
+      <div class="page-header"><h2>PENGUMUMAN</h2><p>Pengumuman resmi organisasi</p></div>
+      <div id="annFeed"></div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<!-- MODAL CONFIRM -->
+<div id="modal">
+  <div id="modalBox">
+    <h3 id="modalTitle">Konfirmasi Aksi</h3>
+    <p id="modalBody">Yakin ingin melakukan ini?</p>
+    <div class="modal-btns">
+      <button class="btn btn-red" id="modalConfirm">YA, LANJUTKAN</button>
+      <button class="btn" style="background:var(--border);color:var(--muted)" onclick="closeModal()">BATAL</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
+import { getDatabase, ref, set, push, onValue, remove, get } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey:"AIzaSyBYf0Gi5j7Bda-Ed6heTbM48j9Ml4GVQhM",
+  authDomain:"drak-rhf-zero-ntris.firebaseapp.com",
+  databaseURL:"https://drak-rhf-zero-ntris-default-rtdb.firebaseio.com",
+  projectId:"drak-rhf-zero-ntris",
+  storageBucket:"drak-rhf-zero-ntris.firebasestorage.app",
+  messagingSenderId:"421998403439",
+  appId:"1:421998403439:web:1443d3fa8f2ee3cb49929a"
+};
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+// Check admin
+const me = JSON.parse(sessionStorage.getItem('rhf_user')||'null');
+if(!me || me.role!=='admin'){
+  // Allow login via URL param too
+  const urlP=new URLSearchParams(location.search);
+  if(urlP.get('key')!=='rhfadmin2025'){
+    location.href='login.html';
+  }
+}
+
+// ── STATE ──
+let allUsers={}, allGc={}, allPriv={}, allMaps={};
+
+// ── REALTIME LISTENERS ──
+onValue(ref(db,'users'),snap=>{
+  allUsers=snap.val()||{};
+  refreshUserStats();
+  if(document.getElementById('p-users').classList.contains('active')) renderUsers();
+  if(document.getElementById('p-online').classList.contains('active')) renderOnline();
+  if(document.getElementById('p-dashboard').classList.contains('active')) renderDashboard();
+});
+
+onValue(ref(db,'globalChat'),snap=>{
+  allGc=snap.val()||{};
+  const cnt=Object.keys(allGc).length;
+  document.getElementById('cntGc').textContent=cnt;
+  document.getElementById('s-gc').textContent=cnt;
+  if(document.getElementById('p-globalchat').classList.contains('active')) renderGcFeed();
+  if(document.getElementById('p-dashboard').classList.contains('active')) renderDashboard();
+});
+
+onValue(ref(db,'privateChat'),snap=>{
+  allPriv=snap.val()||{};
+  const cnt=Object.keys(allPriv).length;
+  document.getElementById('s-priv').textContent=cnt;
+  if(document.getElementById('p-privatechat').classList.contains('active')) renderPrivConvs();
+});
+
+onValue(ref(db,'maps'),snap=>{
+  allMaps=snap.val()||{};
+  const cnt=Object.keys(allMaps).length;
+  document.getElementById('s-maps').textContent=(cnt+3); // +3 default maps
+  if(document.getElementById('p-maps').classList.contains('active')) renderMaps();
+});
+
+onValue(ref(db,'announcements'),snap=>{
+  const data=snap.val()||{};
+  renderAnnouncements(data);
+});
+
+onValue(ref(db,'broadcastHistory'),snap=>{
+  const data=snap.val()||{};
+  renderBroadcastHistory(data);
+});
+
+// ── STATS ──
+function refreshUserStats(){
+  const total=Object.keys(allUsers).length;
+  const online=Object.values(allUsers).filter(u=>u.online).length;
+  document.getElementById('cntUsers').textContent=total;
+  document.getElementById('cntOnline').textContent=online;
+  document.getElementById('s-total').textContent=total;
+  document.getElementById('s-online').textContent=online;
+}
+
+// ── DASHBOARD ──
+function renderDashboard(){
+  const list=Object.entries(allUsers).sort((a,b)=>(b[1].joinedAt||0)-(a[1].joinedAt||0)).slice(0,8);
+  const tbody=document.getElementById('recentUsers');
+  tbody.innerHTML='';
+  list.forEach(([k,v])=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td>${v.avatar||'🧙'}</td><td><strong>${k}</strong></td>
+      <td>${v.online?'<span class="badge badge-green">Online</span>':'<span class="badge" style="background:rgba(107,122,159,.1);color:var(--muted);border:1px solid var(--border)">Offline</span>'}</td>
+      <td><span class="badge ${v.role==='admin'?'badge-gold badge-red':'badge-blue'}">${v.role||'member'}</span></td>
+      <td>${v.joinedAt?fmtDate(v.joinedAt):'-'}</td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+// ── USERS ──
+function renderUsers(filter=''){
+  const tbody=document.getElementById('allUsersTable');
+  tbody.innerHTML='';
+  Object.entries(allUsers).filter(([k])=>k.includes(filter)).forEach(([k,v])=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td>${v.avatar||'🧙'}</td>
+      <td><strong>${k}</strong></td>
+      <td>${v.online?'<span class="badge badge-green">●&nbsp;Online</span>':'<span class="badge" style="background:rgba(107,122,159,.1);color:var(--muted);border:1px solid var(--border)">Offline</span>'}</td>
+      <td>
+        <select style="background:var(--panel2);border:1px solid var(--border);border-radius:5px;padding:3px 8px;color:var(--text);font-size:.75rem;cursor:pointer" onchange="changeRole('${k}',this.value)">
+          <option value="member" ${(v.role||'member')==='member'?'selected':''}>member</option>
+          <option value="officer" ${v.role==='officer'?'selected':''}>officer</option>
+          <option value="admin" ${v.role==='admin'?'selected':''}>admin</option>
+        </select>
+      </td>
+      <td><span style="font-size:.75rem;color:var(--muted)">${v.map||'main'}</span></td>
+      <td><div style="display:flex;gap:6px">
+        <button class="btn btn-blue btn-sm" onclick="kickUser('${k}')">⚡ Kick</button>
+        <button class="btn btn-red btn-sm" onclick="confirmDelete('${k}')">🗑️</button>
+      </div></td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+window.filterUsers=function(){renderUsers(document.getElementById('userSearch').value)};
+
+window.changeRole=async function(username,role){
+  await set(ref(db,`users/${username}/role`),role);
+  showToast(`Role ${username} → ${role}`);
+};
+
+window.kickUser=function(username){
+  showConfirm(`Kick ${username}?`,`User ${username} akan dikeluarkan dari sesi aktif saat ini.`,async()=>{
+    await set(ref(db,`users/${username}/online`),false);
+    showToast(`${username} telah di-kick`);
+  });
+};
+
+window.confirmDelete=function(username){
+  showConfirm(`Hapus ${username}?`,`Akun ${username} akan dihapus permanen dari sistem.`,async()=>{
+    await remove(ref(db,`users/${username}`));
+    showToast(`${username} telah dihapus`);
+  });
+};
+
+// ── ONLINE ──
+function renderOnline(){
+  const tbody=document.getElementById('onlineTable');
+  tbody.innerHTML='';
+  Object.entries(allUsers).filter(([,v])=>v.online).forEach(([k,v])=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td>${v.avatar||'🧙'}</td><td><strong>${k}</strong></td>
+      <td><span class="badge badge-blue">${v.map||'main'}</span></td>
+      <td style="font-size:.75rem;color:var(--muted)">${Math.round(v.x||0)}, ${Math.round(v.y||0)}</td>
+      <td><button class="btn btn-red btn-sm" onclick="kickUser('${k}')">⚡ Kick</button></td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+// ── GLOBAL CHAT ──
+function renderGcFeed(){
+  const feed=document.getElementById('gcFeed');
+  const msgs=Object.entries(allGc).map(([k,v])=>({...v,_key:k})).sort((a,b)=>b.ts-a.ts).slice(0,60);
+  feed.innerHTML='';
+  msgs.forEach(m=>{
+    const d=document.createElement('div');
+    d.className='gc-entry';
+    d.innerHTML=`<div class="av">${m.avatar||'🧙'}</div>
+      <div class="body">
+        <div class="meta"><span class="uname">${escHtml(m.username||'?')}</span><span class="time">${fmtDate(m.ts)}</span></div>
+        <div class="msg">${escHtml(m.text||'')}</div>
+      </div>
+      <button class="del-btn" onclick="deleteGcMsg('${m._key}')">🗑️ Hapus</button>`;
+    feed.appendChild(d);
+  });
+}
+
+window.deleteGcMsg=function(key){
+  remove(ref(db,`globalChat/${key}`));
+  showToast('Pesan dihapus');
+};
+
+window.clearAllGlobal=function(){
+  showConfirm('Hapus Semua Chat Global?','Seluruh riwayat chat global akan dihapus permanen.',async()=>{
+    await remove(ref(db,'globalChat'));
+    showToast('Semua pesan global dihapus');
+  });
+};
+
+// ── PRIVATE CHAT ──
+function renderPrivConvs(){
+  const cont=document.getElementById('privConvList');
+  cont.innerHTML='';
+  Object.entries(allPriv).forEach(([pair,msgs])=>{
+    const cnt=Object.keys(msgs).length;
+    const d=document.createElement('div');
+    d.className='conv-item';
+    d.innerHTML=`<span class="badge badge-purple">🔐</span><span class="conv-pair">${pair.replace('__',' ↔ ')}</span><span class="conv-cnt">${cnt} pesan</span>
+    <button class="btn btn-blue btn-sm" style="margin-left:8px" onclick="viewPrivConv('${pair}')">Lihat</button>
+    <button class="btn btn-red btn-sm" style="margin-left:4px" onclick="deletePrivConv('${pair}')">🗑️</button>`;
+    cont.appendChild(d);
+  });
+}
+
+window.viewPrivConv=function(pair){
+  const view=document.getElementById('adminPrivView');
+  view.style.display='block';
+  view.innerHTML='';
+  const msgs=allPriv[pair]||{};
+  const list=Object.values(msgs).sort((a,b)=>a.ts-b.ts);
+  list.forEach(m=>{
+    const d=document.createElement('div');
+    d.className='priv-admin-msg';
+    d.innerHTML=`<div class="pmf">${escHtml(m.from||'?')}</div><div class="pmt">${escHtml(m.text||'')}</div><div class="pm-time">${fmtDate(m.ts)}</div>`;
+    view.appendChild(d);
+  });
+  view.scrollTop=view.scrollHeight;
+};
+
+window.deletePrivConv=function(pair){
+  showConfirm('Hapus percakapan ini?',`Percakapan antara ${pair.replace('__',' dan ')} akan dihapus.`,async()=>{
+    await remove(ref(db,`privateChat/${pair}`));
+    showToast('Percakapan dihapus');
+  });
+};
+
+// ── MAPS ──
+function renderMaps(){
+  const grid=document.getElementById('mapGrid');
+  grid.innerHTML='';
+  const DEFAULTS={
+    main:{name:'Tanah Utama',bg:'#0d1520',type:'public',desc:'Peta utama dunia RHF ZERO'},
+    forest:{name:'Hutan Gelap',bg:'#0a1a0e',type:'public',desc:'Kawasan hutan misterius'},
+    citadel:{name:'Benteng Pusat',bg:'#1a1020',type:'public',desc:'Markas utama organisasi'}
+  };
+  const allM={...DEFAULTS,...allMaps};
+  Object.entries(allM).forEach(([k,v])=>{
+    const isPrivate=allMaps[k];
+    const card=document.createElement('div');
+    card.className='map-card'+(isPrivate?' private-map':'');
+    const canvas=document.createElement('canvas');
+    canvas.className='map-preview';canvas.width=220;canvas.height=60;
+    const c=canvas.getContext('2d');
+    c.fillStyle=v.bg||'#0d1520';c.fillRect(0,0,220,60);
+    c.strokeStyle=v.gridColor||'rgba(30,42,69,.4)';c.lineWidth=.5;
+    for(let x=0;x<220;x+=20){c.beginPath();c.moveTo(x,0);c.lineTo(x,60);c.stroke()}
+    for(let y=0;y<60;y+=20){c.beginPath();c.moveTo(0,y);c.lineTo(220,y);c.stroke()}
+    card.appendChild(canvas);
+    card.innerHTML+=`<h4>${v.name||k}</h4>
+      <p>${v.desc||'-'}</p>
+      <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+        <span class="badge ${v.type==='private'?'badge-purple':'badge-green'}">${v.type==='private'?'🔐 Private':'🌐 Publik'}</span>
+        ${v.access?`<span class="badge badge-orange" style="font-size:.65rem">${v.access}</span>`:''}
+        ${isPrivate?`<button class="btn btn-red btn-sm map-del-btn" onclick="deleteMap('${k}')">🗑️</button>`:''}
+      </div>`;
+    grid.appendChild(card);
+  });
+}
+
+window.deleteMap=function(key){
+  showConfirm('Hapus peta ini?',`Peta "${allMaps[key]?.name||key}" akan dihapus.`,async()=>{
+    await remove(ref(db,`maps/${key}`));
+    showToast('Peta dihapus');
+  });
+};
+
+window.createMap=async function(){
+  const id=document.getElementById('mapId').value.trim().replace(/\s+/g,'_');
+  const name=document.getElementById('mapName').value.trim();
+  const bg=document.getElementById('mapBg').value;
+  const gridC=document.getElementById('mapGrid2').value;
+  const accent=document.getElementById('mapAccent').value;
+  const type=document.getElementById('mapType').value;
+  const desc=document.getElementById('mapDesc').value.trim();
+  const access=document.getElementById('mapAccess').value.trim();
+  const msgEl=document.getElementById('mapMsg');
+  if(!id||!name){msgEl.textContent='❌ ID dan Nama wajib diisi';msgEl.style.color='var(--red)';return}
+  await set(ref(db,`maps/${id}`),{name,bg,gridColor:gridC+'55',accent,type,desc,access,createdAt:Date.now(),createdBy:'admin'});
+  msgEl.textContent='✅ Peta berhasil dibuat!';msgEl.style.color='var(--green)';
+  showToast('Peta "'+name+'" berhasil dibuat');
+  setTimeout(()=>{msgEl.textContent='';goPage('maps')},1500);
+};
+
+// ── BROADCAST ──
+window.sendBroadcast=async function(mode){
+  const msg=document.getElementById('broadcastMsg').value.trim();
+  if(!msg){showToast('Tulis pesan dulu!');return}
+  const msgRef=push(ref(db,'globalChat'));
+  await set(msgRef,{username:'[ADMIN BROADCAST]',avatar:'📣',text:msg,ts:Date.now(),isBroadcast:true,id:msgRef.key});
+  if(mode==='announcement'){
+    await push(ref(db,'announcements'),{title:'Pengumuman Resmi',body:msg,ts:Date.now(),by:'admin'});
+  }
+  await push(ref(db,'broadcastHistory'),{text:msg,ts:Date.now(),mode:mode||'broadcast'});
+  document.getElementById('broadcastMsg').value='';
+  showToast('Broadcast terkirim ke semua user!');
+};
+
+function renderBroadcastHistory(data){
+  const cont=document.getElementById('broadcastHistory');
+  if(!cont) return;
+  cont.innerHTML='';
+  Object.values(data).sort((a,b)=>b.ts-a.ts).slice(0,10).forEach(m=>{
+    const d=document.createElement('div');
+    d.style.cssText='background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:7px;padding:10px 14px;font-size:.8rem';
+    d.innerHTML=`<div style="display:flex;gap:8px;align-items:center;margin-bottom:4px"><span class="badge ${m.mode==='announcement'?'badge-gold':'badge-blue'}">${m.mode==='announcement'?'📌 Pengumuman':'📡 Broadcast'}</span><span style="color:var(--muted);font-size:.7rem">${fmtDate(m.ts)}</span></div>${escHtml(m.text)}`;
+    cont.appendChild(d);
+  });
+}
+
+function renderAnnouncements(data){
+  const feed=document.getElementById('annFeed');
+  if(!feed) return;
+  feed.innerHTML='';
+  Object.values(data).sort((a,b)=>b.ts-a.ts).forEach(ann=>{
+    const d=document.createElement('div');
+    d.className='ann-item';
+    d.innerHTML=`<div class="ann-title">📌 ${escHtml(ann.title||'Pengumuman')}</div>
+      <div class="ann-body">${escHtml(ann.body||'')}</div>
+      <div class="ann-meta">Oleh ${ann.by||'admin'} · ${fmtDate(ann.ts)}</div>`;
+    feed.appendChild(d);
+  });
+}
+
+// ── PAGE NAV ──
+window.goPage=function(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.sb-item').forEach(s=>s.classList.remove('active'));
+  document.getElementById('p-'+id).classList.add('active');
+  // Find sidebar item
+  document.querySelectorAll('.sb-item').forEach(s=>{if(s.getAttribute('onclick')===`goPage('${id}')`)s.classList.add('active')});
+  // Trigger renders
+  if(id==='users') renderUsers();
+  if(id==='online') renderOnline();
+  if(id==='globalchat') renderGcFeed();
+  if(id==='privatechat') renderPrivConvs();
+  if(id==='maps') renderMaps();
+  if(id==='dashboard') renderDashboard();
+};
+
+// ── MODAL ──
+let modalCb=null;
+function showConfirm(title,body,cb){
+  document.getElementById('modalTitle').textContent=title;
+  document.getElementById('modalBody').textContent=body;
+  modalCb=cb;
+  document.getElementById('modal').classList.add('show');
+  document.getElementById('modalConfirm').onclick=async()=>{closeModal();await cb()};
+}
+window.closeModal=()=>document.getElementById('modal').classList.remove('show');
+
+// ── HELPERS ──
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2800);
+}
+function escHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function fmtDate(ts){if(!ts)return '-';const d=new Date(ts);return d.toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'2-digit'})+' '+d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0')}
+
+window.doLogout=function(){sessionStorage.clear();location.href='login.html'};
+</script>
+</body>
+</html>

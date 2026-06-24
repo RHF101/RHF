@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RHF ZERO — World</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;500;600&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#07090f;--panel:#0d1120;--border:#1e2a45;
+  --gold:#c9a84c;--gold2:#f0d070;--blue:#3a7bd5;
+  --text:#cdd6f4;--muted:#6b7a9f;--red:#f38ba8;--green:#a6e3a1;
+  --purple:#cba6f7;
+}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;overflow:hidden;height:100vh;width:100vw}
+
+/* HUD */
+#hud{position:fixed;top:0;left:0;right:0;height:54px;background:rgba(7,9,15,.92);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 16px;gap:12px;z-index:100;backdrop-filter:blur(10px)}
+#hud .logo{font-family:'Orbitron',monospace;font-size:.9rem;font-weight:900;background:linear-gradient(135deg,var(--gold),var(--gold2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:3px}
+#hud .sep{width:1px;height:24px;background:var(--border)}
+#myInfo{display:flex;align-items:center;gap:8px;font-size:.83rem}
+#myInfo .av{font-size:1.2rem}
+#myInfo .name{color:var(--gold);font-weight:600}
+#myInfo .role{color:var(--muted);font-size:.72rem}
+.hud-right{margin-left:auto;display:flex;gap:8px}
+.hud-btn{padding:6px 14px;border-radius:6px;border:1px solid var(--border);background:rgba(255,255,255,.04);color:var(--text);font-size:.78rem;cursor:pointer;transition:all .2s;font-family:'Inter',sans-serif}
+.hud-btn:hover{border-color:var(--gold);color:var(--gold)}
+.hud-btn.active{border-color:var(--blue);color:var(--blue);background:rgba(58,123,213,.1)}
+#onlineCnt{background:rgba(166,227,161,.1);border-color:var(--green);color:var(--green)}
+
+/* CANVAS WORLD */
+#worldCanvas{position:fixed;top:54px;left:0;cursor:crosshair}
+
+/* GLOBAL CHAT INPUT */
+#globalInput{position:fixed;bottom:0;left:0;right:350px;height:54px;background:rgba(7,9,15,.92);border-top:1px solid var(--border);display:flex;align-items:center;padding:0 14px;gap:10px;z-index:100;backdrop-filter:blur(10px)}
+#globalInput input{flex:1;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:8px;padding:8px 14px;color:var(--text);font-size:.85rem;outline:none}
+#globalInput input:focus{border-color:var(--gold)}
+#globalInput button{padding:8px 16px;border:none;border-radius:8px;background:var(--gold);color:#000;font-weight:700;font-size:.8rem;cursor:pointer;white-space:nowrap}
+
+/* PRIVATE CHAT PANEL */
+#privPanel{position:fixed;top:54px;right:0;width:350px;bottom:0;background:rgba(7,9,15,.97);border-left:1px solid var(--border);z-index:100;display:flex;flex-direction:column;transition:transform .3s}
+#privPanel.hidden{transform:translateX(100%)}
+#privHeader{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+#privHeader h3{font-family:'Orbitron',monospace;font-size:.82rem;color:var(--purple);letter-spacing:2px;flex:1}
+#privClose{background:none;border:none;color:var(--muted);cursor:pointer;font-size:1.1rem;padding:4px 8px}
+#privClose:hover{color:var(--red)}
+
+/* User list in private panel */
+#userList{border-bottom:1px solid var(--border);max-height:180px;overflow-y:auto}
+.user-item{display:flex;align-items:center;gap:10px;padding:10px 16px;cursor:pointer;transition:background .15s}
+.user-item:hover,.user-item.sel{background:rgba(203,166,247,.07)}
+.user-item .uav{font-size:1.1rem}
+.user-item .uname{font-size:.83rem;font-weight:500;color:var(--text)}
+.user-item .ustat{width:8px;height:8px;border-radius:50%;background:var(--muted);margin-left:auto}
+.user-item .ustat.on{background:var(--green)}
+
+#privChat{flex:1;overflow-y:auto;padding:12px 14px;display:flex;flex-direction:column;gap:8px;background:rgba(0,0,0,.3)}
+.priv-msg{max-width:85%;padding:8px 12px;border-radius:10px;font-size:.82rem;line-height:1.4}
+.priv-msg.mine{align-self:flex-end;background:rgba(58,123,213,.2);border:1px solid rgba(58,123,213,.3);color:var(--text)}
+.priv-msg.theirs{align-self:flex-start;background:rgba(203,166,247,.1);border:1px solid rgba(203,166,247,.2)}
+.priv-msg .pm-user{font-size:.7rem;color:var(--purple);font-weight:600;margin-bottom:3px}
+.priv-msg .pm-time{font-size:.65rem;color:var(--muted);margin-top:3px;text-align:right}
+
+#privInputRow{padding:12px 14px;border-top:1px solid var(--border);display:flex;gap:8px}
+#privInputRow input{flex:1;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text);font-size:.82rem;outline:none}
+#privInputRow input:focus{border-color:var(--purple)}
+#privInputRow button{padding:8px 14px;border:none;border-radius:8px;background:var(--purple);color:#000;font-weight:700;font-size:.78rem;cursor:pointer}
+
+/* Global chat history - floating overlay minimal */
+#gcHistory{position:fixed;bottom:60px;left:10px;width:320px;max-height:180px;overflow:hidden;pointer-events:none;z-index:50;display:flex;flex-direction:column;gap:4px;justify-content:flex-end}
+.gc-item{background:rgba(7,9,15,.75);border:1px solid rgba(30,42,69,.6);border-radius:6px;padding:5px 10px;font-size:.75rem;color:var(--text);backdrop-filter:blur(4px);animation:fadeUp .3s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.gc-item strong{color:var(--gold)}
+
+/* MAP list overlay */
+#mapList{position:fixed;top:64px;left:10px;background:rgba(13,17,32,.95);border:1px solid var(--border);border-radius:10px;padding:12px;z-index:90;min-width:180px;display:none}
+#mapList h4{font-size:.75rem;color:var(--muted);letter-spacing:2px;margin-bottom:8px}
+.map-btn{display:block;width:100%;text-align:left;padding:7px 10px;border:none;background:rgba(255,255,255,.04);border-radius:6px;color:var(--text);font-size:.8rem;cursor:pointer;margin-bottom:4px;transition:background .15s}
+.map-btn:hover,.map-btn.active{background:rgba(201,168,76,.12);color:var(--gold)}
+
+/* Notification toast */
+#toast{position:fixed;top:64px;left:50%;transform:translateX(-50%) translateY(-60px);background:var(--panel);border:1px solid var(--gold);border-radius:8px;padding:10px 20px;font-size:.82rem;color:var(--gold);z-index:999;transition:transform .3s;pointer-events:none}
+#toast.show{transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+
+<!-- HUD -->
+<div id="hud">
+  <div class="logo">RHF ZERO</div>
+  <div class="sep"></div>
+  <div id="myInfo">
+    <span class="av" id="myAv">🧙</span>
+    <div><div class="name" id="myName">...</div><div class="role" id="myRole">member</div></div>
+  </div>
+  <div class="sep"></div>
+  <div id="onlineCnt" class="hud-btn">● 0 Online</div>
+  <div class="hud-right">
+    <button class="hud-btn" onclick="toggleMapList()">🗺️ Peta</button>
+    <button class="hud-btn active" onclick="togglePriv()">💬 Private</button>
+    <button class="hud-btn" onclick="doLogout()">Keluar</button>
+  </div>
+</div>
+
+<!-- MAP LIST -->
+<div id="mapList">
+  <h4>PETA TERSEDIA</h4>
+  <div id="mapBtns"></div>
+</div>
+
+<!-- WORLD CANVAS -->
+<canvas id="worldCanvas"></canvas>
+
+<!-- GLOBAL CHAT HISTORY -->
+<div id="gcHistory"></div>
+
+<!-- GLOBAL CHAT INPUT -->
+<div id="globalInput">
+  <span style="font-size:.75rem;color:var(--muted)">💬 GLOBAL</span>
+  <input type="text" id="gcInput" placeholder="Tulis pesan ke semua..." maxlength="120">
+  <button onclick="sendGlobal()">KIRIM</button>
+</div>
+
+<!-- PRIVATE PANEL -->
+<div id="privPanel">
+  <div id="privHeader">
+    <span style="font-size:1.1rem">💌</span>
+    <h3>PRIVATE CHAT</h3>
+    <button id="privClose" onclick="togglePriv()">✕</button>
+  </div>
+  <div id="userList"></div>
+  <div id="privChatTitle" style="padding:8px 16px;font-size:.75rem;color:var(--muted);border-bottom:1px solid var(--border);display:none">
+    <span id="privWith">Pilih user untuk chat private</span>
+  </div>
+  <div id="privChat"></div>
+  <div id="privInputRow">
+    <input type="text" id="privInput" placeholder="Pesan private..." maxlength="200" disabled>
+    <button onclick="sendPrivate()" id="privSendBtn" disabled>KIRIM</button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
+import { getDatabase, ref, set, push, onValue, serverTimestamp, remove, onDisconnect, get } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey:"AIzaSyBYf0Gi5j7Bda-Ed6heTbM48j9Ml4GVQhM",
+  authDomain:"drak-rhf-zero-ntris.firebaseapp.com",
+  databaseURL:"https://drak-rhf-zero-ntris-default-rtdb.firebaseio.com",
+  projectId:"drak-rhf-zero-ntris",
+  storageBucket:"drak-rhf-zero-ntris.firebasestorage.app",
+  messagingSenderId:"421998403439",
+  appId:"1:421998403439:web:1443d3fa8f2ee3cb49929a"
+};
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+// Auth check
+const me = JSON.parse(sessionStorage.getItem('rhf_user')||'null');
+if(!me){location.href='login.html';}
+
+document.getElementById('myAv').textContent = me.avatar||'🧙';
+document.getElementById('myName').textContent = me.username;
+document.getElementById('myRole').textContent = me.role||'member';
+
+// ── CANVAS WORLD ──
+const canvas = document.getElementById('worldCanvas');
+const ctx = canvas.getContext('2d');
+let W, H;
+function resize(){
+  W=canvas.width=window.innerWidth-(document.getElementById('privPanel').classList.contains('hidden')?0:350);
+  H=canvas.height=window.innerHeight-54-54;
+}
+window.addEventListener('resize',resize);
+resize();
+
+// Map definitions
+const MAPS = {
+  main:{name:'Tanah Utama',bg:'#0d1520',gridColor:'rgba(30,42,69,.4)',accent:'#1a2540'},
+  forest:{name:'Hutan Gelap',bg:'#0a1a0e',gridColor:'rgba(30,60,30,.4)',accent:'#0f2a14'},
+  citadel:{name:'Benteng Pusat',bg:'#1a1020',gridColor:'rgba(50,30,69,.4)',accent:'#2a1540'},
+};
+let currentMap = 'main';
+let privateMaps = {};
+
+// Players
+let players = {};
+let myPos = {x:W/2||300, y:H/2||300};
+let myDir = 0; // angle
+let moveKeys = {w:false,a:false,s:false,d:false};
+let moving = false;
+let walkFrame = 0, walkTimer = 0;
+
+// Global comments (bubbles)
+let bubbles = []; // {username, avatar, text, x, y, alpha, life}
+
+// Private bg messages (background floaters)
+let bgMessages = []; // {text, x, y, alpha, speed}
+
+// ── DRAW ──
+function drawMap(){
+  const mapCfg = privateMaps[currentMap] || MAPS[currentMap] || MAPS.main;
+  ctx.fillStyle = mapCfg.bg || '#0d1520';
+  ctx.fillRect(0,0,W,H);
+  // Grid
+  ctx.strokeStyle = mapCfg.gridColor || 'rgba(30,42,69,.4)';
+  ctx.lineWidth = .5;
+  for(let x=0;x<W;x+=48){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke()}
+  for(let y=0;y<H;y+=48){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke()}
+  // Decorations
+  drawDecorations(mapCfg);
+  // Map name
+  ctx.font='bold 11px Orbitron, monospace';
+  ctx.fillStyle='rgba(201,168,76,.3)';
+  ctx.fillText((mapCfg.name||currentMap).toUpperCase(),12,H-14);
+}
+
+function drawDecorations(mapCfg){
+  // Simple ambient decorations per map
+  const seed = currentMap.charCodeAt(0)*7;
+  ctx.globalAlpha=.12;
+  for(let i=0;i<8;i++){
+    const x=(((seed*i*137+50)%W));
+    const y=(((seed*i*79+80)%(H-80)));
+    ctx.fillStyle = mapCfg.accent||'#1a2540';
+    ctx.beginPath();ctx.arc(x,y,30+i*8,0,Math.PI*2);ctx.fill();
+  }
+  ctx.globalAlpha=1;
+}
+
+function drawPlayer(p, isMe){
+  const {x,y,avatar='🧙',username='?',color='#c9a84c',online=true} = p;
+  // Shadow
+  ctx.globalAlpha=.25;
+  ctx.fillStyle='#000';
+  ctx.beginPath();ctx.ellipse(x,y+18,12,5,0,0,Math.PI*2);ctx.fill();
+  ctx.globalAlpha=1;
+  // Body base (circle)
+  ctx.fillStyle = isMe ? '#fff' : (color||'#888');
+  ctx.globalAlpha = online ? 1 : .5;
+  ctx.beginPath();ctx.arc(x,y,14,0,Math.PI*2);ctx.fill();
+  ctx.globalAlpha=1;
+  // Online ring
+  if(isMe){
+    ctx.strokeStyle=color||'#c9a84c';
+    ctx.lineWidth=2;
+    ctx.beginPath();ctx.arc(x,y,17,0,Math.PI*2);ctx.stroke();
+  }
+  // Avatar emoji
+  ctx.font='18px serif';
+  ctx.textAlign='center';
+  ctx.textBaseline='middle';
+  ctx.fillText(avatar,x,y);
+  // Name tag
+  ctx.font='bold 11px Inter, sans-serif';
+  const tw=ctx.measureText(username).width;
+  ctx.fillStyle='rgba(7,9,15,.8)';
+  ctx.beginPath();ctx.roundRect(x-tw/2-6,y-32,tw+12,18,4);ctx.fill();
+  ctx.fillStyle= isMe?'#f0d070':'#cdd6f4';
+  ctx.fillText(username,x,y-23);
+  ctx.textBaseline='alphabetic';
+}
+
+function drawBubbles(){
+  const now = Date.now();
+  bubbles = bubbles.filter(b=>b.life>now);
+  bubbles.forEach(b=>{
+    const remaining = (b.life-now)/4000;
+    ctx.globalAlpha = Math.min(remaining*3,1);
+    ctx.font='bold 12px Inter, sans-serif';
+    const tw = ctx.measureText(b.text).width;
+    const bx = b.x - tw/2 - 10, by = b.y - 64, bw = tw+20, bh = 26;
+    // Bubble bg
+    ctx.fillStyle='rgba(7,9,15,.88)';
+    ctx.strokeStyle='rgba(201,168,76,.6)';
+    ctx.lineWidth=1.5;
+    ctx.beginPath();ctx.roundRect(bx,by,bw,bh,8);ctx.fill();ctx.stroke();
+    // Tail
+    ctx.beginPath();ctx.moveTo(b.x-6,by+bh);ctx.lineTo(b.x,by+bh+8);ctx.lineTo(b.x+6,by+bh);ctx.closePath();
+    ctx.fillStyle='rgba(7,9,15,.88)';ctx.fill();
+    ctx.fillStyle='#f0d070';
+    ctx.fillText(b.text,b.x,by+18);
+    ctx.globalAlpha=1;
+  });
+  ctx.textAlign='left';
+}
+
+function drawBgMessages(){
+  // Private messages float in background
+  bgMessages = bgMessages.filter(m=>m.alpha>0);
+  bgMessages.forEach(m=>{
+    m.y -= m.speed;
+    m.alpha -= .002;
+    ctx.globalAlpha = m.alpha * .22;
+    ctx.font = `${m.size||14}px Inter, sans-serif`;
+    ctx.fillStyle = '#cba6f7';
+    ctx.textAlign='left';
+    ctx.fillText(m.text, m.x, m.y);
+    ctx.globalAlpha=1;
+  });
+}
+
+function drawOtherPlayers(){
+  Object.entries(players).forEach(([uid,p])=>{
+    if(uid===me.username) return;
+    drawPlayer(p,false);
+    // Their bubbles
+    bubbles.filter(b=>b.username===uid).forEach(()=>{});
+  });
+}
+
+let lastFrame=0;
+function gameLoop(ts){
+  const dt=(ts-lastFrame)/1000; lastFrame=ts;
+  updateMovement(dt);
+  ctx.clearRect(0,0,W,H);
+  drawMap();
+  drawBgMessages();
+  drawOtherPlayers();
+  drawPlayer({...me,x:myPos.x,y:myPos.y},true);
+  drawBubbles();
+  requestAnimationFrame(gameLoop);
+}
+requestAnimationFrame(gameLoop);
+
+// ── MOVEMENT ──
+const SPEED = 120;
+document.addEventListener('keydown',e=>{
+  const k=e.key.toLowerCase();
+  if(['w','a','s','d','arrowup','arrowdown','arrowleft','arrowright'].includes(k))e.preventDefault();
+  if(k==='w'||k==='arrowup') moveKeys.w=true;
+  if(k==='s'||k==='arrowdown') moveKeys.s=true;
+  if(k==='a'||k==='arrowleft') moveKeys.a=true;
+  if(k==='d'||k==='arrowright') moveKeys.d=true;
+});
+document.addEventListener('keyup',e=>{
+  const k=e.key.toLowerCase();
+  if(k==='w'||k==='arrowup') moveKeys.w=false;
+  if(k==='s'||k==='arrowdown') moveKeys.s=false;
+  if(k==='a'||k==='arrowleft') moveKeys.a=false;
+  if(k==='d'||k==='arrowright') moveKeys.d=false;
+});
+
+let posSaveTimer=0;
+function updateMovement(dt){
+  let dx=0,dy=0;
+  if(moveKeys.w) dy-=1;
+  if(moveKeys.s) dy+=1;
+  if(moveKeys.a) dx-=1;
+  if(moveKeys.d) dx+=1;
+  const len=Math.sqrt(dx*dx+dy*dy);
+  if(len>0){dx/=len;dy/=len;moving=true;}else{moving=false;}
+  myPos.x=Math.max(20,Math.min(W-20,myPos.x+dx*SPEED*dt));
+  myPos.y=Math.max(20,Math.min(H-20,myPos.y+dy*SPEED*dt));
+  posSaveTimer+=dt;
+  if(posSaveTimer>1){
+    posSaveTimer=0;
+    set(ref(db,`users/${me.username}`),{...me,x:Math.round(myPos.x),y:Math.round(myPos.y),online:true,map:currentMap});
+  }
+}
+
+// Presence
+onDisconnect(ref(db,`users/${me.username}/online`)).set(false);
+
+// ── REALTIME PLAYERS ──
+onValue(ref(db,'users'),snap=>{
+  const data=snap.val()||{};
+  players={};
+  let cnt=0;
+  Object.entries(data).forEach(([k,v])=>{
+    if(v.online) cnt++;
+    if(k!==me.username && v.map===currentMap) players[k]=v;
+  });
+  document.getElementById('onlineCnt').textContent=`● ${cnt} Online`;
+  renderUserList(data);
+});
+
+// ── GLOBAL CHAT ──
+onValue(ref(db,'globalChat'),snap=>{
+  const msgs=snap.val()||{};
+  const list=Object.values(msgs).sort((a,b)=>a.ts-b.ts).slice(-30);
+  // Update history
+  const hist=document.getElementById('gcHistory');
+  hist.innerHTML='';
+  list.slice(-8).forEach(m=>{
+    const d=document.createElement('div');
+    d.className='gc-item';
+    d.innerHTML=`<strong>${m.avatar||'🧙'} ${m.username}</strong>: ${escHtml(m.text)}`;
+    hist.appendChild(d);
+  });
+  // Add bubbles for recent messages
+  list.filter(m=>Date.now()-m.ts<8000).forEach(m=>{
+    if(!bubbles.find(b=>b.id===m.id)){
+      const p=players[m.username]||null;
+      const px=(m.username===me.username)?myPos.x:(p?p.x:Math.random()*W);
+      const py=(m.username===me.username)?myPos.y:(p?p.y:Math.random()*H);
+      bubbles.push({id:m.id||m.ts,username:m.username,text:m.text.slice(0,40),x:px,y:py,life:Date.now()+6000});
+    }
+  });
+});
+
+window.sendGlobal=function(){
+  const inp=document.getElementById('gcInput');
+  const txt=inp.value.trim();
+  if(!txt) return;
+  const msgRef=push(ref(db,'globalChat'));
+  set(msgRef,{username:me.username,avatar:me.avatar,text:txt,ts:Date.now(),id:msgRef.key});
+  inp.value='';
+  // Also add bg float effect
+  addBgFloat(`${me.avatar} ${txt}`);
+};
+document.getElementById('gcInput').addEventListener('keydown',e=>{if(e.key==='Enter')sendGlobal()});
+
+function addBgFloat(text){
+  bgMessages.push({text,x:Math.random()*(W-200)+20,y:H-60,alpha:1,speed:0.3+Math.random()*0.4,size:11+Math.random()*6});
+}
+
+// ── PRIVATE CHAT ──
+let privTarget=null;
+let privListener=null;
+
+function renderUserList(data){
+  const ul=document.getElementById('userList');
+  ul.innerHTML='';
+  Object.entries(data).forEach(([k,v])=>{
+    if(k===me.username) return;
+    const d=document.createElement('div');
+    d.className='user-item'+(privTarget===k?' sel':'');
+    d.innerHTML=`<span class="uav">${v.avatar||'🧙'}</span><span class="uname">${k}</span><span class="ustat ${v.online?'on':''}"></span>`;
+    d.onclick=()=>openPrivChat(k,v);
+    ul.appendChild(d);
+  });
+}
+
+function openPrivChat(username,data){
+  privTarget=username;
+  document.getElementById('privWith').textContent=`💌 Chat dengan ${data.avatar||'🧙'} ${username}`;
+  document.getElementById('privChatTitle').style.display='block';
+  document.getElementById('privInput').disabled=false;
+  document.getElementById('privSendBtn').disabled=false;
+  document.querySelectorAll('.user-item').forEach(el=>{
+    el.classList.toggle('sel',el.querySelector('.uname').textContent===username);
+  });
+  // Listen to private messages
+  if(privListener) privListener();
+  const chatKey=[me.username,username].sort().join('__');
+  privListener=onValue(ref(db,`privateChat/${chatKey}`),snap=>{
+    const msgs=snap.val()||{};
+    const list=Object.values(msgs).sort((a,b)=>a.ts-b.ts);
+    const pc=document.getElementById('privChat');
+    pc.innerHTML='';
+    list.forEach(m=>{
+      const d=document.createElement('div');
+      d.className='priv-msg '+(m.from===me.username?'mine':'theirs');
+      d.innerHTML=`<div class="pm-user">${m.from}</div>${escHtml(m.text)}<div class="pm-time">${fmtTime(m.ts)}</div>`;
+      pc.appendChild(d);
+      // Add subtle bg float for incoming private messages
+      if(m.from!==me.username && Date.now()-m.ts<5000){
+        addBgFloat(`🔒 ${m.text}`);
+      }
+    });
+    pc.scrollTop=pc.scrollHeight;
+  });
+}
+
+window.sendPrivate=function(){
+  if(!privTarget) return;
+  const inp=document.getElementById('privInput');
+  const txt=inp.value.trim();
+  if(!txt) return;
+  const chatKey=[me.username,privTarget].sort().join('__');
+  push(ref(db,`privateChat/${chatKey}`),{from:me.username,to:privTarget,text:txt,ts:Date.now()});
+  inp.value='';
+};
+document.getElementById('privInput').addEventListener('keydown',e=>{if(e.key==='Enter')sendPrivate()});
+
+// ── MAPS ──
+function loadMaps(){
+  onValue(ref(db,'maps'),snap=>{
+    const data=snap.val()||{};
+    privateMaps={};
+    Object.entries(data).forEach(([k,v])=>privateMaps[k]=v);
+    renderMapList(data);
+  });
+}
+loadMaps();
+
+function renderMapList(data){
+  const cont=document.getElementById('mapBtns');
+  cont.innerHTML='';
+  // Default maps
+  Object.entries(MAPS).forEach(([k,v])=>{
+    const b=document.createElement('button');
+    b.className='map-btn'+(currentMap===k?' active':'');
+    b.textContent='🗺️ '+v.name;
+    b.onclick=()=>switchMap(k);
+    cont.appendChild(b);
+  });
+  // Private maps
+  Object.entries(data).forEach(([k,v])=>{
+    const b=document.createElement('button');
+    b.className='map-btn'+(currentMap===k?' active':'');
+    b.innerHTML=`🔐 ${v.name}<span style="font-size:.65rem;color:var(--muted)"> (Private)</span>`;
+    b.onclick=()=>switchMap(k);
+    cont.appendChild(b);
+  });
+}
+
+function switchMap(key){
+  currentMap=key;
+  myPos={x:W/2,y:H/2};
+  set(ref(db,`users/${me.username}/map`),key);
+  document.getElementById('mapList').style.display='none';
+  showToast('Pindah ke '+(MAPS[key]?.name||privateMaps[key]?.name||key));
+}
+
+window.toggleMapList=function(){
+  const ml=document.getElementById('mapList');
+  ml.style.display=ml.style.display==='block'?'none':'block';
+};
+
+// ── UI HELPERS ──
+window.togglePriv=function(){
+  const p=document.getElementById('privPanel');
+  p.classList.toggle('hidden');
+  setTimeout(resize,310);
+};
+
+window.doLogout=function(){
+  set(ref(db,`users/${me.username}/online`),false);
+  sessionStorage.clear();
+  location.href='login.html';
+};
+
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2500);
+}
+
+function escHtml(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function fmtTime(ts){const d=new Date(ts);return d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0')}
+</script>
+</body>
+</html>
